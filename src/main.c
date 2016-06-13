@@ -1,9 +1,11 @@
 #include <stdbool.h>
+#include <stdio.h>
 #include <llvm-c/BitWriter.h>
 #include <llvm-c/Core.h>
+#include "clannad.h"
 
-int
-main(int argc, char **argv)
+void
+hello_world()
 {
   LLVMModuleRef mod = LLVMModuleCreateWithName("clannad");
 
@@ -30,4 +32,19 @@ main(int argc, char **argv)
   LLVMBuildRet(builder, LLVMConstInt(LLVMInt32Type(), 0, false));
 
   LLVMWriteBitcodeToFile(mod, "main.bc");
+}
+
+int
+main(void)
+{
+  Node *ast;
+
+  if (parse_stdin(&ast)) {
+    fprintf(stderr, "Error!\n");
+    return 1;
+  }
+  dump_ast(ast);
+
+  hello_world();
+  return 0;
 }
