@@ -6,6 +6,8 @@ enum NodeType {
   NODE_FUNC,
   NODE_TYPE,
   NODE_DECL,
+  NODE_RETURN,
+  NODE_INTEGER,
   NODE_COMPOUND_STMT,
 };
 
@@ -17,8 +19,10 @@ typedef struct {
 typedef struct Node {
   enum NodeType type;
   union {
-    // NODE_ROOT
+    // NODE_ROOT, NODE_COUMPOUND_STMT
     Vector *children;
+    // NODE_RETURN
+    struct Node *param;
     // NODE_FUNC
     struct {
       struct Node *spec;
@@ -27,6 +31,8 @@ typedef struct Node {
     };
     // NODE_DECL, NODE_TYPE
     char *id;
+    // NODE_INTEGER
+    long ival;
   };
 } Node;
 
@@ -38,7 +44,7 @@ int parse_stdin(Node **astptr);
 
 // vector.h
 Vector* create_vector();
+Vector* vector_push(Vector *vec, void *ptr);
 void* vector_get(Vector *vec, int index);
-void vector_push(Vector *vec, void *ptr);
 
 #endif

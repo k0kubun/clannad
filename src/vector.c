@@ -28,10 +28,11 @@ vector_get(Vector *vec, int index)
   return vec->data[index];
 }
 
-void
+Vector*
 vector_push(Vector *vec, void *ptr)
 {
   vec->length++;
   realloc_vector(vec, vec->length);
   vec->data[vec->length - 1] = ptr;
+  return vec;
 }

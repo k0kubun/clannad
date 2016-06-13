@@ -32,31 +32,58 @@ node_name(Node *node)
       return "NODE_DECL";
     case NODE_COMPOUND_STMT:
       return "NODE_COMPOUND_STMT";
+    case NODE_RETURN:
+      return "NODE_RETURN";
+    case NODE_INTEGER:
+      return "NODE_INTEGER";
     default:
-      fprintf(stderr, "node_name->type: (%d)", node->type);
+      fprintf(stderr, "unexpected node type: %d\n", node->type);
       return "NODE_UNSUPPORTED";
   }
 }
 
+void dump_node(int indent, Node *node);
+
 void
-dump_node_with_indent(Node *node, int indent)
+dump_vector(int indent, Vector *vec)
+{
+  for (int i = 0; i < vec->length; i++) {
+    dump_node(indent, (Node *)vector_get(vec, i));
+  }
+}
+
+void
+dump_nodes(int indent, int argc, ...)
+{
+  va_list list;
+  va_start(list, argc);
+  for (int i = 0; i < argc; i++) dump_node(indent, va_arg(list, Node *));
+  va_end(list);
+}
+
+void
+dump_node(int indent, Node *node)
 {
   switch (node->type) {
     case NODE_ROOT:
+    case NODE_COMPOUND_STMT:
       indented_puts(indent, node_name(node));
-      for (int i = 0; i < node->children->length; i++) {
-        dump_node_with_indent((Node *)vector_get(node->children, i), indent + 1);
-      }
+      dump_vector(indent + 1, node->children);
+      break;
+    case NODE_RETURN:
+      indented_puts(indent, node_name(node));
+      if (node->param) dump_node(indent + 1, node->param);
       break;
     case NODE_FUNC:
       indented_puts(indent, node_name(node));
-      dump_node_with_indent(node->spec, indent + 1);
-      dump_node_with_indent(node->decl, indent + 1);
-      dump_node_with_indent(node->stmts, indent + 1);
+      dump_nodes(indent + 1, 3, node->spec, node->decl, node->stmts);
       break;
     case NODE_DECL:
     case NODE_TYPE:
       indented_printf(indent, "%s id=%s\n", node_name(node), node->id);
+      break;
+    case NODE_INTEGER:
+      indented_printf(indent, "%s ival=%d\n", node_name(node), node->ival);
       break;
     default:
       indented_puts(indent, node_name(node));
@@ -67,5 +94,5 @@ dump_node_with_indent(Node *node, int indent)
 void
 dump_ast(Node *ast)
 {
-  dump_node_with_indent(ast, 0);
+  dump_node(0, ast);
 }

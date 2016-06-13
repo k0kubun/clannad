@@ -8,10 +8,22 @@ char* copy_string(char *str);
 %%
 
 "int" return tINT;
+"return" return tRETURN;
 
 [a-zA-Z_][a-zA-Z0-9_]* {
   yylval.id = copy_string(yytext);
   return tIDENTIFIER;
+}
+
+[1-9][0-9]* {
+  yylval.ival = atoi(yytext);
+  return tINTEGER;
+}
+
+0 {
+  // TODO: support all octal digits
+  yylval.ival = 0;
+  return tINTEGER;
 }
 
 " "|\t|\r|\n {

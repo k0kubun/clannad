@@ -11,24 +11,51 @@ static Node *parse_result;
 %union {
   Node *node;
   char *id;
+  long ival;
+  Vector *list;
 }
 
-%token <id> tINT
-%token <id> tIDENTIFIER
+%token <id>   tINT
+%token <id>   tRETURN
+%token <ival> tINTEGER
+%token <id>   tIDENTIFIER
 
-%type <id> type_specifier
-%type <node> translation_unit
-%type <node> declaration_specifiers external_declaration function_definition
-%type <node> declarator direct_declarator compound_statement
+%type <list> translation_unit
+%type <node> declaration_specifiers
+%type <node> external_declaration
+%type <node> function_definition
+%type <node> declarator
+%type <node> direct_declarator
+%type <node> compound_statement
+%type <list> block_item_list
+%type <node> block_item
+%type <node> statement
+%type <node> jump_statement
+%type <node> expression
+%type <node> primary_expression
+%type <node> constant
+%type <node> integer_constant
+%type <id>   type_specifier
 
-%start translation_unit
+%start program
 
 %%
+
+program
+  : translation_unit
+  {
+    parse_result = create_node(&(Node){ NODE_ROOT, .children = $1 });
+  }
+  ;
 
 translation_unit
   : external_declaration
   {
-    vector_push(parse_result->children, $1);
+    $$ = vector_push(create_vector(), $1);
+  }
+  | translation_unit external_declaration
+  {
+    $$ = vector_push($1, $2);
   }
   ;
 
@@ -39,20 +66,14 @@ external_declaration
 function_definition
   : declaration_specifiers declarator compound_statement
   {
-    Node *node  = create_node(&(Node){ NODE_FUNC });
-    node->spec  = $1;
-    node->decl  = $2;
-    node->stmts = $3;
-    $$ = node;
+    $$ = create_node(&(Node){ NODE_FUNC, .spec = $1, .decl = $2, .stmts = $3 });
   }
   ;
 
 declaration_specifiers
   : type_specifier
   {
-    Node *node = create_node(&(Node){ NODE_TYPE });
-    node->id = $1;
-    $$ = node;
+    $$ = create_node(&(Node){ NODE_TYPE, .id = $1 });
   }
   ;
 
@@ -63,9 +84,7 @@ declarator
 direct_declarator
   : tIDENTIFIER
   {
-    Node *node = create_node(&(Node){ NODE_DECL });
-    node->id = yyval.id;
-    $$ = node;
+    $$ = create_node(&(Node){ NODE_DECL, .id = yyval.id });
   }
   | direct_declarator '(' ')'
   ;
@@ -73,7 +92,61 @@ direct_declarator
 compound_statement
   : '{' '}'
   {
-    $$ = create_node(&(Node){ NODE_COMPOUND_STMT });
+    $$ = create_node(&(Node){ NODE_COMPOUND_STMT, .children = create_vector() });
+  }
+  | '{' block_item_list '}'
+  {
+    $$ = create_node(&(Node){ NODE_COMPOUND_STMT, .children = $2 });
+  }
+  ;
+
+block_item_list
+  : block_item
+  {
+    $$ = vector_push(create_vector(), $1);
+  }
+  | block_item_list block_item
+  {
+    $$ = vector_push($1, $2);
+  }
+  ;
+
+block_item
+  : statement
+  ;
+
+statement
+  : jump_statement
+  ;
+
+jump_statement
+  : tRETURN ';'
+  {
+    $$ = create_node(&(Node){ NODE_RETURN, .param = NULL });
+  }
+  | tRETURN expression ';'
+  {
+    $$ = create_node(&(Node){ NODE_RETURN, .param = $2 });
+  }
+  ;
+
+/* FIXME: skipping many reductions before primary_expression */
+expression
+  : primary_expression
+  ;
+
+primary_expression
+  : constant
+  ;
+
+constant
+  : integer_constant
+  ;
+
+integer_constant
+  : tINTEGER
+  {
+    $$ = create_node(&(Node){ NODE_INTEGER, .ival = $1 });
   }
   ;
 
@@ -98,7 +171,7 @@ int
 yyerror(char const *str)
 {
   extern char *yytext;
-  fprintf(stderr, "parser error near %s\n", yytext);
+  fprintf(stderr, "parser error near %s: %s\n", yytext, str);
   return 0;
 }
 
@@ -109,7 +182,6 @@ parse_stdin(Node **astptr)
   extern FILE *yyin;
 
   yyin = stdin;
-  parse_result = create_node(&(Node){ NODE_ROOT, create_vector() });
   int ret = yyparse();
   *astptr = parse_result;
   return ret;
