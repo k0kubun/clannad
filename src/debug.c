@@ -26,6 +26,8 @@ node_name(Node *node)
       return "NODE_ROOT";
     case NODE_FUNC:
       return "NODE_FUNC";
+    case NODE_FUNCALL:
+      return "NODE_FUNCALL";
     case NODE_TYPE:
       return "NODE_TYPE";
     case NODE_DECL:
@@ -34,6 +36,8 @@ node_name(Node *node)
       return "NODE_COMPOUND_STMT";
     case NODE_RETURN:
       return "NODE_RETURN";
+    case NODE_IDENTIFIER:
+      return "NODE_IDENTIFIER";
     case NODE_INTEGER:
       return "NODE_INTEGER";
     default:
@@ -78,6 +82,11 @@ dump_node(int indent, Node *node)
       indented_puts(indent, node_name(node));
       dump_nodes(indent + 1, 3, node->spec, node->decl, node->stmts);
       break;
+    case NODE_FUNCALL:
+      indented_puts(indent, node_name(node));
+      dump_node(indent + 1, node->func);
+      break;
+    case NODE_IDENTIFIER:
     case NODE_DECL:
     case NODE_TYPE:
       indented_printf(indent, "%s id=%s\n", node_name(node), node->id);

@@ -30,8 +30,10 @@ static Node *parse_result;
 %type <list> block_item_list
 %type <node> block_item
 %type <node> statement
+%type <node> expression_statement
 %type <node> jump_statement
 %type <node> expression
+%type <node> postfix_expression
 %type <node> primary_expression
 %type <node> constant
 %type <node> integer_constant
@@ -116,7 +118,8 @@ block_item
   ;
 
 statement
-  : jump_statement
+  : expression_statement
+  | jump_statement
   ;
 
 jump_statement
@@ -130,13 +133,36 @@ jump_statement
   }
   ;
 
+expression_statement
+  : ';'
+  {
+    $$ = NULL;
+  }
+  | expression ';'
+  {
+    $$ = $1;
+  }
+  ;
+
 /* FIXME: skipping many reductions before primary_expression */
 expression
+  : postfix_expression
+  ;
+
+postfix_expression
   : primary_expression
+  | postfix_expression '(' ')'
+  {
+    $$ = create_node(&(Node){ NODE_FUNCALL, .func = $1, .params = create_vector() });
+  }
   ;
 
 primary_expression
-  : constant
+  : tIDENTIFIER
+  {
+    $$ = create_node(&(Node){ NODE_IDENTIFIER, .id = $1 });
+  }
+  | constant
   ;
 
 constant

@@ -31,6 +31,7 @@ vector_get(Vector *vec, int index)
 Vector*
 vector_push(Vector *vec, void *ptr)
 {
+  if (!ptr) return vec;
   vec->length++;
   realloc_vector(vec, vec->length);
   vec->data[vec->length - 1] = ptr;
