@@ -1,0 +1,6 @@
+clannad
+*.o
+*.ll
+*.s
+*.out
+*.bc
