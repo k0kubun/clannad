@@ -1,27 +1,65 @@
+#include <stdarg.h>
 #include <stdio.h>
 #include "clannad.h"
 
 void
-dump_ast_with_indent(Node *ast, int indent)
+indented_printf(int indent, const char *format, ...)
 {
-  switch (ast->type) {
+  for (int i = 0; i < indent; i++) printf("  ");
+  va_list list;
+  va_start(list, format);
+  vprintf(format, list);
+  va_end(list);
+}
+
+void
+indented_puts(int indent, const char *str)
+{
+  indented_printf(indent, "%s\n", str);
+}
+
+char*
+node_name(Node *node)
+{
+  switch (node->type) {
     case NODE_ROOT:
-      printf("NODE_ROOT\n");
+      return "NODE_ROOT";
+    case NODE_FUNC:
+      return "NODE_FUNC";
+    case NODE_TYPE:
+      return "NODE_TYPE";
+    case NODE_DECL:
+      return "NODE_DECL";
+    case NODE_COMPOUND_STMT:
+      return "NODE_COMPOUND_STMT";
+    default:
+      fprintf(stderr, "node_name->type: (%d)", node->type);
+      return "NODE_UNSUPPORTED";
+  }
+}
+
+void
+dump_node_with_indent(Node *node, int indent)
+{
+  switch (node->type) {
+    case NODE_ROOT:
+      indented_puts(indent, node_name(node));
+      for (int i = 0; i < node->children->length; i++) {
+        dump_node_with_indent((Node *)vector_get(node->children, i), indent + 1);
+      }
       break;
     case NODE_FUNC:
-      printf("NODE_FUNC\n");
-      break;
-    case NODE_TYPE:
-      printf("NODE_TYPE\n");
+      indented_puts(indent, node_name(node));
+      dump_node_with_indent(node->spec, indent + 1);
+      dump_node_with_indent(node->decl, indent + 1);
+      dump_node_with_indent(node->stmts, indent + 1);
       break;
     case NODE_DECL:
-      printf("NODE_DECL\n");
-      break;
-    case NODE_COMPOUND_STMT:
-      printf("NODE_TYPE\n");
+    case NODE_TYPE:
+      indented_printf(indent, "%s id=%s\n", node_name(node), node->id);
       break;
     default:
-      printf("default\n");
+      indented_puts(indent, node_name(node));
       break;
   }
 }
@@ -29,5 +67,5 @@ dump_ast_with_indent(Node *ast, int indent)
 void
 dump_ast(Node *ast)
 {
-  dump_ast_with_indent(ast, 0);
+  dump_node_with_indent(ast, 0);
 }

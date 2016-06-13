@@ -12,8 +12,8 @@ run: compile
 	llvm-dis main.bc && llvm-link main.ll -S -o sample/linked.ll && llc sample/linked.ll && gcc sample/linked.s
 	./a.out
 
-clannad: tmp tmp/debug.o tmp/main.o tmp/parser.tab.o tmp/lex.yy.o
-	$(LD) tmp/debug.o tmp/main.o tmp/parser.tab.o tmp/lex.yy.o $(LDFLAGS) -o ./clannad
+clannad: tmp tmp/debug.o tmp/main.o tmp/vector.o tmp/parser.tab.o tmp/lex.yy.o
+	$(LD) tmp/debug.o tmp/main.o tmp/vector.o tmp/parser.tab.o tmp/lex.yy.o $(LDFLAGS) -o ./clannad
 	#----------------------------------------------------------------------------------
 
 tmp:
@@ -24,6 +24,9 @@ tmp/debug.o: src/clannad.h src/debug.c
 
 tmp/main.o: src/clannad.h src/main.c
 	$(CC) $(CFLAGS) -c src/main.c -o tmp/main.o
+
+tmp/vector.o: src/clannad.h src/vector.c
+	$(CC) $(CFLAGS) -c src/vector.c -o tmp/vector.o
 
 tmp/parser.tab.o: src/clannad.h src/parser.y
 	bison -dv --defines=./tmp/parser.tab.h -o ./tmp/parser.tab.c src/parser.y

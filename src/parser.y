@@ -17,22 +17,19 @@ static Node *parse_result;
 %token <id> tIDENTIFIER
 
 %type <id> type_specifier
-%type <node> program translation_unit
+%type <node> translation_unit
 %type <node> declaration_specifiers external_declaration function_definition
 %type <node> declarator direct_declarator compound_statement
 
-%start program
+%start translation_unit
 
 %%
 
-program
-  : translation_unit
-  {
-    parse_result = $1;
-  }
-
 translation_unit
   : external_declaration
+  {
+    vector_push(parse_result->children, $1);
+  }
   ;
 
 external_declaration
@@ -42,14 +39,20 @@ external_declaration
 function_definition
   : declaration_specifiers declarator compound_statement
   {
-    $$ = create_node(&(Node){ NODE_DECL });
+    Node *node  = create_node(&(Node){ NODE_FUNC });
+    node->spec  = $1;
+    node->decl  = $2;
+    node->stmts = $3;
+    $$ = node;
   }
   ;
 
 declaration_specifiers
   : type_specifier
   {
-    $$ = create_node(&(Node){ NODE_TYPE });
+    Node *node = create_node(&(Node){ NODE_TYPE });
+    node->id = $1;
+    $$ = node;
   }
   ;
 
@@ -60,12 +63,11 @@ declarator
 direct_declarator
   : tIDENTIFIER
   {
-    $$ = create_node(&(Node){ NODE_DECL });
+    Node *node = create_node(&(Node){ NODE_DECL });
+    node->id = yyval.id;
+    $$ = node;
   }
   | direct_declarator '(' ')'
-  {
-    $$ = create_node(&(Node){ NODE_DECL });
-  }
   ;
 
 compound_statement
@@ -77,6 +79,9 @@ compound_statement
 
 type_specifier
   : tINT
+  {
+    $$ = "int";
+  }
   ;
 
 %%
@@ -100,12 +105,12 @@ yyerror(char const *str)
 int
 parse_stdin(Node **astptr)
 {
-  int ret;
   extern int yyparse(void);
   extern FILE *yyin;
 
   yyin = stdin;
-  ret = yyparse();
+  parse_result = create_node(&(Node){ NODE_ROOT, create_vector() });
+  int ret = yyparse();
   *astptr = parse_result;
   return ret;
 }
