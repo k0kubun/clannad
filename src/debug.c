@@ -85,6 +85,7 @@ dump_node(int indent, Node *node)
     case NODE_FUNCALL:
       indented_puts(indent, node_name(node));
       dump_node(indent + 1, node->func);
+      dump_vector(indent + 1, node->params);
       break;
     case NODE_IDENTIFIER:
     case NODE_DECL:

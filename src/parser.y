@@ -34,6 +34,7 @@ static Node *parse_result;
 %type <node> jump_statement
 %type <node> expression
 %type <node> postfix_expression
+%type <list> argument_expression_list
 %type <node> primary_expression
 %type <node> constant
 %type <node> integer_constant
@@ -154,6 +155,22 @@ postfix_expression
   | postfix_expression '(' ')'
   {
     $$ = create_node(&(Node){ NODE_FUNCALL, .func = $1, .params = create_vector() });
+  }
+  | postfix_expression '(' argument_expression_list ')'
+  {
+    $$ = create_node(&(Node){ NODE_FUNCALL, .func = $1, .params = $3 });
+  }
+  ;
+
+/* FIXME: skipping many reductions before primary_expression */
+argument_expression_list
+  : primary_expression
+  {
+    $$ = vector_push(create_vector(), $1);
+  }
+  | argument_expression_list ',' primary_expression
+  {
+    $$ = vector_push($1, $3);
   }
   ;
 
