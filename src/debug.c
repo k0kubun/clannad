@@ -40,6 +40,8 @@ node_name(Node *node)
       return "NODE_IDENTIFIER";
     case NODE_INTEGER:
       return "NODE_INTEGER";
+    case NODE_STRING:
+      return "NODE_STRING";
     default:
       fprintf(stderr, "unexpected node type: %d\n", node->type);
       return "NODE_UNSUPPORTED";
@@ -90,6 +92,7 @@ dump_node(int indent, Node *node)
     case NODE_IDENTIFIER:
     case NODE_DECL:
     case NODE_TYPE:
+    case NODE_STRING:
       indented_printf(indent, "%s id=%s\n", node_name(node), node->id);
       break;
     case NODE_INTEGER:

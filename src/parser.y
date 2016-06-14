@@ -19,6 +19,7 @@ static Node *parse_result;
 %token <id>   tRETURN
 %token <ival> tINTEGER
 %token <id>   tIDENTIFIER
+%token <id>   tSTRING_LITERAL
 
 %type <list> translation_unit
 %type <node> declaration_specifiers
@@ -37,6 +38,7 @@ static Node *parse_result;
 %type <list> argument_expression_list
 %type <node> primary_expression
 %type <node> constant
+%type <node> string
 %type <node> integer_constant
 %type <id>   type_specifier
 
@@ -180,10 +182,18 @@ primary_expression
     $$ = create_node(&(Node){ NODE_IDENTIFIER, .id = $1 });
   }
   | constant
+  | string
   ;
 
 constant
   : integer_constant
+  ;
+
+string
+  : tSTRING_LITERAL
+  {
+    $$ = create_node(&(Node){ NODE_STRING, .id = $1 });
+  }
   ;
 
 integer_constant
@@ -214,7 +224,7 @@ int
 yyerror(char const *str)
 {
   extern char *yytext;
-  fprintf(stderr, "parser error near %s: %s\n", yytext, str);
+  fprintf(stderr, "parser error near '%s': %s\n", yytext, str);
   return 0;
 }
 

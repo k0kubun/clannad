@@ -26,6 +26,15 @@ char* copy_string(char *str);
   return tINTEGER;
 }
 
+\"([^"]|\\\")*\" {
+  // TODO: change to lex ({SP}?\"([^"\\\n]|{ES})*\"{WS}*)+
+  int len = strlen(yytext);
+  yylval.id = (char *)malloc(sizeof(char) * (len - 1));
+  strcpy(yylval.id, yytext + 1);
+  yylval.id[len - 2] = '\0';
+  return tSTRING_LITERAL;
+}
+
 " "|\t|\r|\n {
   // ignore
 }

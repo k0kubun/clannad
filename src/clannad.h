@@ -9,6 +9,7 @@ enum NodeType {
   NODE_DECL,
   NODE_RETURN,
   NODE_INTEGER,
+  NODE_STRING,
   NODE_IDENTIFIER,
   NODE_COMPOUND_STMT,
 };
@@ -36,7 +37,7 @@ typedef struct Node {
       struct Node *decl;
       struct Node *stmts;
     };
-    // NODE_DECL, NODE_TYPE, NODE_IDENTIFIER
+    // NODE_DECL, NODE_TYPE, NODE_IDENTIFIER, NODE_STRING
     char *id;
     // NODE_INTEGER
     long ival;
