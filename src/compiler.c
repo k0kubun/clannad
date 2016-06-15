@@ -64,12 +64,16 @@ compile_func(LLVMModuleRef mod, Node *node)
 {
   assert_node(node, NODE_FUNC);
 
-  // declare main function
-  LLVMTypeRef main_params[] = { LLVMInt32Type(), LLVMInt32Type() };
-  LLVMValueRef main_func = LLVMAddFunction(mod, "main", LLVMFunctionType(LLVMInt32Type(), main_params, 2, false));
+  // declare function
+  char *func_name = node->decl->id;
+  LLVMTypeRef params[] = { LLVMInt32Type(), LLVMInt32Type() };
+  LLVMValueRef main_func = LLVMAddFunction(mod, func_name, LLVMFunctionType(LLVMInt32Type(), params, 2, false));
 
-  // create block for main
-  LLVMBasicBlockRef block = LLVMAppendBasicBlock(main_func, "main_block");
+  // create block for function
+  char block_name[256]; // FIXME: dynamic allocation
+  sprintf(block_name, "%s_block", func_name);
+  LLVMBasicBlockRef block = LLVMAppendBasicBlock(main_func, block_name);
+
   compile_stmt(mod, block, node->stmts);
 }
 
