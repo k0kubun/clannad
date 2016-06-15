@@ -1,6 +1,8 @@
 #ifndef CLANNAD_H
 #define CLANNAD_H
 
+#include <llvm-c/Core.h>
+
 enum NodeType {
   NODE_ROOT,
   NODE_FUNC,
@@ -50,7 +52,10 @@ void dump_ast(Node *ast);
 // parser.y
 int parse_stdin(Node **astptr);
 
-// vector.h
+// compiler.c
+LLVMModuleRef compile(Node *ast);
+
+// vector.c
 Vector* create_vector();
 Vector* vector_push(Vector *vec, void *ptr);
 void* vector_get(Vector *vec, int index);
