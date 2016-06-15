@@ -8,9 +8,16 @@ assert_node(Node *node, enum NodeType type)
 {
   if (node->type != type) {
     fprintf(stderr, "InternalError: node type assertion failed!\n");
-    fprintf(stderr, "  expected %d but got %d\n", type, node->type);
+    fprintf(stderr, "  expected '%s' but got '%s'\n", type_label(type), type_label(node->type));
     exit(1);
   }
+}
+
+LLVMValueRef
+compile_int(Node *node)
+{
+  assert_node(node, NODE_INTEGER);
+  return LLVMConstInt(LLVMInt32Type(), node->ival, false);
 }
 
 void
@@ -18,8 +25,14 @@ compile_return(LLVMModuleRef mod, LLVMBuilderRef builder, Node *node)
 {
   assert_node(node, NODE_RETURN);
 
-  // return 0
-  LLVMBuildRet(builder, LLVMConstInt(LLVMInt32Type(), 0, false));
+  switch (node->param->type) {
+    case NODE_INTEGER:
+      LLVMBuildRet(builder, compile_int(node->param));
+      break;
+    default:
+      fprintf(stderr, "Unexpected node type in compile_return: %s\n", type_label(node->param->type));
+      exit(1);
+  }
 }
 
 void
@@ -43,7 +56,6 @@ compile_stmt(LLVMModuleRef mod, LLVMBasicBlockRef block, Node *node)
   LLVMPositionBuilderAtEnd(builder, block);
 
   for (int i = 0; i < node->children->length; i++) {
-    // TODO: Switch by node type
     Node *child = (Node *)vector_get(node->children, i);
     switch (child->type) {
       case NODE_FUNCALL:
@@ -53,7 +65,7 @@ compile_stmt(LLVMModuleRef mod, LLVMBasicBlockRef block, Node *node)
         compile_return(mod, builder, child);
         break;
       default:
-        fprintf(stderr, "Unexpected node type in compile_stmt: %d\n", child->type);
+        fprintf(stderr, "Unexpected node type in compile_stmt: %s\n", type_label(child->type));
         exit(1);
     }
   }
@@ -94,7 +106,7 @@ compile_root(LLVMModuleRef mod, Node *node)
         compile_func(mod, child);
         break;
       default:
-        fprintf(stderr, "Unexpected node type in compile_root: %d\n", child->type);
+        fprintf(stderr, "Unexpected node type in compile_root: %s\n", type_label(child->type));
         exit(1);
     }
   }

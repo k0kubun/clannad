@@ -19,9 +19,9 @@ indented_puts(int indent, const char *str)
 }
 
 char*
-node_name(Node *node)
+type_label(enum NodeType type)
 {
-  switch (node->type) {
+  switch (type) {
     case NODE_ROOT:
       return "NODE_ROOT";
     case NODE_FUNC:
@@ -43,7 +43,7 @@ node_name(Node *node)
     case NODE_STRING:
       return "NODE_STRING";
     default:
-      fprintf(stderr, "unexpected node type: %d\n", node->type);
+      fprintf(stderr, "type_label is not defined for %d\n", type);
       return "NODE_UNSUPPORTED";
   }
 }
@@ -73,19 +73,19 @@ dump_node(int indent, Node *node)
   switch (node->type) {
     case NODE_ROOT:
     case NODE_COMPOUND_STMT:
-      indented_puts(indent, node_name(node));
+      indented_puts(indent, type_label(node->type));
       dump_vector(indent + 1, node->children);
       break;
     case NODE_RETURN:
-      indented_puts(indent, node_name(node));
+      indented_puts(indent, type_label(node->type));
       if (node->param) dump_node(indent + 1, node->param);
       break;
     case NODE_FUNC:
-      indented_puts(indent, node_name(node));
+      indented_puts(indent, type_label(node->type));
       dump_nodes(indent + 1, 3, node->spec, node->decl, node->stmts);
       break;
     case NODE_FUNCALL:
-      indented_puts(indent, node_name(node));
+      indented_puts(indent, type_label(node->type));
       dump_node(indent + 1, node->func);
       dump_vector(indent + 1, node->params);
       break;
@@ -93,13 +93,13 @@ dump_node(int indent, Node *node)
     case NODE_DECL:
     case NODE_TYPE:
     case NODE_STRING:
-      indented_printf(indent, "%s id=%s\n", node_name(node), node->id);
+      indented_printf(indent, "%s id=%s\n", type_label(node->type), node->id);
       break;
     case NODE_INTEGER:
-      indented_printf(indent, "%s ival=%d\n", node_name(node), node->ival);
+      indented_printf(indent, "%s ival=%d\n", type_label(node->type), node->ival);
       break;
     default:
-      indented_puts(indent, node_name(node));
+      indented_puts(indent, type_label(node->type));
       break;
   }
 }

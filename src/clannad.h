@@ -48,6 +48,7 @@ typedef struct Node {
 
 // debug.c
 void dump_ast(Node *ast);
+char* type_label(enum NodeType type);
 
 // parser.y
 int parse_stdin(Node **astptr);
