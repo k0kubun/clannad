@@ -3,28 +3,41 @@
 #include <stdio.h>
 #include "clannad.h"
 
-// Compile NODE_RETURN
+void
+assert_node(Node *node, enum NodeType type)
+{
+  if (node->type != type) {
+    fprintf(stderr, "InternalError: node type assertion failed!\n");
+    fprintf(stderr, "  expected %d but got %d\n", type, node->type);
+    exit(1);
+  }
+}
+
 void
 compile_return(LLVMModuleRef mod, LLVMBuilderRef builder, Node *node)
 {
+  assert_node(node, NODE_RETURN);
+
   // return 0
   LLVMBuildRet(builder, LLVMConstInt(LLVMInt32Type(), 0, false));
 }
 
-// Compile NODE_FUNCALL
 void
 compile_funcall(LLVMModuleRef mod, LLVMBuilderRef builder, Node *node)
 {
+  assert_node(node, NODE_FUNCALL);
+
   // printf("Hello World!\n")
   LLVMValueRef args[] = { LLVMBuildGlobalStringPtr(builder, "Hello world!\n", "") };
   LLVMValueRef printf_func = LLVMGetNamedFunction(mod, "printf");
   LLVMBuildCall(builder, printf_func, args, 1, "");
 }
 
-// Compile NODE_COMPOUND_STMT
 void
 compile_stmt(LLVMModuleRef mod, LLVMBasicBlockRef block, Node *node)
 {
+  assert_node(node, NODE_COMPOUND_STMT);
+
   // build block instructions
   LLVMBuilderRef builder = LLVMCreateBuilder();
   LLVMPositionBuilderAtEnd(builder, block);
@@ -46,11 +59,10 @@ compile_stmt(LLVMModuleRef mod, LLVMBasicBlockRef block, Node *node)
   }
 }
 
-// Compile NODE_FUNC
 void
 compile_func(LLVMModuleRef mod, Node *node)
 {
-  // TODO: Assert node type
+  assert_node(node, NODE_FUNC);
 
   // declare main function
   LLVMTypeRef main_params[] = { LLVMInt32Type(), LLVMInt32Type() };
@@ -61,11 +73,10 @@ compile_func(LLVMModuleRef mod, Node *node)
   compile_stmt(mod, block, node->stmts);
 }
 
-// Compile NODE_ROOT
 void
 compile_root(LLVMModuleRef mod, Node *node)
 {
-  // TODO: Assert node type
+  assert_node(node, NODE_ROOT);
 
   // TODO: Compile declaration properly
   // declare printf function
@@ -73,8 +84,15 @@ compile_root(LLVMModuleRef mod, Node *node)
   LLVMAddFunction(mod, "printf", LLVMFunctionType(LLVMInt32Type(), printf_params, 1, false));
 
   for (int i = 0; i < node->children->length; i++) {
-    // TODO: Switch by node type
-    compile_func(mod, (Node *)vector_get(node->children, i));
+    Node *child = (Node *)vector_get(node->children, i);
+    switch (child->type) {
+      case NODE_FUNC:
+        compile_func(mod, child);
+        break;
+      default:
+        fprintf(stderr, "Unexpected node type in compile_root: %d\n", child->type);
+        exit(1);
+    }
   }
 }
 
