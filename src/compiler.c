@@ -20,6 +20,15 @@ compile_int(Node *node)
   return LLVMConstInt(LLVMInt32Type(), node->ival, false);
 }
 
+LLVMValueRef
+compile_string(LLVMBuilderRef builder, Node *node)
+{
+  assert_node(node, NODE_STRING);
+
+  // FIXME: Handle escape sequence in node->id
+  return LLVMBuildGlobalStringPtr(builder, node->id, "");
+}
+
 void
 compile_return(LLVMModuleRef mod, LLVMBuilderRef builder, Node *node)
 {
@@ -40,10 +49,23 @@ compile_funcall(LLVMModuleRef mod, LLVMBuilderRef builder, Node *node)
 {
   assert_node(node, NODE_FUNCALL);
 
-  // printf("Hello World!\n")
-  LLVMValueRef args[] = { LLVMBuildGlobalStringPtr(builder, "Hello world!\n", "") };
-  LLVMValueRef printf_func = LLVMGetNamedFunction(mod, "printf");
-  LLVMBuildCall(builder, printf_func, args, 1, "");
+  LLVMValueRef args[256]; // FIXME: Handle array limit properly
+  LLVMValueRef func = LLVMGetNamedFunction(mod, node->func->id);
+
+  // Build arguments
+  for (int i = 0; i < node->params->length; i++) {
+    Node *param = (Node *)vector_get(node->params, i);
+    switch (param->type) {
+      case NODE_STRING:
+        args[i] = compile_string(builder, param);
+        break;
+      default:
+        fprintf(stderr, "Unexpected node type in compile_funcall: %s\n", type_label(param->type));
+        exit(1);
+    }
+  }
+
+  LLVMBuildCall(builder, func, args, node->params->length, "");
 }
 
 void
