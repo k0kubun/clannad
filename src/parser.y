@@ -92,6 +92,9 @@ direct_declarator
     $$ = create_node(&(Node){ NODE_DECL, .id = yyval.id });
   }
   | direct_declarator '(' ')'
+  {
+    $$ = create_node(&(Node){ NODE_FUNC_DECL, .func = $1, .params = create_vector() });
+  }
   ;
 
 compound_statement
