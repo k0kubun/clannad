@@ -8,8 +8,8 @@ enum NodeType {
   NODE_FUNC,
   NODE_FUNCALL,
   NODE_TYPE,
-  NODE_DECL,
-  NODE_FUNC_DECL,
+  NODE_SPEC,
+  NODE_FUNC_SPEC,
   NODE_RETURN,
   NODE_INTEGER,
   NODE_STRING,
@@ -27,7 +27,7 @@ typedef struct Node {
   union {
     // NODE_ROOT, NODE_COUMPOUND_STMT
     Vector *children;
-    // NODE_FUNCALL, NODE_FUNC_DECL
+    // NODE_FUNCALL, NODE_FUNC_SPEC
     struct {
       Vector *params;
       struct Node *func;
@@ -40,7 +40,7 @@ typedef struct Node {
       struct Node *decl;
       struct Node *stmts;
     };
-    // NODE_DECL, NODE_TYPE, NODE_IDENTIFIER, NODE_STRING
+    // NODE_SPEC, NODE_TYPE, NODE_IDENTIFIER, NODE_STRING
     char *id;
     // NODE_INTEGER
     long ival;

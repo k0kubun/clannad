@@ -30,10 +30,10 @@ type_label(enum NodeType type)
       return "NODE_FUNCALL";
     case NODE_TYPE:
       return "NODE_TYPE";
-    case NODE_DECL:
-      return "NODE_DECL";
-    case NODE_FUNC_DECL:
-      return "NODE_FUNC_DECL";
+    case NODE_SPEC:
+      return "NODE_SPEC";
+    case NODE_FUNC_SPEC:
+      return "NODE_FUNC_SPEC";
     case NODE_COMPOUND_STMT:
       return "NODE_COMPOUND_STMT";
     case NODE_RETURN:
@@ -87,13 +87,13 @@ dump_node(int indent, Node *node)
       dump_nodes(indent + 1, 3, node->spec, node->decl, node->stmts);
       break;
     case NODE_FUNCALL:
-    case NODE_FUNC_DECL:
+    case NODE_FUNC_SPEC:
       indented_puts(indent, type_label(node->type));
       dump_node(indent + 1, node->func);
       dump_vector(indent + 1, node->params);
       break;
     case NODE_IDENTIFIER:
-    case NODE_DECL:
+    case NODE_SPEC:
     case NODE_TYPE:
     case NODE_STRING:
       indented_printf(indent, "%s id=%s\n", type_label(node->type), node->id);

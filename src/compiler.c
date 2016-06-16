@@ -96,8 +96,8 @@ compile_stmt(LLVMModuleRef mod, LLVMBasicBlockRef block, Node *node)
 char*
 func_name(Node *node)
 {
-  assert_node(node, NODE_FUNC_DECL);
-  assert_node(node->func, NODE_DECL);
+  assert_node(node, NODE_FUNC_SPEC);
+  assert_node(node->func, NODE_SPEC);
   return node->func->id;
 }
 
