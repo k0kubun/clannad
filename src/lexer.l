@@ -3,6 +3,7 @@
 #include "parser.tab.h"
 
 char* copy_string(char *str);
+char* read_string_literal(char *str);
 %}
 
 %%
@@ -28,10 +29,7 @@ char* copy_string(char *str);
 
 \"([^"]|\\\")*\" {
   // TODO: change to lex ({SP}?\"([^"\\\n]|{ES})*\"{WS}*)+
-  int len = strlen(yytext);
-  yylval.id = (char *)malloc(sizeof(char) * (len - 1));
-  strcpy(yylval.id, yytext + 1);
-  yylval.id[len - 2] = '\0';
+  yylval.id = read_string_literal(yytext);
   return tSTRING_LITERAL;
 }
 
@@ -57,5 +55,34 @@ copy_string(char *str)
 {
   char *ret = (char *)malloc(sizeof(char) * (strlen(str) + 1));
   strcpy(ret, str);
+  return ret;
+}
+
+char
+read_escaped_char(char c)
+{
+  switch (c) {
+    case 'n':
+      return '\n';
+    default:
+      fprintf(stderr, "unexpected escape sequence: '\\%c'", c);
+      exit(1);
+  }
+}
+
+char*
+read_string_literal(char *str)
+{
+  char *ret = (char *)malloc(sizeof(char) * (strlen(str) - 1));
+
+  int pos = 0;
+  for (int i = 1; i < strlen(str) - 1; i++) { // Ignoreing `"`.
+    char c = str[i];
+    if (c == '\\') {
+      c = read_escaped_char(str[++i]);
+    }
+    ret[pos++] = c;
+  }
+  ret[pos] = '\0';
   return ret;
 }
