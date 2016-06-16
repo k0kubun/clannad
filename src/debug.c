@@ -34,6 +34,8 @@ type_label(enum NodeType type)
       return "NODE_FUNCALL";
     case NODE_TYPE:
       return "NODE_TYPE";
+    case NODE_PTR:
+      return "NODE_PTR";
     case NODE_SPEC:
       return "NODE_SPEC";
     case NODE_FUNC_SPEC:
@@ -82,6 +84,7 @@ dump_node(int indent, Node *node)
       indented_puts(indent, type_label(node->type));
       dump_vector(indent + 1, node->children);
       break;
+    case NODE_PTR:
     case NODE_RETURN:
       indented_puts(indent, type_label(node->type));
       if (node->param) dump_node(indent + 1, node->param);

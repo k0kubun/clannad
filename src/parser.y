@@ -16,6 +16,7 @@ static Node *parse_result;
 }
 
 %token <id>   tINT
+%token <id>   tCHAR
 %token <id>   tRETURN
 %token <ival> tINTEGER
 %token <id>   tIDENTIFIER
@@ -29,6 +30,7 @@ static Node *parse_result;
 %type <node> init_declarator_list
 %type <node> init_declarator
 %type <node> declarator
+%type <node> pointer
 %type <node> direct_declarator
 %type <list> parameter_type_list
 %type <list> parameter_list
@@ -105,7 +107,19 @@ declaration_specifiers
   ;
 
 declarator
-  : direct_declarator
+  : pointer direct_declarator
+  {
+    $1->param = $2;
+    $$ = $1;
+  }
+  | direct_declarator
+  ;
+
+pointer
+  : '*'
+  {
+    $$ = create_node(&(Node){ NODE_PTR, .param = NULL });
+  }
   ;
 
 direct_declarator
@@ -258,6 +272,10 @@ type_specifier
   : tINT
   {
     $$ = "int";
+  }
+  | tCHAR
+  {
+    $$ = "char";
   }
   ;
 

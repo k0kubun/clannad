@@ -1,4 +1,4 @@
-int printf(int a);
+int printf(char *__format);
 
 int main() {
   printf("Hello world!\n");

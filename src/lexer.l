@@ -9,6 +9,7 @@ char* read_string_literal(char *str);
 %%
 
 "int" return tINT;
+"char" return tCHAR;
 "return" return tRETURN;
 
 [a-zA-Z_][a-zA-Z0-9_]* {

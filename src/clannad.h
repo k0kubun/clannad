@@ -10,6 +10,7 @@ enum NodeType {
   NODE_PARAM_DECL,
   NODE_FUNCALL,
   NODE_TYPE,
+  NODE_PTR,
   NODE_SPEC,
   NODE_FUNC_SPEC,
   NODE_RETURN,
@@ -34,7 +35,7 @@ typedef struct Node {
       Vector *params;
       struct Node *func;
     };
-    // NODE_RETURN
+    // NODE_RETURN, NODE_PTR
     struct Node *param;
     // NODE_FUNC, NODE_FUNC_DECL, NODE_PARAM_DECL
     struct {
