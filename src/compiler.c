@@ -120,20 +120,27 @@ compile_func(LLVMModuleRef mod, Node *node)
 }
 
 void
-compile_root(LLVMModuleRef mod, Node *node)
+compile_func_decl(LLVMModuleRef mod, Node *node)
 {
-  assert_node(node, NODE_ROOT);
-
   // TODO: Compile declaration properly
   // declare printf function
   LLVMTypeRef printf_params[] = { LLVMPointerType(LLVMInt8Type(), false) };
   LLVMAddFunction(mod, "printf", LLVMFunctionType(LLVMInt32Type(), printf_params, 1, false));
+}
+
+void
+compile_root(LLVMModuleRef mod, Node *node)
+{
+  assert_node(node, NODE_ROOT);
 
   for (int i = 0; i < node->children->length; i++) {
     Node *child = (Node *)vector_get(node->children, i);
     switch (child->type) {
       case NODE_FUNC:
         compile_func(mod, child);
+        break;
+      case NODE_FUNC_DECL:
+        compile_func_decl(mod, child);
         break;
       default:
         fprintf(stderr, "Unexpected node type in compile_root: %s\n", type_label(child->type));

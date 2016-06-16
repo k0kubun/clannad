@@ -25,6 +25,9 @@ static Node *parse_result;
 %type <node> declaration_specifiers
 %type <node> external_declaration
 %type <node> function_definition
+%type <node> declaration
+%type <node> init_declarator_list
+%type <node> init_declarator
 %type <node> declarator
 %type <node> direct_declarator
 %type <node> compound_statement
@@ -66,6 +69,7 @@ translation_unit
 
 external_declaration
   : function_definition
+  | declaration
   ;
 
 function_definition
@@ -73,6 +77,21 @@ function_definition
   {
     $$ = create_node(&(Node){ NODE_FUNC, .spec = $1, .decl = $2, .stmts = $3 });
   }
+  ;
+
+declaration
+  : declaration_specifiers init_declarator_list ';'
+  {
+    $$ = create_node(&(Node){ NODE_FUNC_DECL, .spec = $1, .decl = $2 });
+  }
+  ;
+
+init_declarator_list
+  : init_declarator
+  ;
+
+init_declarator
+  : declarator
   ;
 
 declaration_specifiers

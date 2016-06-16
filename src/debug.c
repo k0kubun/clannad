@@ -26,6 +26,8 @@ type_label(enum NodeType type)
       return "NODE_ROOT";
     case NODE_FUNC:
       return "NODE_FUNC";
+    case NODE_FUNC_DECL:
+      return "NODE_FUNC_DECL";
     case NODE_FUNCALL:
       return "NODE_FUNCALL";
     case NODE_TYPE:
@@ -85,6 +87,10 @@ dump_node(int indent, Node *node)
     case NODE_FUNC:
       indented_puts(indent, type_label(node->type));
       dump_nodes(indent + 1, 3, node->spec, node->decl, node->stmts);
+      break;
+    case NODE_FUNC_DECL:
+      indented_puts(indent, type_label(node->type));
+      dump_nodes(indent + 1, 2, node->spec, node->decl);
       break;
     case NODE_FUNCALL:
     case NODE_FUNC_SPEC:
