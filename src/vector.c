@@ -17,7 +17,7 @@ void
 realloc_vector(Vector *vec, int length)
 {
   void **ptr = (void **)realloc(vec->data, length * sizeof(void *));
-  memset(ptr + (length - 1) * sizeof(void *), 0, sizeof(void *));
+  memset(ptr + (length - 1), 0, sizeof(void *));
   vec->data = ptr;
 }
 
