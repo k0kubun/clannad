@@ -30,6 +30,9 @@ static Node *parse_result;
 %type <node> init_declarator
 %type <node> declarator
 %type <node> direct_declarator
+%type <list> parameter_type_list
+%type <list> parameter_list
+%type <node> parameter_declaration
 %type <node> compound_statement
 %type <list> block_item_list
 %type <node> block_item
@@ -113,6 +116,32 @@ direct_declarator
   | direct_declarator '(' ')'
   {
     $$ = create_node(&(Node){ NODE_FUNC_SPEC, .func = $1, .params = create_vector() });
+  }
+  | direct_declarator '(' parameter_type_list ')'
+  {
+    $$ = create_node(&(Node){ NODE_FUNC_SPEC, .func = $1, .params = $3 });
+  }
+  ;
+
+parameter_type_list
+  : parameter_list
+  ;
+
+parameter_list
+  : parameter_declaration
+  {
+    $$ = vector_push(create_vector(), $1);
+  }
+  | parameter_list ',' parameter_declaration
+  {
+    $$ = vector_push($1, $3);
+  }
+  ;
+
+parameter_declaration
+  : declaration_specifiers declarator
+  {
+    $$ = create_node(&(Node){ NODE_PARAM_DECL, .spec = $1, .decl = $2 });
   }
   ;
 

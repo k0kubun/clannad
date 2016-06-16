@@ -7,6 +7,7 @@ enum NodeType {
   NODE_ROOT,
   NODE_FUNC,
   NODE_FUNC_DECL,
+  NODE_PARAM_DECL,
   NODE_FUNCALL,
   NODE_TYPE,
   NODE_SPEC,
@@ -35,11 +36,11 @@ typedef struct Node {
     };
     // NODE_RETURN
     struct Node *param;
-    // NODE_FUNC, NODE_FUNC_DECL
+    // NODE_FUNC, NODE_FUNC_DECL, NODE_PARAM_DECL
     struct {
       struct Node *spec;
       struct Node *decl;
-      struct Node *stmts;
+      struct Node *stmts; // NODE_FUNC only
     };
     // NODE_SPEC, NODE_TYPE, NODE_IDENTIFIER, NODE_STRING
     char *id;

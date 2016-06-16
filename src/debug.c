@@ -28,6 +28,8 @@ type_label(enum NodeType type)
       return "NODE_FUNC";
     case NODE_FUNC_DECL:
       return "NODE_FUNC_DECL";
+    case NODE_PARAM_DECL:
+      return "NODE_PARAM_DECL";
     case NODE_FUNCALL:
       return "NODE_FUNCALL";
     case NODE_TYPE:
@@ -89,6 +91,7 @@ dump_node(int indent, Node *node)
       dump_nodes(indent + 1, 3, node->spec, node->decl, node->stmts);
       break;
     case NODE_FUNC_DECL:
+    case NODE_PARAM_DECL:
       indented_puts(indent, type_label(node->type));
       dump_nodes(indent + 1, 2, node->spec, node->decl);
       break;
