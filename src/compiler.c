@@ -1,6 +1,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include "clannad.h"
 
 void
@@ -58,6 +59,9 @@ compile_funcall(LLVMModuleRef mod, LLVMBuilderRef builder, Node *node)
     switch (param->type) {
       case NODE_STRING:
         args[i] = compile_string(builder, param);
+        break;
+      case NODE_INTEGER:
+        args[i] = compile_int(param);
         break;
       default:
         fprintf(stderr, "Unexpected node type in compile_funcall: %s\n", type_label(param->type));
@@ -119,13 +123,46 @@ compile_func(LLVMModuleRef mod, Node *node)
   compile_stmt(mod, block, node->stmts);
 }
 
+LLVMTypeRef
+compile_type(Node *node)
+{
+  assert_node(node, NODE_TYPE);
+
+  // FIXME: We should have this as token
+  if (strcmp(node->id, "int") == 0) {
+    return LLVMInt32Type();
+  } else if (strcmp(node->id, "char") == 0) {
+    return LLVMInt8Type();
+  } else {
+    fprintf(stderr, "Unexpected id in compile_type: %s\n", node->id);
+    exit(1);
+  }
+}
+
+LLVMTypeRef
+compile_param_decl(Node *node)
+{
+  assert_node(node, NODE_PARAM_DECL);
+
+  if (node->decl->type == NODE_PTR) {
+    return LLVMPointerType(compile_type(node->spec), false);
+  } else {
+    return compile_type(node->spec);
+  }
+}
+
 void
 compile_func_decl(LLVMModuleRef mod, Node *node)
 {
-  // TODO: Compile declaration properly
-  // declare printf function
-  LLVMTypeRef printf_params[] = { LLVMPointerType(LLVMInt8Type(), false) };
-  LLVMAddFunction(mod, "printf", LLVMFunctionType(LLVMInt32Type(), printf_params, 1, false));
+  assert_node(node, NODE_FUNC_DECL);
+
+  LLVMTypeRef params[256]; // FIXME: dynamic allocation
+  for (int i = 0; i < node->decl->params->length; i++) {
+    params[i] = compile_param_decl((Node *)vector_get(node->decl->params, i));
+  }
+
+  LLVMAddFunction(mod, func_name(node->decl),
+      LLVMFunctionType(compile_type(node->spec), params, node->decl->params->length, false));
 }
 
 void

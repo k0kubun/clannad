@@ -1,6 +1,6 @@
-int printf(char *__format);
+int printf(char *__format, int a);
 
 int main() {
-  printf("Hello world!\n");
+  printf("I'm %d years old.\n", 23);
   return 0;
 }
