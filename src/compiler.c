@@ -45,6 +45,41 @@ compile_return(LLVMModuleRef mod, LLVMBuilderRef builder, Node *node)
   }
 }
 
+LLVMValueRef compile_exp(LLVMBuilderRef builder, Node *node);
+
+LLVMValueRef
+compile_binop(LLVMBuilderRef builder, Node *node)
+{
+  assert_node(node, NODE_BINOP);
+  switch (node->op) {
+    case '+':
+      return LLVMBuildAdd(builder, compile_exp(builder, node->lhs), compile_exp(builder, node->rhs), "");
+    case '-':
+      return LLVMBuildSub(builder, compile_exp(builder, node->lhs), compile_exp(builder, node->rhs), "");
+    case '*':
+      return LLVMBuildMul(builder, compile_exp(builder, node->lhs), compile_exp(builder, node->rhs), "");
+    case '/':
+      return LLVMBuildSDiv(builder, compile_exp(builder, node->lhs), compile_exp(builder, node->rhs), "");
+    default:
+      fprintf(stderr, "Unexpected binary operation: %c\n", node->op);
+      exit(1);
+  }
+}
+
+LLVMValueRef
+compile_exp(LLVMBuilderRef builder, Node *node)
+{
+  switch (node->type) {
+    case NODE_BINOP:
+      return compile_binop(builder, node);
+    case NODE_INTEGER:
+      return compile_int(node);
+    default:
+      fprintf(stderr, "Unexpected node: %s\n", type_label(node->type));
+      exit(1);
+  }
+}
+
 void
 compile_funcall(LLVMModuleRef mod, LLVMBuilderRef builder, Node *node)
 {
@@ -62,6 +97,9 @@ compile_funcall(LLVMModuleRef mod, LLVMBuilderRef builder, Node *node)
         break;
       case NODE_INTEGER:
         args[i] = compile_int(param);
+        break;
+      case NODE_BINOP:
+        args[i] = compile_binop(builder, param);
         break;
       default:
         fprintf(stderr, "Unexpected node type in compile_funcall: %s\n", type_label(param->type));
