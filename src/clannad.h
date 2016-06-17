@@ -18,6 +18,7 @@ enum NodeType {
   NODE_STRING,
   NODE_IDENTIFIER,
   NODE_COMPOUND_STMT,
+  NODE_BINOP,
 };
 
 typedef struct {
@@ -47,6 +48,12 @@ typedef struct Node {
     char *id;
     // NODE_INTEGER
     long ival;
+    // NODE_BINOP
+    struct {
+      struct Node *lhs;
+      char op;
+      struct Node *rhs;
+    };
   };
 } Node;
 

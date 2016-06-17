@@ -42,6 +42,11 @@ static Node *parse_result;
 %type <node> expression_statement
 %type <node> jump_statement
 %type <node> expression
+%type <node> multiplicative_expression
+%type <node> additive_expression
+%type <node> cast_expression
+%type <node> unary_expression
+%type <node> assignment_expression
 %type <node> postfix_expression
 %type <list> argument_expression_list
 %type <node> primary_expression
@@ -212,8 +217,40 @@ expression_statement
   }
   ;
 
-/* FIXME: skipping many reductions before primary_expression */
 expression
+  : assignment_expression
+  | expression ',' assignment_expression
+  ;
+
+additive_expression
+  : multiplicative_expression
+  | additive_expression '+' multiplicative_expression
+  {
+    $$ = create_node(&(Node){ NODE_BINOP, .lhs = $1, .op = '+', .rhs = $3 });
+  }
+  | additive_expression '-' multiplicative_expression
+  {
+    $$ = create_node(&(Node){ NODE_BINOP, .lhs = $1, .op = '-', .rhs = $3 });
+  }
+  ;
+
+multiplicative_expression
+  : cast_expression
+  | multiplicative_expression '*' cast_expression
+  {
+    $$ = create_node(&(Node){ NODE_BINOP, .lhs = $1, .op = '*', .rhs = $3 });
+  }
+  | multiplicative_expression '/' cast_expression
+  {
+    $$ = create_node(&(Node){ NODE_BINOP, .lhs = $1, .op = '/', .rhs = $3 });
+  }
+  ;
+
+cast_expression
+  : unary_expression
+  ;
+
+unary_expression
   : postfix_expression
   ;
 
@@ -229,16 +266,20 @@ postfix_expression
   }
   ;
 
-/* FIXME: skipping many reductions before primary_expression */
 argument_expression_list
-  : primary_expression
+  : assignment_expression
   {
     $$ = vector_push(create_vector(), $1);
   }
-  | argument_expression_list ',' primary_expression
+  | argument_expression_list ',' assignment_expression
   {
     $$ = vector_push($1, $3);
   }
+  ;
+
+/* FIXME: skipping many reductions before additive_expression */
+assignment_expression
+  : additive_expression
   ;
 
 primary_expression

@@ -18,6 +18,12 @@ indented_puts(int indent, const char *str)
   indented_printf(indent, "%s\n", str);
 }
 
+void
+indented_putc(int indent, const char c)
+{
+  indented_printf(indent, "%c\n", c);
+}
+
 char*
 type_label(enum NodeType type)
 {
@@ -50,6 +56,8 @@ type_label(enum NodeType type)
       return "NODE_INTEGER";
     case NODE_STRING:
       return "NODE_STRING";
+    case NODE_BINOP:
+      return "NODE_BINOP";
     default:
       fprintf(stderr, "type_label is not defined for %d\n", type);
       return "NODE_UNSUPPORTED";
@@ -112,6 +120,11 @@ dump_node(int indent, Node *node)
       break;
     case NODE_INTEGER:
       indented_printf(indent, "%s ival=%d\n", type_label(node->type), node->ival);
+      break;
+    case NODE_BINOP:
+      indented_printf(indent, "%s %c\n", type_label(node->type), node->op);
+      dump_node(indent + 1, node->lhs);
+      dump_node(indent + 1, node->rhs);
       break;
     default:
       indented_puts(indent, type_label(node->type));
