@@ -1,11 +1,10 @@
 int printf(char *__format, int a);
 
 int foo() {
-  printf("The result is: %d\n", 5 + 4 * 3 - 2 / 1);
-  return 0;
+  return 5 + 4 * 3 - 2 / 1;
 }
 
 int main() {
-  foo();
+  printf("The result is: %d\n", foo());
   return 0;
 }

@@ -30,22 +30,14 @@ compile_string(LLVMBuilderRef builder, Node *node)
   return LLVMBuildGlobalStringPtr(builder, node->id, "");
 }
 
+LLVMValueRef compile_exp(LLVMBuilderRef builder, Node *node);
+
 void
 compile_return(LLVMModuleRef mod, LLVMBuilderRef builder, Node *node)
 {
   assert_node(node, NODE_RETURN);
-
-  switch (node->param->type) {
-    case NODE_INTEGER:
-      LLVMBuildRet(builder, compile_int(node->param));
-      break;
-    default:
-      fprintf(stderr, "Unexpected node type in compile_return: %s\n", type_label(node->param->type));
-      exit(1);
-  }
+  LLVMBuildRet(builder, compile_exp(builder, node->param));
 }
-
-LLVMValueRef compile_exp(LLVMBuilderRef builder, Node *node);
 
 LLVMValueRef
 compile_binop(LLVMBuilderRef builder, Node *node)
@@ -74,13 +66,15 @@ compile_exp(LLVMBuilderRef builder, Node *node)
       return compile_binop(builder, node);
     case NODE_INTEGER:
       return compile_int(node);
+    case NODE_STRING:
+      return compile_string(builder, node);
     default:
-      fprintf(stderr, "Unexpected node: %s\n", type_label(node->type));
+      fprintf(stderr, "Unexpected node in compile_exp: %s\n", type_label(node->type));
       exit(1);
   }
 }
 
-void
+LLVMValueRef
 compile_funcall(LLVMModuleRef mod, LLVMBuilderRef builder, Node *node)
 {
   assert_node(node, NODE_FUNCALL);
@@ -91,23 +85,15 @@ compile_funcall(LLVMModuleRef mod, LLVMBuilderRef builder, Node *node)
   // Build arguments
   for (int i = 0; i < node->params->length; i++) {
     Node *param = (Node *)vector_get(node->params, i);
-    switch (param->type) {
-      case NODE_STRING:
-        args[i] = compile_string(builder, param);
-        break;
-      case NODE_INTEGER:
-        args[i] = compile_int(param);
-        break;
-      case NODE_BINOP:
-        args[i] = compile_binop(builder, param);
-        break;
-      default:
-        fprintf(stderr, "Unexpected node type in compile_funcall: %s\n", type_label(param->type));
-        exit(1);
+    if (param->type == NODE_FUNCALL) {
+      // FIXME: compile_exp should have compile_funcall
+      args[i] = compile_funcall(mod, builder, param);
+    } else {
+      args[i] = compile_exp(builder, param);
     }
   }
 
-  LLVMBuildCall(builder, func, args, node->params->length, "");
+  return LLVMBuildCall(builder, func, args, node->params->length, "");
 }
 
 void
