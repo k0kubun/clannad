@@ -143,24 +143,6 @@ func_name(Node *node)
   return node->func->id;
 }
 
-void
-compile_func(LLVMModuleRef mod, Node *node)
-{
-  assert_node(node, NODE_FUNC);
-
-  // declare function
-  char *func = func_name(node->decl);
-  LLVMTypeRef params[] = { LLVMInt32Type(), LLVMInt32Type() };
-  LLVMValueRef main_func = LLVMAddFunction(mod, func, LLVMFunctionType(LLVMInt32Type(), params, 2, false));
-
-  // create block for function
-  char block_name[256]; // FIXME: dynamic allocation
-  sprintf(block_name, "%s_block", func);
-  LLVMBasicBlockRef block = LLVMAppendBasicBlock(main_func, block_name);
-
-  compile_stmt(mod, block, node->stmts);
-}
-
 LLVMTypeRef
 compile_type(Node *node)
 {
@@ -187,6 +169,28 @@ compile_param_decl(Node *node)
   } else {
     return compile_type(node->spec);
   }
+}
+
+void
+compile_func(LLVMModuleRef mod, Node *node)
+{
+  assert_node(node, NODE_FUNC);
+
+  // declare function
+  char *func = func_name(node->decl);
+  LLVMTypeRef params[256]; // FIXME: dynamic allocation
+  for (int i = 0; i < node->decl->params->length; i++) {
+    params[i] = compile_param_decl((Node *)vector_get(node->decl->params, i));
+  }
+  LLVMValueRef main_func = LLVMAddFunction(mod, func,
+      LLVMFunctionType(LLVMInt32Type(), params, node->decl->params->length, false));
+
+  // create block for function
+  char block_name[256]; // FIXME: dynamic allocation
+  sprintf(block_name, "%s_block", func);
+  LLVMBasicBlockRef block = LLVMAppendBasicBlock(main_func, block_name);
+
+  compile_stmt(mod, block, node->stmts);
 }
 
 void
