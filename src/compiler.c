@@ -261,9 +261,10 @@ compile_root(Node *node)
 LLVMModuleRef
 compile(Node *ast)
 {
-  compiler.mod  = LLVMModuleCreateWithName("clannad");
-  compiler.syms = create_dict();
-
+  compiler = (Compiler){
+    .mod  = LLVMModuleCreateWithName("clannad"),
+    .syms = create_dict(),
+  };
   compile_root(ast);
   return compiler.mod;
 }
