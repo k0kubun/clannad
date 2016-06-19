@@ -27,6 +27,10 @@ typedef struct {
   int length;
 } Vector;
 
+typedef struct {
+  Vector *entries;
+} Dict;
+
 typedef struct Node {
   enum NodeType type;
   union {
@@ -67,6 +71,11 @@ int parse_stdin(Node **astptr);
 
 // compiler.c
 LLVMModuleRef compile(Node *ast);
+
+// dict.c
+Dict* create_dict();
+void* dict_get(Dict *dict, char *key);
+void dict_set(Dict *dict, char *key, void *value);
 
 // vector.c
 Vector* create_vector();
