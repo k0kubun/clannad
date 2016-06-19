@@ -92,7 +92,16 @@ function_definition
 declaration
   : declaration_specifiers init_declarator_list ';'
   {
-    $$ = create_node(&(Node){ NODE_FUNC_DECL, .spec = $1, .decl = $2 });
+    switch ($2->type) {
+    case NODE_FUNC_SPEC:
+      $$ = create_node(&(Node){ NODE_FUNC_DECL, .spec = $1, .decl = $2 });
+      break;
+    case NODE_SPEC:
+      $$ = create_node(&(Node){ NODE_VAR_DECL, .spec = $1, .decl = $2 });
+      break;
+    default:
+      yyerror("unexpected decl type in declaration");
+    }
   }
   ;
 
@@ -187,7 +196,8 @@ block_item_list
   ;
 
 block_item
-  : statement
+  : declaration
+  | statement
   ;
 
 statement

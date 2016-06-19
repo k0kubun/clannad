@@ -36,6 +36,8 @@ type_label(enum NodeType type)
       return "NODE_FUNC_DECL";
     case NODE_PARAM_DECL:
       return "NODE_PARAM_DECL";
+    case NODE_VAR_DECL:
+      return "NODE_VAR_DECL";
     case NODE_FUNCALL:
       return "NODE_FUNCALL";
     case NODE_TYPE:

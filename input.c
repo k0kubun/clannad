@@ -5,6 +5,7 @@ int foo() {
 }
 
 int main() {
+  int num;
   printf("The result is: %d\n", foo());
   return 0;
 }
