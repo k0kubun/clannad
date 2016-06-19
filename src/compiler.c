@@ -4,6 +4,13 @@
 #include <string.h>
 #include "clannad.h"
 
+typedef struct {
+  // Symbol table for compiling scope
+  Dict *syms;
+} Compiler;
+
+static Compiler compiler;
+
 void
 assert_node(Node *node, enum NodeType type)
 {
@@ -25,9 +32,20 @@ LLVMValueRef
 compile_string(LLVMBuilderRef builder, Node *node)
 {
   assert_node(node, NODE_STRING);
-
-  // FIXME: Handle escape sequence in node->id
   return LLVMBuildGlobalStringPtr(builder, node->id, "");
+}
+
+LLVMValueRef
+compile_variable(LLVMBuilderRef builder, Node *node)
+{
+  assert_node(node, NODE_IDENTIFIER);
+
+  LLVMValueRef var = dict_get(compiler.syms, node->id);
+  if (var == NULL) {
+    fprintf(stderr, "Undefined variable: %s\n", node->id);
+    exit(1);
+  }
+  return LLVMBuildLoad(builder, var, node->id);
 }
 
 LLVMValueRef compile_exp(LLVMBuilderRef builder, Node *node);
@@ -43,6 +61,8 @@ LLVMValueRef
 compile_binop(LLVMBuilderRef builder, Node *node)
 {
   assert_node(node, NODE_BINOP);
+
+  LLVMValueRef var;
   switch (node->op) {
     case '+':
       return LLVMBuildAdd(builder, compile_exp(builder, node->lhs), compile_exp(builder, node->rhs), "");
@@ -53,8 +73,12 @@ compile_binop(LLVMBuilderRef builder, Node *node)
     case '/':
       return LLVMBuildSDiv(builder, compile_exp(builder, node->lhs), compile_exp(builder, node->rhs), "");
     case '=':
-      // FIXME: Use LLVMBuildStore
-      return compile_exp(builder, node->rhs);
+      var = dict_get(compiler.syms, node->lhs->id);
+      if (var == NULL) {
+        fprintf(stderr, "Undefined variable: %s\n", node->lhs->id);
+        exit(1);
+      }
+      return LLVMBuildStore(builder, compile_exp(builder, node->rhs), var);
     default:
       fprintf(stderr, "Unexpected binary operation: %c\n", node->op);
       exit(1);
@@ -71,6 +95,8 @@ compile_exp(LLVMBuilderRef builder, Node *node)
       return compile_int(node);
     case NODE_STRING:
       return compile_string(builder, node);
+    case NODE_IDENTIFIER:
+      return compile_variable(builder, node);
     default:
       fprintf(stderr, "Unexpected node in compile_exp: %s\n", type_label(node->type));
       exit(1);
@@ -120,13 +146,17 @@ compile_var_decl(LLVMBuilderRef builder, Node *node)
 {
   assert_node(node, NODE_VAR_DECL);
 
-  LLVMBuildAlloca(builder, compile_type(node->spec), node->decl->id);
+  LLVMValueRef var = LLVMBuildAlloca(builder, compile_type(node->spec), node->decl->id);
+  dict_set(compiler.syms, node->decl->id, var);
 }
 
 void
 compile_stmt(LLVMModuleRef mod, LLVMBasicBlockRef block, Node *node)
 {
   assert_node(node, NODE_COMPOUND_STMT);
+
+  // Create local scope
+  compiler.syms = create_dict();
 
   // build block instructions
   LLVMBuilderRef builder = LLVMCreateBuilder();
