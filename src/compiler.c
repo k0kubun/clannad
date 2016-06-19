@@ -52,6 +52,9 @@ compile_binop(LLVMBuilderRef builder, Node *node)
       return LLVMBuildMul(builder, compile_exp(builder, node->lhs), compile_exp(builder, node->rhs), "");
     case '/':
       return LLVMBuildSDiv(builder, compile_exp(builder, node->lhs), compile_exp(builder, node->rhs), "");
+    case '=':
+      // FIXME: Use LLVMBuildStore
+      return compile_exp(builder, node->rhs);
     default:
       fprintf(stderr, "Unexpected binary operation: %c\n", node->op);
       exit(1);
@@ -137,6 +140,9 @@ compile_stmt(LLVMModuleRef mod, LLVMBasicBlockRef block, Node *node)
         break;
       case NODE_VAR_DECL:
         compile_var_decl(builder, child);
+        break;
+      case NODE_BINOP:
+        compile_binop(builder, child);
         break;
       case NODE_RETURN:
         compile_return(mod, builder, child);

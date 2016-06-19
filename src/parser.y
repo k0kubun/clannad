@@ -290,6 +290,10 @@ argument_expression_list
 /* FIXME: skipping many reductions before additive_expression */
 assignment_expression
   : additive_expression
+  | unary_expression '=' assignment_expression
+  {
+    $$ = create_node(&(Node){ NODE_BINOP, .lhs = $1, .op = '=', .rhs = $3 });
+  }
   ;
 
 primary_expression

@@ -6,6 +6,7 @@ int foo() {
 
 int main() {
   int num;
+  num = 3;
   printf("The result is: %d\n", foo());
   return 0;
 }
