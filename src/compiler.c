@@ -5,8 +5,8 @@
 #include "clannad.h"
 
 typedef struct {
-  // Symbol table for compiling scope
-  Dict *syms;
+  LLVMModuleRef mod;
+  Dict *syms; /* Symbol table for compiling scope */
 } Compiler;
 
 static Compiler compiler;
@@ -51,7 +51,7 @@ compile_variable(LLVMBuilderRef builder, Node *node)
 LLVMValueRef compile_exp(LLVMBuilderRef builder, Node *node);
 
 void
-compile_return(LLVMModuleRef mod, LLVMBuilderRef builder, Node *node)
+compile_return(LLVMBuilderRef builder, Node *node)
 {
   assert_node(node, NODE_RETURN);
   LLVMBuildRet(builder, compile_exp(builder, node->param));
@@ -104,19 +104,19 @@ compile_exp(LLVMBuilderRef builder, Node *node)
 }
 
 LLVMValueRef
-compile_funcall(LLVMModuleRef mod, LLVMBuilderRef builder, Node *node)
+compile_funcall(LLVMBuilderRef builder, Node *node)
 {
   assert_node(node, NODE_FUNCALL);
 
   LLVMValueRef args[256]; // FIXME: Handle array limit properly
-  LLVMValueRef func = LLVMGetNamedFunction(mod, node->func->id);
+  LLVMValueRef func = LLVMGetNamedFunction(compiler.mod, node->func->id);
 
   // Build arguments
   for (int i = 0; i < node->params->length; i++) {
     Node *param = (Node *)vector_get(node->params, i);
     if (param->type == NODE_FUNCALL) {
       // FIXME: compile_exp should have compile_funcall
-      args[i] = compile_funcall(mod, builder, param);
+      args[i] = compile_funcall(builder, param);
     } else {
       args[i] = compile_exp(builder, param);
     }
@@ -151,7 +151,7 @@ compile_var_decl(LLVMBuilderRef builder, Node *node)
 }
 
 void
-compile_stmt(LLVMModuleRef mod, LLVMBasicBlockRef block, Node *node)
+compile_stmt(LLVMBasicBlockRef block, Node *node)
 {
   assert_node(node, NODE_COMPOUND_STMT);
 
@@ -166,7 +166,7 @@ compile_stmt(LLVMModuleRef mod, LLVMBasicBlockRef block, Node *node)
     Node *child = (Node *)vector_get(node->children, i);
     switch (child->type) {
       case NODE_FUNCALL:
-        compile_funcall(mod, builder, child);
+        compile_funcall(builder, child);
         break;
       case NODE_VAR_DECL:
         compile_var_decl(builder, child);
@@ -175,7 +175,7 @@ compile_stmt(LLVMModuleRef mod, LLVMBasicBlockRef block, Node *node)
         compile_binop(builder, child);
         break;
       case NODE_RETURN:
-        compile_return(mod, builder, child);
+        compile_return(builder, child);
         break;
       default:
         fprintf(stderr, "Unexpected node type in compile_stmt: %s\n", type_label(child->type));
@@ -205,7 +205,7 @@ compile_param_decl(Node *node)
 }
 
 void
-compile_func(LLVMModuleRef mod, Node *node)
+compile_func(Node *node)
 {
   assert_node(node, NODE_FUNC);
 
@@ -215,7 +215,7 @@ compile_func(LLVMModuleRef mod, Node *node)
   for (int i = 0; i < node->decl->params->length; i++) {
     params[i] = compile_param_decl((Node *)vector_get(node->decl->params, i));
   }
-  LLVMValueRef main_func = LLVMAddFunction(mod, func,
+  LLVMValueRef main_func = LLVMAddFunction(compiler.mod, func,
       LLVMFunctionType(LLVMInt32Type(), params, node->decl->params->length, false));
 
   // create block for function
@@ -223,11 +223,11 @@ compile_func(LLVMModuleRef mod, Node *node)
   sprintf(block_name, "%s_block", func);
   LLVMBasicBlockRef block = LLVMAppendBasicBlock(main_func, block_name);
 
-  compile_stmt(mod, block, node->stmts);
+  compile_stmt(block, node->stmts);
 }
 
 void
-compile_func_decl(LLVMModuleRef mod, Node *node)
+compile_func_decl(Node *node)
 {
   assert_node(node, NODE_FUNC_DECL);
 
@@ -236,12 +236,12 @@ compile_func_decl(LLVMModuleRef mod, Node *node)
     params[i] = compile_param_decl((Node *)vector_get(node->decl->params, i));
   }
 
-  LLVMAddFunction(mod, func_name(node->decl),
+  LLVMAddFunction(compiler.mod, func_name(node->decl),
       LLVMFunctionType(compile_type(node->spec), params, node->decl->params->length, false));
 }
 
 void
-compile_root(LLVMModuleRef mod, Node *node)
+compile_root(Node *node)
 {
   assert_node(node, NODE_ROOT);
 
@@ -249,10 +249,10 @@ compile_root(LLVMModuleRef mod, Node *node)
     Node *child = (Node *)vector_get(node->children, i);
     switch (child->type) {
       case NODE_FUNC:
-        compile_func(mod, child);
+        compile_func(child);
         break;
       case NODE_FUNC_DECL:
-        compile_func_decl(mod, child);
+        compile_func_decl(child);
         break;
       default:
         fprintf(stderr, "Unexpected node type in compile_root: %s\n", type_label(child->type));
@@ -264,7 +264,9 @@ compile_root(LLVMModuleRef mod, Node *node)
 LLVMModuleRef
 compile(Node *ast)
 {
-  LLVMModuleRef mod = LLVMModuleCreateWithName("clannad");
-  compile_root(mod, ast);
-  return mod;
+  compiler.mod  = LLVMModuleCreateWithName("clannad");
+  compiler.syms = create_dict();
+
+  compile_root(ast);
+  return compiler.mod;
 }
