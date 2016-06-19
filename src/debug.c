@@ -105,6 +105,7 @@ dump_node(int indent, Node *node)
       break;
     case NODE_FUNC_DECL:
     case NODE_PARAM_DECL:
+    case NODE_VAR_DECL:
       indented_puts(indent, type_label(node->type));
       dump_nodes(indent + 1, 2, node->spec, node->decl);
       break;

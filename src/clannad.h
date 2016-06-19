@@ -39,7 +39,7 @@ typedef struct Node {
     };
     // NODE_RETURN, NODE_PTR
     struct Node *param;
-    // NODE_FUNC, NODE_FUNC_DECL, NODE_PARAM_DECL
+    // NODE_FUNC, NODE_FUNC_DECL, NODE_PARAM_DECL, NODE_VAR_DECL
     struct {
       struct Node *spec;
       struct Node *decl;

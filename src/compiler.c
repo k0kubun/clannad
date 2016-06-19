@@ -96,6 +96,30 @@ compile_funcall(LLVMModuleRef mod, LLVMBuilderRef builder, Node *node)
   return LLVMBuildCall(builder, func, args, node->params->length, "");
 }
 
+LLVMTypeRef
+compile_type(Node *node)
+{
+  assert_node(node, NODE_TYPE);
+
+  // FIXME: We should have this as token
+  if (strcmp(node->id, "int") == 0) {
+    return LLVMInt32Type();
+  } else if (strcmp(node->id, "char") == 0) {
+    return LLVMInt8Type();
+  } else {
+    fprintf(stderr, "Unexpected id in compile_type: %s\n", node->id);
+    exit(1);
+  }
+}
+
+void
+compile_var_decl(LLVMBuilderRef builder, Node *node)
+{
+  assert_node(node, NODE_VAR_DECL);
+
+  LLVMBuildAlloca(builder, compile_type(node->spec), node->decl->id);
+}
+
 void
 compile_stmt(LLVMModuleRef mod, LLVMBasicBlockRef block, Node *node)
 {
@@ -110,6 +134,9 @@ compile_stmt(LLVMModuleRef mod, LLVMBasicBlockRef block, Node *node)
     switch (child->type) {
       case NODE_FUNCALL:
         compile_funcall(mod, builder, child);
+        break;
+      case NODE_VAR_DECL:
+        compile_var_decl(builder, child);
         break;
       case NODE_RETURN:
         compile_return(mod, builder, child);
@@ -127,22 +154,6 @@ func_name(Node *node)
   assert_node(node, NODE_FUNC_SPEC);
   assert_node(node->func, NODE_SPEC);
   return node->func->id;
-}
-
-LLVMTypeRef
-compile_type(Node *node)
-{
-  assert_node(node, NODE_TYPE);
-
-  // FIXME: We should have this as token
-  if (strcmp(node->id, "int") == 0) {
-    return LLVMInt32Type();
-  } else if (strcmp(node->id, "char") == 0) {
-    return LLVMInt8Type();
-  } else {
-    fprintf(stderr, "Unexpected id in compile_type: %s\n", node->id);
-    exit(1);
-  }
 }
 
 LLVMTypeRef
