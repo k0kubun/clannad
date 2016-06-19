@@ -25,7 +25,7 @@ indented_putc(int indent, const char c)
 }
 
 char*
-type_label(enum NodeType type)
+kind_label(enum NodeKind type)
 {
   switch (type) {
     case NODE_ROOT:
@@ -61,7 +61,7 @@ type_label(enum NodeType type)
     case NODE_BINOP:
       return "NODE_BINOP";
     default:
-      fprintf(stderr, "type_label is not defined for %d\n", type);
+      fprintf(stderr, "kind_label is not defined for %d\n", type);
       return "NODE_UNSUPPORTED";
   }
 }
@@ -88,30 +88,30 @@ dump_nodes(int indent, int argc, ...)
 void
 dump_node(int indent, Node *node)
 {
-  switch (node->type) {
+  switch (node->kind) {
     case NODE_ROOT:
     case NODE_COMPOUND_STMT:
-      indented_puts(indent, type_label(node->type));
+      indented_puts(indent, kind_label(node->kind));
       dump_vector(indent + 1, node->children);
       break;
     case NODE_PTR:
     case NODE_RETURN:
-      indented_puts(indent, type_label(node->type));
+      indented_puts(indent, kind_label(node->kind));
       if (node->param) dump_node(indent + 1, node->param);
       break;
     case NODE_FUNC:
-      indented_puts(indent, type_label(node->type));
+      indented_puts(indent, kind_label(node->kind));
       dump_nodes(indent + 1, 3, node->spec, node->decl, node->stmts);
       break;
     case NODE_FUNC_DECL:
     case NODE_PARAM_DECL:
     case NODE_VAR_DECL:
-      indented_puts(indent, type_label(node->type));
+      indented_puts(indent, kind_label(node->kind));
       dump_nodes(indent + 1, 2, node->spec, node->decl);
       break;
     case NODE_FUNCALL:
     case NODE_FUNC_SPEC:
-      indented_puts(indent, type_label(node->type));
+      indented_puts(indent, kind_label(node->kind));
       dump_node(indent + 1, node->func);
       dump_vector(indent + 1, node->params);
       break;
@@ -119,18 +119,18 @@ dump_node(int indent, Node *node)
     case NODE_SPEC:
     case NODE_TYPE:
     case NODE_STRING:
-      indented_printf(indent, "%s id=%s\n", type_label(node->type), node->id);
+      indented_printf(indent, "%s id=%s\n", kind_label(node->kind), node->id);
       break;
     case NODE_INTEGER:
-      indented_printf(indent, "%s ival=%d\n", type_label(node->type), node->ival);
+      indented_printf(indent, "%s ival=%d\n", kind_label(node->kind), node->ival);
       break;
     case NODE_BINOP:
-      indented_printf(indent, "%s %c\n", type_label(node->type), node->op);
+      indented_printf(indent, "%s %c\n", kind_label(node->kind), node->op);
       dump_node(indent + 1, node->lhs);
       dump_node(indent + 1, node->rhs);
       break;
     default:
-      indented_puts(indent, type_label(node->type));
+      indented_puts(indent, kind_label(node->kind));
       break;
   }
 }

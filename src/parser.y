@@ -92,7 +92,7 @@ function_definition
 declaration
   : declaration_specifiers init_declarator_list ';'
   {
-    switch ($2->type) {
+    switch ($2->kind) {
     case NODE_FUNC_SPEC:
       $$ = create_node(&(Node){ NODE_FUNC_DECL, .spec = $1, .decl = $2 });
       break;

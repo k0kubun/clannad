@@ -12,11 +12,11 @@ typedef struct {
 static Compiler compiler;
 
 void
-assert_node(Node *node, enum NodeType type)
+assert_node(Node *node, enum NodeKind kind)
 {
-  if (node->type != type) {
-    fprintf(stderr, "InternalError: node type assertion failed!\n");
-    fprintf(stderr, "  expected '%s' but got '%s'\n", type_label(type), type_label(node->type));
+  if (node->kind != kind) {
+    fprintf(stderr, "InternalError: node kind assertion failed!\n");
+    fprintf(stderr, "  expected '%s' but got '%s'\n", kind_label(kind), kind_label(node->kind));
     exit(1);
   }
 }
@@ -105,7 +105,7 @@ compile_funcall(LLVMBuilderRef builder, Node *node)
 LLVMValueRef
 compile_exp(LLVMBuilderRef builder, Node *node)
 {
-  switch (node->type) {
+  switch (node->kind) {
     case NODE_BINOP:
       return compile_binop(builder, node);
     case NODE_INTEGER:
@@ -117,7 +117,7 @@ compile_exp(LLVMBuilderRef builder, Node *node)
     case NODE_FUNCALL:
       return compile_funcall(builder, node);
     default:
-      fprintf(stderr, "Unexpected node in compile_exp: %s\n", type_label(node->type));
+      fprintf(stderr, "Unexpected node in compile_exp: %s\n", kind_label(node->kind));
       exit(1);
   }
 }
@@ -160,7 +160,7 @@ compile_stmt(LLVMBasicBlockRef block, Node *node)
 
   for (int i = 0; i < node->children->length; i++) {
     Node *child = (Node *)vector_get(node->children, i);
-    switch (child->type) {
+    switch (child->kind) {
       case NODE_BINOP:
       case NODE_INTEGER:
       case NODE_STRING:
@@ -175,7 +175,7 @@ compile_stmt(LLVMBasicBlockRef block, Node *node)
         compile_return(builder, child);
         break;
       default:
-        fprintf(stderr, "Unexpected node type in compile_stmt: %s\n", type_label(child->type));
+        fprintf(stderr, "Unexpected node kind in compile_stmt: %s\n", kind_label(child->kind));
         exit(1);
     }
   }
@@ -194,7 +194,7 @@ compile_param_decl(Node *node)
 {
   assert_node(node, NODE_PARAM_DECL);
 
-  if (node->decl->type == NODE_PTR) {
+  if (node->decl->kind == NODE_PTR) {
     return LLVMPointerType(compile_type(node->spec), false);
   } else {
     return compile_type(node->spec);
@@ -244,7 +244,7 @@ compile_root(Node *node)
 
   for (int i = 0; i < node->children->length; i++) {
     Node *child = (Node *)vector_get(node->children, i);
-    switch (child->type) {
+    switch (child->kind) {
       case NODE_FUNC:
         compile_func(child);
         break;
@@ -252,7 +252,7 @@ compile_root(Node *node)
         compile_func_decl(child);
         break;
       default:
-        fprintf(stderr, "Unexpected node type in compile_root: %s\n", type_label(child->type));
+        fprintf(stderr, "Unexpected node kind in compile_root: %s\n", kind_label(child->kind));
         exit(1);
     }
   }

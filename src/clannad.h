@@ -3,7 +3,7 @@
 
 #include <llvm-c/Core.h>
 
-enum NodeType {
+enum NodeKind {
   NODE_ROOT,
   NODE_FUNC,
   NODE_FUNC_DECL,
@@ -32,7 +32,7 @@ typedef struct {
 } Dict;
 
 typedef struct Node {
-  enum NodeType type;
+  enum NodeKind kind;
   union {
     // NODE_ROOT, NODE_COUMPOUND_STMT
     Vector *children;
@@ -64,7 +64,7 @@ typedef struct Node {
 
 // debug.c
 void dump_ast(Node *ast);
-char* type_label(enum NodeType type);
+char* kind_label(enum NodeKind kind);
 
 // parser.y
 int parse_stdin(Node **astptr);
