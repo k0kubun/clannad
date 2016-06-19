@@ -46,7 +46,7 @@ typedef struct Node {
     // NODE_FUNC, NODE_FUNC_DECL, NODE_PARAM_DECL, NODE_VAR_DECL
     struct {
       struct Node *type;
-      struct Node *decl;
+      struct Node *spec;
       struct Node *stmts; // NODE_FUNC only
     };
     // NODE_SPEC, NODE_TYPE, NODE_IDENTIFIER, NODE_STRING

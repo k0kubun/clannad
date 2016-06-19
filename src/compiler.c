@@ -142,8 +142,8 @@ compile_var_decl(LLVMBuilderRef builder, Node *node)
 {
   assert_node(node, NODE_VAR_DECL);
 
-  LLVMValueRef var = LLVMBuildAlloca(builder, compile_type(node->type), node->decl->id);
-  dict_set(compiler.syms, node->decl->id, var);
+  LLVMValueRef var = LLVMBuildAlloca(builder, compile_type(node->type), node->spec->id);
+  dict_set(compiler.syms, node->spec->id, var);
 }
 
 void
@@ -194,7 +194,7 @@ compile_param_decl(Node *node)
 {
   assert_node(node, NODE_PARAM_DECL);
 
-  if (node->decl->kind == NODE_PTR) {
+  if (node->spec->kind == NODE_PTR) {
     return LLVMPointerType(compile_type(node->type), false);
   } else {
     return compile_type(node->type);
@@ -207,13 +207,13 @@ compile_func(Node *node)
   assert_node(node, NODE_FUNC);
 
   // declare function
-  char *func = func_name(node->decl);
+  char *func = func_name(node->spec);
   LLVMTypeRef params[256]; // FIXME: dynamic allocation
-  for (int i = 0; i < node->decl->params->length; i++) {
-    params[i] = compile_param_decl((Node *)vector_get(node->decl->params, i));
+  for (int i = 0; i < node->spec->params->length; i++) {
+    params[i] = compile_param_decl((Node *)vector_get(node->spec->params, i));
   }
   LLVMValueRef main_func = LLVMAddFunction(compiler.mod, func,
-      LLVMFunctionType(compile_type(node->type), params, node->decl->params->length, false));
+      LLVMFunctionType(compile_type(node->type), params, node->spec->params->length, false));
 
   // create block for function
   char block_name[256]; // FIXME: dynamic allocation
@@ -229,12 +229,12 @@ compile_func_decl(Node *node)
   assert_node(node, NODE_FUNC_DECL);
 
   LLVMTypeRef params[256]; // FIXME: dynamic allocation
-  for (int i = 0; i < node->decl->params->length; i++) {
-    params[i] = compile_param_decl((Node *)vector_get(node->decl->params, i));
+  for (int i = 0; i < node->spec->params->length; i++) {
+    params[i] = compile_param_decl((Node *)vector_get(node->spec->params, i));
   }
 
-  LLVMAddFunction(compiler.mod, func_name(node->decl),
-      LLVMFunctionType(compile_type(node->type), params, node->decl->params->length, false));
+  LLVMAddFunction(compiler.mod, func_name(node->spec),
+      LLVMFunctionType(compile_type(node->type), params, node->spec->params->length, false));
 }
 
 void
