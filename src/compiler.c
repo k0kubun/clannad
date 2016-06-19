@@ -86,6 +86,23 @@ compile_binop(LLVMBuilderRef builder, Node *node)
 }
 
 LLVMValueRef
+compile_funcall(LLVMBuilderRef builder, Node *node)
+{
+  assert_node(node, NODE_FUNCALL);
+
+  LLVMValueRef args[256]; // FIXME: Handle array limit properly
+  LLVMValueRef func = LLVMGetNamedFunction(compiler.mod, node->func->id);
+
+  // Build arguments
+  for (int i = 0; i < node->params->length; i++) {
+    Node *param = (Node *)vector_get(node->params, i);
+    args[i] = compile_exp(builder, param);
+  }
+
+  return LLVMBuildCall(builder, func, args, node->params->length, "");
+}
+
+LLVMValueRef
 compile_exp(LLVMBuilderRef builder, Node *node)
 {
   switch (node->type) {
@@ -97,32 +114,12 @@ compile_exp(LLVMBuilderRef builder, Node *node)
       return compile_string(builder, node);
     case NODE_IDENTIFIER:
       return compile_variable(builder, node);
+    case NODE_FUNCALL:
+      return compile_funcall(builder, node);
     default:
       fprintf(stderr, "Unexpected node in compile_exp: %s\n", type_label(node->type));
       exit(1);
   }
-}
-
-LLVMValueRef
-compile_funcall(LLVMBuilderRef builder, Node *node)
-{
-  assert_node(node, NODE_FUNCALL);
-
-  LLVMValueRef args[256]; // FIXME: Handle array limit properly
-  LLVMValueRef func = LLVMGetNamedFunction(compiler.mod, node->func->id);
-
-  // Build arguments
-  for (int i = 0; i < node->params->length; i++) {
-    Node *param = (Node *)vector_get(node->params, i);
-    if (param->type == NODE_FUNCALL) {
-      // FIXME: compile_exp should have compile_funcall
-      args[i] = compile_funcall(builder, param);
-    } else {
-      args[i] = compile_exp(builder, param);
-    }
-  }
-
-  return LLVMBuildCall(builder, func, args, node->params->length, "");
 }
 
 LLVMTypeRef
@@ -130,7 +127,6 @@ compile_type(Node *node)
 {
   assert_node(node, NODE_TYPE);
 
-  // FIXME: We should have this as token
   if (strcmp(node->id, "int") == 0) {
     return LLVMInt32Type();
   } else if (strcmp(node->id, "char") == 0) {
@@ -165,14 +161,15 @@ compile_stmt(LLVMBasicBlockRef block, Node *node)
   for (int i = 0; i < node->children->length; i++) {
     Node *child = (Node *)vector_get(node->children, i);
     switch (child->type) {
+      case NODE_BINOP:
+      case NODE_INTEGER:
+      case NODE_STRING:
+      case NODE_IDENTIFIER:
       case NODE_FUNCALL:
-        compile_funcall(builder, child);
+        compile_exp(builder, child);
         break;
       case NODE_VAR_DECL:
         compile_var_decl(builder, child);
-        break;
-      case NODE_BINOP:
-        compile_binop(builder, child);
         break;
       case NODE_RETURN:
         compile_return(builder, child);
