@@ -101,13 +101,13 @@ dump_node(int indent, Node *node)
       break;
     case NODE_FUNC:
       indented_puts(indent, kind_label(node->kind));
-      dump_nodes(indent + 1, 3, node->spec, node->decl, node->stmts);
+      dump_nodes(indent + 1, 3, node->type, node->decl, node->stmts);
       break;
     case NODE_FUNC_DECL:
     case NODE_PARAM_DECL:
     case NODE_VAR_DECL:
       indented_puts(indent, kind_label(node->kind));
-      dump_nodes(indent + 1, 2, node->spec, node->decl);
+      dump_nodes(indent + 1, 2, node->type, node->decl);
       break;
     case NODE_FUNCALL:
     case NODE_FUNC_SPEC:

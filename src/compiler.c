@@ -142,7 +142,7 @@ compile_var_decl(LLVMBuilderRef builder, Node *node)
 {
   assert_node(node, NODE_VAR_DECL);
 
-  LLVMValueRef var = LLVMBuildAlloca(builder, compile_type(node->spec), node->decl->id);
+  LLVMValueRef var = LLVMBuildAlloca(builder, compile_type(node->type), node->decl->id);
   dict_set(compiler.syms, node->decl->id, var);
 }
 
@@ -195,9 +195,9 @@ compile_param_decl(Node *node)
   assert_node(node, NODE_PARAM_DECL);
 
   if (node->decl->kind == NODE_PTR) {
-    return LLVMPointerType(compile_type(node->spec), false);
+    return LLVMPointerType(compile_type(node->type), false);
   } else {
-    return compile_type(node->spec);
+    return compile_type(node->type);
   }
 }
 
@@ -234,7 +234,7 @@ compile_func_decl(Node *node)
   }
 
   LLVMAddFunction(compiler.mod, func_name(node->decl),
-      LLVMFunctionType(compile_type(node->spec), params, node->decl->params->length, false));
+      LLVMFunctionType(compile_type(node->type), params, node->decl->params->length, false));
 }
 
 void

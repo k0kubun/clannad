@@ -85,7 +85,7 @@ external_declaration
 function_definition
   : declaration_specifiers declarator compound_statement
   {
-    $$ = create_node(&(Node){ NODE_FUNC, .spec = $1, .decl = $2, .stmts = $3 });
+    $$ = create_node(&(Node){ NODE_FUNC, .type = $1, .decl = $2, .stmts = $3 });
   }
   ;
 
@@ -94,10 +94,10 @@ declaration
   {
     switch ($2->kind) {
     case NODE_FUNC_SPEC:
-      $$ = create_node(&(Node){ NODE_FUNC_DECL, .spec = $1, .decl = $2 });
+      $$ = create_node(&(Node){ NODE_FUNC_DECL, .type = $1, .decl = $2 });
       break;
     case NODE_SPEC:
-      $$ = create_node(&(Node){ NODE_VAR_DECL, .spec = $1, .decl = $2 });
+      $$ = create_node(&(Node){ NODE_VAR_DECL, .type = $1, .decl = $2 });
       break;
     default:
       yyerror("unexpected decl type in declaration");
@@ -169,7 +169,7 @@ parameter_list
 parameter_declaration
   : declaration_specifiers declarator
   {
-    $$ = create_node(&(Node){ NODE_PARAM_DECL, .spec = $1, .decl = $2 });
+    $$ = create_node(&(Node){ NODE_PARAM_DECL, .type = $1, .decl = $2 });
   }
   ;
 
