@@ -213,7 +213,7 @@ compile_func(Node *node)
     params[i] = compile_param_decl((Node *)vector_get(node->decl->params, i));
   }
   LLVMValueRef main_func = LLVMAddFunction(compiler.mod, func,
-      LLVMFunctionType(LLVMInt32Type(), params, node->decl->params->length, false));
+      LLVMFunctionType(compile_type(node->type), params, node->decl->params->length, false));
 
   // create block for function
   char block_name[256]; // FIXME: dynamic allocation
