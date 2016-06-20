@@ -17,7 +17,7 @@ char* read_string_literal(char *str);
   return tIDENTIFIER;
 }
 
-[1-9][0-9]* {
+-?[1-9][0-9]* {
   yylval.ival = atoi(yytext);
   return tINTEGER;
 }

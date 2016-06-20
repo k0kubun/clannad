@@ -2,7 +2,7 @@ int printf(char *__format, int a);
 
 int twice(int a) {
   int ret;
-  ret = a * 2;
+  ret = a * -2 * -1;
   return ret;
 }
 
