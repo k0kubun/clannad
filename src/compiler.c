@@ -207,18 +207,25 @@ compile_func(Node *node)
   assert_node(node, NODE_FUNC);
 
   // declare function
-  char *func = func_name(node->spec);
-  LLVMTypeRef params[256]; // FIXME: dynamic allocation
+  char *name = func_name(node->spec);
+  LLVMTypeRef param_types[256]; // FIXME: dynamic allocation
   for (int i = 0; i < node->spec->params->length; i++) {
-    params[i] = compile_param_decl((Node *)vector_get(node->spec->params, i));
+    param_types[i] = compile_param_decl((Node *)vector_get(node->spec->params, i));
   }
-  LLVMValueRef main_func = LLVMAddFunction(compiler.mod, func,
-      LLVMFunctionType(compile_type(node->type), params, node->spec->params->length, false));
+  LLVMValueRef func = LLVMAddFunction(compiler.mod, name,
+      LLVMFunctionType(compile_type(node->type), param_types, node->spec->params->length, false));
+
+  // set argument names
+  LLVMValueRef params[256]; // FIXME: dynamic allocation
+  LLVMGetParams(func, params);
+  for (int i = 0; i < node->spec->params->length; i++) {
+    LLVMSetValueName(params[i], ((Node *)vector_get(node->spec->params, i))->spec->id);
+  }
 
   // create block for function
   char block_name[256]; // FIXME: dynamic allocation
-  sprintf(block_name, "%s_block", func);
-  LLVMBasicBlockRef block = LLVMAppendBasicBlock(main_func, block_name);
+  sprintf(block_name, "%s_block", name);
+  LLVMBasicBlockRef block = LLVMAppendBasicBlock(func, block_name);
 
   compile_stmt(block, node->stmts);
 }
