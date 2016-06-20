@@ -147,16 +147,9 @@ compile_var_decl(LLVMBuilderRef builder, Node *node)
 }
 
 void
-compile_stmt(LLVMBasicBlockRef block, Node *node)
+compile_stmt(LLVMBuilderRef builder, Node *node)
 {
   assert_node(node, NODE_COMPOUND_STMT);
-
-  // Create local scope
-  compiler.syms = create_dict();
-
-  // build block instructions
-  LLVMBuilderRef builder = LLVMCreateBuilder();
-  LLVMPositionBuilderAtEnd(builder, block);
 
   for (int i = 0; i < node->children->length; i++) {
     Node *child = (Node *)vector_get(node->children, i);
@@ -215,11 +208,16 @@ compile_func(Node *node)
   LLVMValueRef func = LLVMAddFunction(compiler.mod, name,
       LLVMFunctionType(compile_type(node->type), param_types, node->spec->params->length, false));
 
+  // Create local scope
+  compiler.syms = create_dict();
+
   // set argument names
   LLVMValueRef params[256]; // FIXME: dynamic allocation
   LLVMGetParams(func, params);
   for (int i = 0; i < node->spec->params->length; i++) {
-    LLVMSetValueName(params[i], ((Node *)vector_get(node->spec->params, i))->spec->id);
+    char *param_name = ((Node *)vector_get(node->spec->params, i))->spec->id;
+    dict_set(compiler.syms, param_name, params[i]);
+    LLVMSetValueName(params[i], param_name);
   }
 
   // create block for function
@@ -227,7 +225,20 @@ compile_func(Node *node)
   sprintf(block_name, "%s_block", name);
   LLVMBasicBlockRef block = LLVMAppendBasicBlock(func, block_name);
 
-  compile_stmt(block, node->stmts);
+  // build block instructions
+  LLVMBuilderRef builder = LLVMCreateBuilder();
+  LLVMPositionBuilderAtEnd(builder, block);
+
+  // store argument
+  for (int i = 0; i < node->spec->params->length; i++) {
+    Node *param = vector_get(node->spec->params, i);
+    LLVMValueRef val = dict_get(compiler.syms, param->spec->id);
+    LLVMValueRef var = LLVMBuildAlloca(builder, compile_type(param->type), param->spec->id);
+    dict_set(compiler.syms, param->spec->id, var);
+    LLVMBuildStore(builder, val, var);
+  }
+
+  compile_stmt(builder, node->stmts);
 }
 
 void

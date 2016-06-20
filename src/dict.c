@@ -49,6 +49,8 @@ dict_set(Dict *dict, char *key, void *value)
     entry->data = value;
     vector_push(dict->entries, entry);
   } else {
-    dict->entries->data[i] = value;
+    DictEntry *entry = vector_get(dict->entries, i);
+    entry->data = value;
+    dict->entries->data[i] = entry;
   }
 }

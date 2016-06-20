@@ -1,12 +1,12 @@
 int printf(char *__format, int a);
 
-int foo(int a) {
+int twice(int a) {
   int ret;
-  ret = 5 + 4 * 3 - 2 / 1;
+  ret = a * 2;
   return ret;
 }
 
 int main() {
-  printf("The result is: %d\n", foo(3));
+  printf("The result is: %d\n", twice(10));
   return 0;
 }
