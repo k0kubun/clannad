@@ -8,8 +8,10 @@ char* read_string_literal(char *str);
 
 %%
 
-"int" return tINT;
-"char" return tCHAR;
+"int"    return tINT;
+"char"   return tCHAR;
+"if"     return tIF;
+"else"   return tELSE;
 "return" return tRETURN;
 
 [a-zA-Z_][a-zA-Z0-9_]* {

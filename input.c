@@ -1,12 +1,11 @@
-int printf(char *__format, int a);
-
-int twice(int a) {
-  int ret;
-  ret = a * -2 * -1;
-  return ret;
-}
+int printf(char *__format);
 
 int main() {
-  printf("The result is: %d\n", twice(10));
+  int a;
+  a = 3;
+  if (a)
+    printf("yes");
+  else
+    printf("no");
   return 0;
 }

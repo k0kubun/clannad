@@ -17,6 +17,8 @@ static Node *parse_result;
 
 %token <id>   tINT
 %token <id>   tCHAR
+%token <id>   tIF
+%token <id>   tELSE
 %token <id>   tRETURN
 %token <ival> tINTEGER
 %token <id>   tIDENTIFIER
@@ -40,6 +42,7 @@ static Node *parse_result;
 %type <node> block_item
 %type <node> statement
 %type <node> expression_statement
+%type <node> selection_statement
 %type <node> jump_statement
 %type <node> expression
 %type <node> multiplicative_expression
@@ -202,6 +205,7 @@ block_item
 
 statement
   : expression_statement
+  | selection_statement
   | jump_statement
   ;
 
@@ -224,6 +228,17 @@ expression_statement
   | expression ';'
   {
     $$ = $1;
+  }
+  ;
+
+selection_statement
+  : tIF '(' expression ')' statement tELSE statement
+  {
+    $$ = create_node(&(Node){ NODE_IF, .cond = $3, .if_stmt = $5, .else_stmt = $7 });
+  }
+  | tIF '(' expression ')' statement
+  {
+    $$ = create_node(&(Node){ NODE_IF, .cond = $3, .if_stmt = $5, .else_stmt = NULL });
   }
   ;
 

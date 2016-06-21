@@ -20,6 +20,7 @@ enum NodeKind {
   NODE_IDENTIFIER,
   NODE_COMPOUND_STMT,
   NODE_BINOP,
+  NODE_IF,
 };
 
 typedef struct {
@@ -58,6 +59,12 @@ typedef struct Node {
       struct Node *lhs;
       char op;
       struct Node *rhs;
+    };
+    // NODE_IF
+    struct {
+      struct Node *cond;
+      struct Node *if_stmt;
+      struct Node *else_stmt;
     };
   };
 } Node;

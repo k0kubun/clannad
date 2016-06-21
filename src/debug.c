@@ -60,6 +60,8 @@ kind_label(enum NodeKind type)
       return "NODE_STRING";
     case NODE_BINOP:
       return "NODE_BINOP";
+    case NODE_IF:
+      return "NODE_IF";
     default:
       fprintf(stderr, "kind_label is not defined for %d\n", type);
       return "NODE_UNSUPPORTED";
@@ -128,6 +130,12 @@ dump_node(int indent, Node *node)
       indented_printf(indent, "%s %c\n", kind_label(node->kind), node->op);
       dump_node(indent + 1, node->lhs);
       dump_node(indent + 1, node->rhs);
+      break;
+    case NODE_IF:
+      indented_puts(indent, kind_label(node->kind));
+      dump_node(indent + 1, node->cond);
+      dump_node(indent + 1, node->if_stmt);
+      if (node->else_stmt) dump_node(indent + 1, node->else_stmt);
       break;
     default:
       indented_puts(indent, kind_label(node->kind));
