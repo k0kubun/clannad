@@ -59,6 +59,34 @@ compile_return(LLVMBuilderRef builder, Node *node)
 }
 
 LLVMValueRef
+compile_unary(LLVMBuilderRef builder, Node *node)
+{
+  Node *target;
+  if (node->lhs) target = node->lhs;
+  if (node->rhs) target = node->rhs;
+
+  LLVMValueRef var;
+  LLVMValueRef result = compile_exp(builder, target);
+  switch ((int)node->op) {
+    case INC_OP:
+      // FIXME: maybe some assertion required
+      var = dict_get(compiler.syms, target->id);
+      LLVMBuildStore(builder, LLVMBuildAdd(builder, result, LLVMConstInt(LLVMInt32Type(), 1, 0), ""), var);
+      break;
+    case DEC_OP:
+      // FIXME: maybe some assertion required
+      var = dict_get(compiler.syms, target->id);
+      LLVMBuildStore(builder, LLVMBuildSub(builder, result, LLVMConstInt(LLVMInt32Type(), 1, 0), ""), var);
+      break;
+    default:
+      fprintf(stderr, "Unexpected operator in compile_unary: %d\n", (int)node->op);
+      exit(1);
+  }
+  // TODO: check whether result is correct or not to return
+  return result;
+}
+
+LLVMValueRef
 compile_binop(LLVMBuilderRef builder, Node *node)
 {
   assert_node(node, NODE_BINOP);
@@ -107,6 +135,8 @@ LLVMValueRef
 compile_exp(LLVMBuilderRef builder, Node *node)
 {
   switch (node->kind) {
+    case NODE_UNARY:
+      return compile_unary(builder, node);
     case NODE_BINOP:
       return compile_binop(builder, node);
     case NODE_INTEGER:
@@ -180,6 +210,7 @@ compile_stmt(LLVMBuilderRef builder, Node *node)
     case NODE_STRING:
     case NODE_IDENTIFIER:
     case NODE_FUNCALL:
+    case NODE_UNARY:
       compile_exp(builder, node);
       break;
     case NODE_VAR_DECL:

@@ -23,6 +23,8 @@ static Node *parse_result;
 %token <ival> tINTEGER
 %token <id>   tIDENTIFIER
 %token <id>   tSTRING_LITERAL
+%token <id>   tINC_OP
+%token <id>   tDEC_OP
 
 %type <list> translation_unit
 %type <node> declaration_specifiers
@@ -288,6 +290,14 @@ postfix_expression
   | postfix_expression '(' argument_expression_list ')'
   {
     $$ = create_node(&(Node){ NODE_FUNCALL, .func = $1, .params = $3 });
+  }
+  | postfix_expression tINC_OP
+  {
+    $$ = create_node(&(Node){ NODE_UNARY, .lhs = $1, .op = INC_OP, .rhs = NULL });
+  }
+  | postfix_expression tDEC_OP
+  {
+    $$ = create_node(&(Node){ NODE_UNARY, .lhs = $1, .op = DEC_OP, .rhs = NULL });
   }
   ;
 

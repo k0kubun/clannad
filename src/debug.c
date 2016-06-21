@@ -60,6 +60,8 @@ kind_label(enum NodeKind type)
       return "NODE_STRING";
     case NODE_BINOP:
       return "NODE_BINOP";
+    case NODE_UNARY:
+      return "NODE_UNARY";
     case NODE_IF:
       return "NODE_IF";
     default:
@@ -130,6 +132,15 @@ dump_node(int indent, Node *node)
       indented_printf(indent, "%s %c\n", kind_label(node->kind), node->op);
       dump_node(indent + 1, node->lhs);
       dump_node(indent + 1, node->rhs);
+      break;
+    case NODE_UNARY:
+      if ((int)node->op >= 256) {
+        indented_printf(indent, "%s token %d\n", kind_label(node->kind), (int)node->op);
+      } else {
+        indented_printf(indent, "%s %c\n", kind_label(node->kind), node->op);
+      }
+      if (node->lhs) dump_node(indent + 1, node->lhs);
+      if (node->rhs) dump_node(indent + 1, node->rhs);
       break;
     case NODE_IF:
       indented_puts(indent, kind_label(node->kind));

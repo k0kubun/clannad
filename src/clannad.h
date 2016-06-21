@@ -21,6 +21,12 @@ enum NodeKind {
   NODE_COMPOUND_STMT,
   NODE_BINOP,
   NODE_IF,
+  NODE_UNARY,
+};
+
+enum UnaryOp {
+  INC_OP = 256,
+  DEC_OP,
 };
 
 typedef struct {
@@ -54,10 +60,10 @@ typedef struct Node {
     char *id;
     // NODE_INTEGER
     long ival;
-    // NODE_BINOP
+    // NODE_BINOP, NODE_UNARY
     struct {
       struct Node *lhs;
-      char op;
+      int op;
       struct Node *rhs;
     };
     // NODE_IF
