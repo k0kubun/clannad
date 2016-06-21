@@ -6,6 +6,7 @@
 
 typedef struct {
   LLVMModuleRef mod;
+  LLVMValueRef func;
   Dict *syms; /* Symbol table for compiling scope */
 } Compiler;
 
@@ -146,31 +147,64 @@ compile_var_decl(LLVMBuilderRef builder, Node *node)
   dict_set(compiler.syms, node->spec->id, var);
 }
 
+void compile_stmt(LLVMBuilderRef builder, Node *node);
+
+void
+compile_if(LLVMBuilderRef builder, Node *node)
+{
+  LLVMBasicBlockRef if_block   = LLVMAppendBasicBlock(compiler.func, "if");
+  LLVMBasicBlockRef else_block = LLVMAppendBasicBlock(compiler.func, "else");
+  LLVMBasicBlockRef end_block  = LLVMAppendBasicBlock(compiler.func, "end");
+
+  LLVMValueRef cond = LLVMBuildICmp(builder, LLVMIntNE,
+      compile_exp(builder, node->cond), LLVMConstInt(LLVMInt32Type(), 0, 0), "");
+  LLVMBuildCondBr(builder, cond, if_block, else_block);
+
+  LLVMPositionBuilderAtEnd(builder, if_block);
+  compile_stmt(builder, node->if_stmt);
+  LLVMBuildBr(builder, end_block);
+
+  LLVMPositionBuilderAtEnd(builder, else_block);
+  if (node->else_stmt) compile_stmt(builder, node->else_stmt);
+  LLVMBuildBr(builder, end_block);
+
+  LLVMPositionBuilderAtEnd(builder, end_block);
+}
+
 void
 compile_stmt(LLVMBuilderRef builder, Node *node)
+{
+  switch (node->kind) {
+    case NODE_BINOP:
+    case NODE_INTEGER:
+    case NODE_STRING:
+    case NODE_IDENTIFIER:
+    case NODE_FUNCALL:
+      compile_exp(builder, node);
+      break;
+    case NODE_VAR_DECL:
+      compile_var_decl(builder, node);
+      break;
+    case NODE_IF:
+      compile_if(builder, node);
+      break;
+    case NODE_RETURN:
+      compile_return(builder, node);
+      break;
+    default:
+      fprintf(stderr, "Unexpected node kind in compile_stmt: %s\n", kind_label(node->kind));
+      exit(1);
+  }
+}
+
+void
+compile_comp_stmt(LLVMBuilderRef builder, Node *node)
 {
   assert_node(node, NODE_COMPOUND_STMT);
 
   for (int i = 0; i < node->children->length; i++) {
     Node *child = (Node *)vector_get(node->children, i);
-    switch (child->kind) {
-      case NODE_BINOP:
-      case NODE_INTEGER:
-      case NODE_STRING:
-      case NODE_IDENTIFIER:
-      case NODE_FUNCALL:
-        compile_exp(builder, child);
-        break;
-      case NODE_VAR_DECL:
-        compile_var_decl(builder, child);
-        break;
-      case NODE_RETURN:
-        compile_return(builder, child);
-        break;
-      default:
-        fprintf(stderr, "Unexpected node kind in compile_stmt: %s\n", kind_label(child->kind));
-        exit(1);
-    }
+    compile_stmt(builder, child);
   }
 }
 
@@ -200,12 +234,11 @@ compile_func(Node *node)
   assert_node(node, NODE_FUNC);
 
   // declare function
-  char *name = func_name(node->spec);
   LLVMTypeRef param_types[256]; // FIXME: dynamic allocation
   for (int i = 0; i < node->spec->params->length; i++) {
     param_types[i] = compile_param_decl((Node *)vector_get(node->spec->params, i));
   }
-  LLVMValueRef func = LLVMAddFunction(compiler.mod, name,
+  compiler.func = LLVMAddFunction(compiler.mod, func_name(node->spec),
       LLVMFunctionType(compile_type(node->type), param_types, node->spec->params->length, false));
 
   // Create local scope
@@ -213,19 +246,15 @@ compile_func(Node *node)
 
   // set argument names
   LLVMValueRef params[256]; // FIXME: dynamic allocation
-  LLVMGetParams(func, params);
+  LLVMGetParams(compiler.func, params);
   for (int i = 0; i < node->spec->params->length; i++) {
     char *param_name = ((Node *)vector_get(node->spec->params, i))->spec->id;
     dict_set(compiler.syms, param_name, params[i]);
     LLVMSetValueName(params[i], param_name);
   }
 
-  // create block for function
-  char block_name[256]; // FIXME: dynamic allocation
-  sprintf(block_name, "%s_block", name);
-  LLVMBasicBlockRef block = LLVMAppendBasicBlock(func, block_name);
-
   // build block instructions
+  LLVMBasicBlockRef block = LLVMAppendBasicBlock(compiler.func, "entry");
   LLVMBuilderRef builder = LLVMCreateBuilder();
   LLVMPositionBuilderAtEnd(builder, block);
 
@@ -238,7 +267,7 @@ compile_func(Node *node)
     LLVMBuildStore(builder, val, var);
   }
 
-  compile_stmt(builder, node->stmts);
+  compile_comp_stmt(builder, node->stmts);
 }
 
 void

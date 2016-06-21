@@ -2,10 +2,10 @@ int printf(char *__format);
 
 int main() {
   int a;
-  a = 3;
+  a = 1;
   if (a)
-    printf("yes");
+    printf("yes\n");
   else
-    printf("no");
+    printf("no\n");
   return 0;
 }
