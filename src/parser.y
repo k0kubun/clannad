@@ -26,6 +26,7 @@ static Node *parse_result;
 %token <id>   tINC_OP
 %token <id>   tDEC_OP
 %token <id>   tEQ_OP
+%token <id>   tNE_OP
 
 %type <list> translation_unit
 %type <node> declaration_specifiers
@@ -278,6 +279,10 @@ equality_expression
   | equality_expression tEQ_OP relational_expression
   {
     $$ = create_node(&(Node){ NODE_BINOP, .lhs = $1, .op = EQ_OP, .rhs = $3 });
+  }
+  | equality_expression tNE_OP relational_expression
+  {
+    $$ = create_node(&(Node){ NODE_BINOP, .lhs = $1, .op = NE_OP, .rhs = $3 });
   }
   ;
 

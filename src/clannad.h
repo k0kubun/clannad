@@ -28,6 +28,7 @@ enum UnaryOp {
   INC_OP = 256,
   DEC_OP,
   EQ_OP,
+  NE_OP,
 };
 
 typedef struct {

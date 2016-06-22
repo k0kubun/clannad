@@ -110,6 +110,8 @@ compile_binop(LLVMBuilderRef builder, Node *node)
       return LLVMBuildStore(builder, compile_exp(builder, node->rhs), var);
     case EQ_OP:
       return LLVMBuildICmp(builder, LLVMIntEQ, compile_exp(builder, node->lhs), compile_exp(builder, node->rhs), "");
+    case NE_OP:
+      return LLVMBuildICmp(builder, LLVMIntNE, compile_exp(builder, node->lhs), compile_exp(builder, node->rhs), "");
     default:
       fprintf(stderr, "Unexpected binary operation: %c\n", node->op);
       exit(1);
