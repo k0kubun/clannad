@@ -1,8 +1,16 @@
 int printf(char *__format);
-int testmain();
+int test();
+
+int expect_int(int a, int b) {
+  if (a == b)
+    printf(".");
+  else
+    printf("F\nexpected %d but got %d\n", a, b);
+  return 0;
+}
 
 int main() {
-  testmain();
-  printf("OK\n");
+  test();
+  printf("\n\nFinished to run tests.\n");
   return 0;
 }

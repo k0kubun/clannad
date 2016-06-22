@@ -9,7 +9,7 @@ compile: clannad
 	cat input.c | ./clannad
 
 run: compile
-	llvm-dis main.bc && llvm-link main.ll -S -o sample/linked.ll && llc sample/linked.ll && gcc sample/linked.s
+	llvm-dis main.bc && llvm-link main.ll -S -o tmp/linked.ll && llc tmp/linked.ll && gcc tmp/linked.s
 	./a.out
 
 test: clannad test/all_test.bin
