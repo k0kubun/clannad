@@ -12,9 +12,23 @@ run: compile
 	llvm-dis main.bc && llvm-link main.ll -S -o sample/linked.ll && llc sample/linked.ll && gcc sample/linked.s
 	./a.out
 
+test: clannad test/all_test.bin
+	test/all_test.bin
+
 clannad: tmp tmp/debug.o tmp/dict.o tmp/main.o tmp/vector.o tmp/compiler.o tmp/parser.tab.o tmp/lex.yy.o
 	$(LD) tmp/debug.o tmp/dict.o tmp/main.o tmp/vector.o tmp/compiler.o tmp/parser.tab.o tmp/lex.yy.o $(LDFLAGS) -o ./clannad
 	#----------------------------------------------------------------------------------
+
+test/all_test.bin: test/all_test.bc test/test_helper.bc
+	llvm-link test/all_test.bc test/test_helper.bc -o test/all_test.ll && llc test/all_test.ll && gcc test/all_test.s -o test/all_test.bin
+
+test/all_test.bc: clannad test/all_test.c
+	cat test/all_test.c | ./clannad
+	mv main.bc $@
+
+test/test_helper.bc: clannad test/test_helper.c
+	cat test/test_helper.c | ./clannad
+	mv main.bc $@
 
 tmp:
 	mkdir -p tmp
