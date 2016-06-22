@@ -108,6 +108,8 @@ compile_binop(LLVMBuilderRef builder, Node *node)
         exit(1);
       }
       return LLVMBuildStore(builder, compile_exp(builder, node->rhs), var);
+    case EQ_OP:
+      return LLVMBuildICmp(builder, LLVMIntEQ, compile_exp(builder, node->lhs), compile_exp(builder, node->rhs), "");
     default:
       fprintf(stderr, "Unexpected binary operation: %c\n", node->op);
       exit(1);
@@ -186,8 +188,9 @@ compile_if(LLVMBuilderRef builder, Node *node)
   LLVMBasicBlockRef else_block = LLVMAppendBasicBlock(compiler.func, "else");
   LLVMBasicBlockRef end_block  = LLVMAppendBasicBlock(compiler.func, "end");
 
+  LLVMValueRef cond_exp = compile_exp(builder, node->cond);
   LLVMValueRef cond = LLVMBuildICmp(builder, LLVMIntNE,
-      compile_exp(builder, node->cond), LLVMConstInt(LLVMInt32Type(), 0, 0), "");
+      cond_exp, LLVMConstInt(LLVMTypeOf(cond_exp), 0, 0), "");
   LLVMBuildCondBr(builder, cond, if_block, else_block);
 
   LLVMPositionBuilderAtEnd(builder, if_block);

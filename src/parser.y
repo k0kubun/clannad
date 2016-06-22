@@ -25,6 +25,7 @@ static Node *parse_result;
 %token <id>   tSTRING_LITERAL
 %token <id>   tINC_OP
 %token <id>   tDEC_OP
+%token <id>   tEQ_OP
 
 %type <list> translation_unit
 %type <node> declaration_specifiers
@@ -49,6 +50,9 @@ static Node *parse_result;
 %type <node> expression
 %type <node> multiplicative_expression
 %type <node> additive_expression
+%type <node> shift_expression
+%type <node> relational_expression
+%type <node> equality_expression
 %type <node> cast_expression
 %type <node> unary_expression
 %type <node> assignment_expression
@@ -261,6 +265,22 @@ additive_expression
   }
   ;
 
+shift_expression
+  : additive_expression
+  ;
+
+relational_expression
+  : shift_expression
+  ;
+
+equality_expression
+  : relational_expression
+  | equality_expression tEQ_OP relational_expression
+  {
+    $$ = create_node(&(Node){ NODE_BINOP, .lhs = $1, .op = EQ_OP, .rhs = $3 });
+  }
+  ;
+
 multiplicative_expression
   : cast_expression
   | multiplicative_expression '*' cast_expression
@@ -312,9 +332,9 @@ argument_expression_list
   }
   ;
 
-/* FIXME: skipping many reductions before additive_expression */
+/* FIXME: skipping many reductions before equality_expression */
 assignment_expression
-  : additive_expression
+  : equality_expression
   | unary_expression '=' assignment_expression
   {
     $$ = create_node(&(Node){ NODE_BINOP, .lhs = $1, .op = '=', .rhs = $3 });
