@@ -1,0 +1,122 @@
+# Supported features
+## C89/C90
+ANSI X3.159-1989, ISO/IEC 9899:1990
+
+- 2. environment
+  - 2.1. conceptual models
+     - 2.1.2.1. translation phases
+         - [ ] source character mapping
+         - [ ] remove newline preceding backslach
+         - [ ] replace comment with one space character
+         - [ ] preprocessor
+         - [ ] escape sequence in string literal
+         - [ ] concatenate adjacent character string literal and wide string literal
+  - 2.2. environmental considerations
+     - 2.2.1. character sets
+         - [ ] 2.2.1.1. trigraph sequences
+         - [ ] 2.2.1.2. multibyte characters
+     - 2.2.2. character display semantics
+         - [ ] 2.2.4.1. translation limits
+         - [ ] 2.2.4.2. numerical limits
+- 3. language
+  - 3.1. lexical elements
+     - 3.1.1. keywords
+     - 3.1.2. identifiers
+         - [ ] 3.1.2.1. scope of identifiers
+         - [ ] 3.1.2.2. likage of identifiers
+         - [ ] 3.1.2.3. name spaces of identifiers
+         - [ ] 3.1.2.4. storage durations of objects
+         - 3.1.2.5. types
+  - 3.2. conversions
+  - 3.3. expressions
+  - 3.4. constant expressions
+  - 3.5. declarations
+  - 3.6. statements
+  - 3.7. external definitions
+  - 3.8. preprocessing directives
+     - [ ] if
+     - [ ] ifdef
+     - [ ] ifndef
+     - [ ] include
+     - [ ] define
+     - [ ] undef
+     - [ ] line
+     - [ ] error
+     - [ ] pragma
+
+## C99
+[ISO/IEC 9899:1999](http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1124.pdf)
+
+- [ ] restricted character set support via digraphs and `<iso646.h>` (originally specified in AMD1)
+- [ ] wide character library support in `<wchar.h>` and `<wctype.h>` (originally specified in AMD1)
+- [ ] more precise aliasing rules via effective type
+- [ ] restricted pointers
+- [ ] variable length arrays
+- [ ] flexible array members
+- [ ] static and type qualifiers in parameter array declarators
+- [ ] complex (and imaginary) support in `<complex.h>`
+- [ ] type-generic math macros in `<tgmath.h>`
+- [ ] the long long int type and library functions
+- [ ] increased minimum translation limits
+- [ ] additional floating-point characteristics in `<float.h>`
+- [ ] remove implicit int
+- [ ] reliable integer division
+- [ ] universal character names (\u and \U)
+- [ ] extended identifiers
+- [ ] hexadecimal floating-point constants and %a and %A printf/scanf conversion specifiers
+- [ ] compound literals
+- [ ] designated initializers
+- [ ] // comments
+- [ ] extended integer types and library functions in `<inttypes.h>` and `<stdint.h>`
+- [ ] remove implicit function declaration
+- [ ] preprocessor arithmetic done in intmax\_t/uintmax\_t
+- [ ] mixed declarations and code
+- [ ] new block scopes for selection and iteration statements
+- [ ] integer constant type rules
+- [ ] integer promotion rules
+- [ ] macros with a variable number of arguments
+- [ ] the vscanf family of functions in `<stdio.h>` and `<wchar.h>`
+- [ ] additional math library functions in `<math.h>`
+- [ ] treatment of error conditions by math library functions (math_errhandling)
+- [ ] floating-point environment access in `<fenv.h>`
+- [ ] IEC 60559 (also known as IEC 559 or IEEE arithmetic) support
+- [ ] trailing comma allowed in enum declaration
+- [ ] %lf conversion specifier allowed in printf
+- [ ] inline functions
+- [ ] the snprintf family of functions in `<stdio.h>`
+- [ ] boolean type in `<stdbool.h>`
+- [ ] idempotent type qualifiers
+- [ ] empty macro arguments
+- [ ] new structure type compatibility rules (tag compatibility)
+- [ ] additional predefined macro names
+- [ ] \_Pragma preprocessing operator
+- [ ] standard pragmas
+- [ ] `__func__` predefined identifier
+- [ ] `va_copy` macro
+- [ ] additional strftime conversion specifiers
+- [ ] LIA compatibility annex
+- [ ] deprecate ungetc at the beginning of a binary file
+- [ ] remove deprecation of aliased array parameters
+- [ ] conversion of array to pointer not limited to lvalues
+- [ ] relaxed constraints on aggregate and union initialization
+- [ ] relaxed restrictions on portable header names
+- [ ] return without expression not permitted in function that returns a value (and vice versa)
+
+## C11
+[ISO/IEC 9899:2011](http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1570.pdf)
+
+- [ ] conditional (optional) features (including some that were previously mandatory)
+- [ ] support for multiple threads of execution including an improved memory sequencing model, atomic objects, and thread-local storage (`<stdatomic.h>` and `<threads.h>`)
+- [ ] additional floating-point characteristic macros (`<float.h>`)
+- [ ] querying and specifying alignment of objects (`<stdalign.h>, `<stdlib.h>`)
+- [ ] Unicode characters and strings (`<uchar.h>`) (originally specified in ISO/IEC TR 19769:2004)
+- [ ] type-generic expressions
+- [ ] static assertions
+- [ ] anonymous structures and unions
+- [ ] no-return functions
+- [ ] macros to create complex numbers (`<complex.h>`)
+- [ ] support for opening files for exclusive access
+- [ ] removed the gets function (`<stdio.h>`)
+- [ ] added the aligned\_alloc, at\_quick\_exit, and quick\_exit functions (`<stdlib.h>`)
+- [ ] \(conditional\) support for bounds-checking interfaces (originally specified in ISO/IEC TR 24731-1:2007)
+- [ ] \(conditional\) support for analyzability
