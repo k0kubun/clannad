@@ -12,6 +12,9 @@ run: compile
 	llvm-dis main.bc && llvm-link main.ll -S -o tmp/linked.ll && llc tmp/linked.ll && gcc tmp/linked.s
 	./a.out
 
+clean:
+	git check-ignore **/* | xargs rm
+
 test: clannad test/all_test.bin
 	test/all_test.bin
 
