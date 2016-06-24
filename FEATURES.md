@@ -2,47 +2,154 @@
 ## C89/C90
 ANSI X3.159-1989, ISO/IEC 9899:1990
 
-- 2. environment
-  - 2.1. conceptual models
-     - 2.1.2.1. translation phases
+- 2 environment
+  - 2.1 conceptual models
+     - 2.1.2.1 translation phases
          - [ ] source character mapping
          - [ ] remove newline preceding backslach
          - [ ] replace comment with one space character
          - [ ] preprocessor
          - [ ] escape sequence in string literal
          - [ ] concatenate adjacent character string literal and wide string literal
-  - 2.2. environmental considerations
-     - 2.2.1. character sets
-         - [ ] 2.2.1.1. trigraph sequences
-         - [ ] 2.2.1.2. multibyte characters
-     - 2.2.2. character display semantics
-         - [ ] 2.2.4.1. translation limits
-         - [ ] 2.2.4.2. numerical limits
-- 3. language
-  - 3.1. lexical elements
-     - 3.1.1. keywords
-     - 3.1.2. identifiers
-         - [ ] 3.1.2.1. scope of identifiers
-         - [ ] 3.1.2.2. likage of identifiers
-         - [ ] 3.1.2.3. name spaces of identifiers
-         - [ ] 3.1.2.4. storage durations of objects
+  - 2.2 environmental considerations
+     - 2.2.1 character sets
+         - [ ] 2.2.1.1 trigraph sequences
+         - [ ] 2.2.1.2 multibyte characters
+     - 2.2.2 character display semantics
+         - [ ] 2.2.4.1 translation limits
+         - [ ] 2.2.4.2 numerical limits
+- 3 language
+  - 3.1 lexical elements
+     - 3.1.1 keywords
+         - [ ] auto double int struct
+         - [ ] break else long switch
+         - [ ] case enum register typedef
+         - [ ] char extern return union
+         - [ ] const float short unsigned
+         - [ ] continue for signed void
+         - [ ] default goto sizeof volatile
+         - [ ] do if static while
+     - 3.1.2 identifiers
+         - [ ] 3.1.2.1 scope of identifiers
+         - [ ] 3.1.2.2 likage of identifiers
+         - [ ] 3.1.2.3 name spaces of identifiers
+         - [ ] 3.1.2.4 storage durations of objects
          - 3.1.2.5. types
+              - object types
+                    - [ ] char
+                    - [ ] signed char
+                    - [ ] short int
+                    - [ ] int
+                    - [ ] long int
+                    - [ ] unsigned char
+                    - [ ] unsigned short int
+                    - [ ] unsigned int
+                    - [ ] unsigned long int
+                    - [ ] float
+                    - [ ] double
+                    - [ ] long double
+                    - [ ] enum
+                    - [ ] array
+                    - [ ] struct
+                    - [ ] pointer
+              - function types
+              - incomplete types
+                    - [ ] void
+                    - [ ] union
+         - [ ] 3.1.2.6 compatible type and composite type
+     - 3.1.3 constants
+         - [ ] 3.1.3.1 floating constants
+         - [ ] 3.1.3.2 integer constants
+         - [ ] 3.1.3.3 enumeration constants
+         - [ ] 3.1.3.4 character constants
+     - [ ] 3.1.4 string literals
+     - [ ] 3.1.5 operators
+     - [ ] 3.1.6 punctuators
+     - [ ] 3.1.7 header names
+     - [ ] 3.1.8 preprocessing numbers
+     - [ ] 3.1.9 comments
   - 3.2. conversions
+     - [ ] 3.2.1 arithmetic operands
+     - [ ] 3.2.2 other operands
   - 3.3. expressions
+     - [ ] 3.3.1 Primary expressions
+     - [ ] 3.3.2 Postfix operators
+         - [ ] 3.3.2.1 Array subscripting
+         - [ ] 3.3.2.2 Function calls
+         - [ ] 3.3.2.3 Structure and union members
+         - [ ] 3.3.2.4 Postfix increment and decrement operators
+     - [ ] 3.3.3 Unary operators
+         - [ ] 3.3.3.1 Prefix increment and decrement operators
+         - [ ] 3.3.3.2 Address and indirection operators
+         - [ ] 3.3.3.3 Unary arithmetic operators
+         - [ ] 3.3.3.4 The sizeof operator
+     - [ ] 3.3.4 Cast operators
+     - [ ] 3.3.5 Multiplicative operators
+     - [ ] 3.3.6 Additive operators
+     - [ ] 3.3.7 Bitwise shift operators
+     - [ ] 3.3.8 Relational operators
+     - [ ] 3.3.9 Equality operators
+     - [ ] 3.3.10 Bitwise AND operator
+     - [ ] 3.3.11 Bitwise exclusive OR operator
+     - [ ] 3.3.12 Bitwise inclusive OR operator
+     - [ ] 3.3.13 Logical AND operator
+     - [ ] 3.3.14 Logical OR operator
+     - [ ] 3.3.15 Conditional operator
+     - [ ] 3.3.16 Assignment operators
+         - [ ] 3.3.16.1 Simple assignment
+         - [ ] 3.3.16.2 Compound assignment
+     - [ ] 3.3.17 Comma operator
   - 3.4. constant expressions
+     - [ ] an arithmetic constant expression
+     - [ ] an address constant
+     - [ ] an address constant for an object type plus or minus an integral constant expression
   - 3.5. declarations
+     - [ ] 3.5.1 Storage-class specifiers
+     - [ ] 3.5.2 Type specifiers
+         - [ ] 3.5.2.1 Structure and union specifiers
+         - [ ] 3.5.2.2 Enumeration specifiers
+         - [ ] 3.5.2.3 Tags
+     - [ ] 3.5.3 Type qualifiers
+     - [ ] 3.5.4 Declarators
+         - [ ] 3.5.4.1 Pointer declarators
+         - [ ] 3.5.4.2 Array declarators
+         - [ ] 3.5.4.3 Function declarators (including prototypes)
+     - [ ] 3.5.5 Type names
+     - [ ] 3.5.6 Type definitions
+     - [ ] 3.5.7 Initialization
   - 3.6. statements
+     - [ ] 3.6.1 Labeled statements
+     - [ ] 3.6.2 Compound statement, or block
+     - [ ] 3.6.3 Expression and null statements
+     - [ ] 3.6.4 Selection statements
+         - [ ] 3.6.4.1 The if statement
+         - [ ] 3.6.4.2 The switch statement
+     - [ ] 3.6.5 Iteration statements
+         - [ ] 3.6.5.1 The while statement
+         - [ ] 3.6.5.2 The do statement
+         - [ ] 3.6.5.3 The for statement
+     - [ ] 3.6.6 Jump statements
+         - [ ] 3.6.6.1 The goto statement
+         - [ ] 3.6.6.2 The continue statement
+         - [ ] 3.6.6.3 The break statement
+         - [ ] 3.6.6.4 The return statement
   - 3.7. external definitions
+     - [ ] 3.7.1 Function definitions
+     - [ ] 3.7.2 External object definitions
   - 3.8. preprocessing directives
-     - [ ] if
-     - [ ] ifdef
-     - [ ] ifndef
-     - [ ] include
-     - [ ] define
-     - [ ] undef
-     - [ ] line
-     - [ ] error
-     - [ ] pragma
+     - [ ] 3.8.1 Conditional inclusion
+     - [ ] 3.8.2 Source file inclusion
+     - [ ] 3.8.3 Macro replacement
+         - [ ] 3.8.3.1 Argument substitution
+         - [ ] 3.8.3.2 The # operator
+         - [ ] 3.8.3.3 The ## operator
+         - [ ] 3.8.3.4 Rescanning and further replacement
+         - [ ] 3.8.3.5 Scope of macro definitions
+     - [ ] 3.8.4 Line control
+     - [ ] 3.8.5 Error directive
+     - [ ] 3.8.6 Pragma directive
+     - [ ] 3.8.7 Null directive
+     - [ ] 3.8.8 Predefined macro names
 
 ## C99
 [ISO/IEC 9899:1999](http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1124.pdf)
