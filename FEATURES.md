@@ -163,18 +163,13 @@ ANSI X3.159-1989, ISO/IEC 9899:1990
 ## C99
 [ISO/IEC 9899:1999](http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1124.pdf)
 
-- [ ] restricted character set support via digraphs and `<iso646.h>` (originally specified in AMD1)
-- [ ] wide character library support in `<wchar.h>` and `<wctype.h>` (originally specified in AMD1)
 - [ ] more precise aliasing rules via effective type
 - [ ] restricted pointers
 - [ ] variable length arrays
 - [ ] flexible array members
 - [ ] static and type qualifiers in parameter array declarators
-- [ ] complex (and imaginary) support in `<complex.h>`
-- [ ] type-generic math macros in `<tgmath.h>`
 - [ ] the long long int type and library functions
 - [ ] increased minimum translation limits
-- [ ] additional floating-point characteristics in `<float.h>`
 - [ ] remove implicit int
 - [ ] reliable integer division
 - [ ] universal character names (\u and \U)
@@ -183,7 +178,6 @@ ANSI X3.159-1989, ISO/IEC 9899:1990
 - [ ] compound literals
 - [ ] designated initializers
 - [ ] // comments
-- [ ] extended integer types and library functions in `<inttypes.h>` and `<stdint.h>`
 - [ ] remove implicit function declaration
 - [ ] preprocessor arithmetic done in intmax\_t/uintmax\_t
 - [ ] mixed declarations and code
@@ -191,16 +185,10 @@ ANSI X3.159-1989, ISO/IEC 9899:1990
 - [ ] integer constant type rules
 - [ ] integer promotion rules
 - [ ] macros with a variable number of arguments
-- [ ] the vscanf family of functions in `<stdio.h>` and `<wchar.h>`
-- [ ] additional math library functions in `<math.h>`
-- [ ] treatment of error conditions by math library functions (math_errhandling)
-- [ ] floating-point environment access in `<fenv.h>`
+- [ ] treatment of error conditions by math library functions (math\_errhandling)
 - [ ] IEC 60559 (also known as IEC 559 or IEEE arithmetic) support
 - [ ] trailing comma allowed in enum declaration
-- [ ] %lf conversion specifier allowed in printf
 - [ ] inline functions
-- [ ] the snprintf family of functions in `<stdio.h>`
-- [ ] boolean type in `<stdbool.h>`
 - [ ] idempotent type qualifiers
 - [ ] empty macro arguments
 - [ ] new structure type compatibility rules (tag compatibility)
@@ -222,17 +210,10 @@ ANSI X3.159-1989, ISO/IEC 9899:1990
 [ISO/IEC 9899:2011](http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1570.pdf)
 
 - [ ] conditional (optional) features (including some that were previously mandatory)
-- [ ] support for multiple threads of execution including an improved memory sequencing model, atomic objects, and thread-local storage (`<stdatomic.h>` and `<threads.h>`)
-- [ ] additional floating-point characteristic macros (`<float.h>`)
-- [ ] querying and specifying alignment of objects (`<stdalign.h>, `<stdlib.h>`)
-- [ ] Unicode characters and strings (`<uchar.h>`) (originally specified in ISO/IEC TR 19769:2004)
 - [ ] type-generic expressions
 - [ ] static assertions
 - [ ] anonymous structures and unions
 - [ ] no-return functions
-- [ ] macros to create complex numbers (`<complex.h>`)
 - [ ] support for opening files for exclusive access
-- [ ] removed the gets function (`<stdio.h>`)
-- [ ] added the aligned\_alloc, at\_quick\_exit, and quick\_exit functions (`<stdlib.h>`)
 - [ ] \(conditional\) support for bounds-checking interfaces (originally specified in ISO/IEC TR 24731-1:2007)
 - [ ] \(conditional\) support for analyzability
