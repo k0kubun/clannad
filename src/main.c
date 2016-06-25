@@ -15,6 +15,8 @@ main(void)
   dump_ast(ast);
 
   LLVMModuleRef mod = compile(ast);
+  optimize(mod);
+
   LLVMWriteBitcodeToFile(mod, "main.bc");
 
   return 0;

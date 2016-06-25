@@ -18,8 +18,8 @@ clean:
 test: clannad test/all_test.bin
 	test/all_test.bin
 
-clannad: tmp tmp/debug.o tmp/dict.o tmp/main.o tmp/vector.o tmp/compiler.o tmp/parser.tab.o tmp/lex.yy.o
-	$(LD) tmp/debug.o tmp/dict.o tmp/main.o tmp/vector.o tmp/compiler.o tmp/parser.tab.o tmp/lex.yy.o $(LDFLAGS) -o ./clannad
+clannad: tmp tmp/debug.o tmp/dict.o tmp/main.o tmp/vector.o tmp/compiler.o tmp/optimizer.o tmp/parser.tab.o tmp/lex.yy.o
+	$(LD) tmp/debug.o tmp/dict.o tmp/main.o tmp/vector.o tmp/compiler.o tmp/optimizer.o tmp/parser.tab.o tmp/lex.yy.o $(LDFLAGS) -o ./clannad
 	#----------------------------------------------------------------------------------
 
 test/all_test.bin: test/all_test.bc test/test_helper.bc
@@ -50,6 +50,9 @@ tmp/vector.o: src/clannad.h src/vector.c
 
 tmp/compiler.o: src/clannad.h src/compiler.c
 	$(CC) $(CFLAGS) -c src/compiler.c -o tmp/compiler.o
+
+tmp/optimizer.o: src/clannad.h src/optimizer.c
+	$(CC) $(CFLAGS) -c src/optimizer.c -o tmp/optimizer.o
 
 tmp/parser.tab.o: src/clannad.h src/parser.y
 	bison -dv --defines=./tmp/parser.tab.h -o ./tmp/parser.tab.c src/parser.y

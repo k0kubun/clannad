@@ -97,4 +97,7 @@ Vector* create_vector();
 Vector* vector_push(Vector *vec, void *ptr);
 void* vector_get(Vector *vec, int index);
 
+// optimizer.c
+void optimize(LLVMModuleRef mod);
+
 #endif
