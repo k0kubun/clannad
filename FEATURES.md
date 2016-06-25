@@ -30,8 +30,8 @@ ANSI X3.159-1989, ISO/IEC 9899:1990
          - [ ] default goto sizeof volatile
          - [ ] do static while
      - 3.1.2 identifiers
-         - [ ] 3.1.2.1 scope of identifiers
-         - [ ] 3.1.2.2 likage of identifiers
+         - [ ] 3.1.2.1 scopes of identifiers
+         - [ ] 3.1.2.2 linkages of identifiers
          - [ ] 3.1.2.3 name spaces of identifiers
          - [ ] 3.1.2.4 storage durations of objects
          - 3.1.2.5. types
