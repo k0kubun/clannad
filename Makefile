@@ -3,6 +3,7 @@ CFLAGS=-Werror `llvm-config --cflags` -I./src
 LD=clang++
 LDFLAGS=`llvm-config --cxxflags --ldflags --libs core executionengine jit interpreter analysis native bitwriter --system-libs`
 OBJS=src/debug.o src/dict.o src/main.o src/vector.o src/compiler.o src/optimizer.o src/parser.tab.o src/lex.yy.o
+.PHONY: all compile run clean test
 
 all: compile
 
@@ -34,30 +35,10 @@ test/test_helper.bc: test/test_helper.c clannad
 	cat $< | ./clannad
 	mv main.bc $@
 
-src/debug.o: src/debug.c src/clannad.h
-	$(CC) $(CFLAGS) -c $< -o $@
+$(OBJS): src/clannad.h
 
-src/dict.o: src/dict.c src/clannad.h
-	$(CC) $(CFLAGS) -c $< -o $@
+src/parser.tab.c: src/parser.y
+	bison -dv --defines=./src/parser.tab.h -o $@ $<
 
-src/main.o: src/main.c src/clannad.h
-	$(CC) $(CFLAGS) -c $< -o $@
-
-src/vector.o: src/vector.c src/clannad.h
-	$(CC) $(CFLAGS) -c $< -o $@
-
-src/compiler.o: src/compiler.c src/clannad.h
-	$(CC) $(CFLAGS) -c $< -o $@
-
-src/optimizer.o: src/optimizer.c src/clannad.h
-	$(CC) $(CFLAGS) -c $< -o $@
-
-src/parser.tab.o: src/parser.y src/clannad.h
-	bison -dv --defines=./src/parser.tab.h -o ./src/parser.tab.c $<
-	$(CC) $(CFLAGS) -c src/parser.tab.c -o $@
-
-src/lex.yy.o: src/lexer.l src/clannad.h
-	flex -o src/lex.yy.c $<
-	$(CC) $(CFLAGS) -c src/lex.yy.c -o $@
-
-.PHONY: all compile run clean test
+src/lex.yy.c: src/lexer.l
+	flex -o $@ $<
