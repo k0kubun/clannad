@@ -12,7 +12,6 @@ main(void)
     fprintf(stderr, "Error!\n");
     return 1;
   }
-  dump_ast(ast);
 
   LLVMModuleRef mod = compile(ast);
   optimize(mod);
