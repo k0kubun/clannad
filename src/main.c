@@ -6,29 +6,37 @@
 #include <llvm-c/BitWriter.h>
 #include "clannad.h"
 
+struct clannad_options {
+  bool dump_ast;
+};
+
 void
 usage(int status)
 {
   FILE *stream = status ? stderr : stdout;
   fprintf(
       stream,
-      "Usage: clannad [-j] <file>\n"
+      "Usage: clannad <file>\n"
       "\n"
-      "  -j  Execute file with JIT\n"
-      "  -h  Print this help\n"
+      "  -fdump-ast  Print AST\n"
+      "  -h          Print this help\n"
       "\n"
       );
   exit(status);
 }
 
 char*
-parse_opts(int argc, char **argv)
+parse_opts(int argc, char **argv, struct clannad_options *opts)
 {
+  *opts = (struct clannad_options){
+    .dump_ast = false,
+  };
+
   int opt;
-  while ((opt = getopt(argc, argv, "jh")) != -1) {
+  while ((opt = getopt(argc, argv, "hf:")) != -1) {
     switch (opt) {
-      case 'j':
-        printf("JIT\n");
+      case 'f':
+        opts->dump_ast = true;
         break;
       case 'h':
         usage(0);
@@ -59,7 +67,8 @@ open_file(char *filename)
 int
 main(int argc, char **argv)
 {
-  char *filename = parse_opts(argc, argv);
+  struct clannad_options opts;
+  char *filename = parse_opts(argc, argv, &opts);
   FILE *file     = open_file(filename);
 
   Node *ast;
@@ -67,6 +76,10 @@ main(int argc, char **argv)
     fprintf(stderr, "Error!\n");
     return 1;
   }
+  fclose(file);
+
+  if (opts.dump_ast)
+    dump_ast(ast);
 
   LLVMModuleRef mod = compile(ast);
   optimize(mod);

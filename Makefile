@@ -28,11 +28,11 @@ test/all_test.bin: test/all_test.bc test/test_helper.bc
 	llvm-link test/all_test.bc test/test_helper.bc -o test/all_test.ll && llc test/all_test.ll && gcc test/all_test.s -o test/all_test.bin
 
 test/all_test.bc: test/all_test.c clannad
-	cat $< | ./clannad
+	cat $< | ./clannad -
 	mv main.bc $@
 
 test/test_helper.bc: test/test_helper.c clannad
-	cat $< | ./clannad
+	cat $< | ./clannad -
 	mv main.bc $@
 
 $(OBJS): src/clannad.h
