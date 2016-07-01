@@ -403,12 +403,12 @@ yyerror(char const *str)
 }
 
 int
-parse_stdin(Node **astptr)
+parse_file(Node **astptr, FILE *file)
 {
   extern int yyparse(void);
   extern FILE *yyin;
 
-  yyin = stdin;
+  yyin = file;
   int ret = yyparse();
   *astptr = parse_result;
   return ret;

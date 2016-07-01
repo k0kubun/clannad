@@ -1,8 +1,9 @@
 #include <stdbool.h>
 #include <stdio.h>
-#include <llvm-c/BitWriter.h>
+#include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <llvm-c/BitWriter.h>
 #include "clannad.h"
 
 void
@@ -21,7 +22,7 @@ usage(int status)
 }
 
 char*
-parseopt(int argc, char **argv)
+parse_opts(int argc, char **argv)
 {
   int opt;
   while ((opt = getopt(argc, argv, "jh")) != -1) {
@@ -41,14 +42,28 @@ parseopt(int argc, char **argv)
   return argv[optind];
 }
 
+FILE*
+open_file(char *filename)
+{
+  if (!strcmp(filename, "-"))
+    return stdin;
+
+  FILE *file = fopen(filename, "r");
+  if (!file) {
+    fprintf(stderr, "Failed to open: '%s'\n", filename);
+    exit(1);
+  }
+  return file;
+}
+
 int
 main(int argc, char **argv)
 {
-  Node *ast;
-  char *filename;
+  char *filename = parse_opts(argc, argv);
+  FILE *file     = open_file(filename);
 
-  filename = parseopt(argc, argv);
-  if (parse_stdin(&ast)) {
+  Node *ast;
+  if (parse_file(&ast, file)) {
     fprintf(stderr, "Error!\n");
     return 1;
   }

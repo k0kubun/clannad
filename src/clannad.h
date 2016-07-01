@@ -1,6 +1,7 @@
 #ifndef CLANNAD_H
 #define CLANNAD_H
 
+#include <stdio.h>
 #include <llvm-c/Core.h>
 
 enum NodeKind {
@@ -82,7 +83,7 @@ void dump_ast(Node *ast);
 char* kind_label(enum NodeKind kind);
 
 // parser.y
-int parse_stdin(Node **astptr);
+int parse_file(Node **astptr, FILE *file);
 
 // compiler.c
 LLVMModuleRef compile(Node *ast);

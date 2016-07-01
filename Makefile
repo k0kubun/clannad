@@ -8,7 +8,7 @@ OBJS=src/debug.o src/dict.o src/main.o src/vector.o src/compiler.o src/optimizer
 all: compile
 
 compile: clannad
-	cat input.c | ./clannad
+	cat input.c | ./clannad -
 
 run: compile
 	llvm-dis main.bc && llvm-link main.ll -S -o src/linked.ll && llc src/linked.ll && gcc src/linked.s
