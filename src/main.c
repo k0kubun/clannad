@@ -17,10 +17,11 @@ usage(int status)
   FILE *stream = status ? stderr : stdout;
   fprintf(
       stream,
-      "Usage: clannad <file>\n"
+      "Usage: clannad [-o outfile] <file>\n"
       "\n"
       "  -o outfile  Place output in outfile\n"
       "  -fdump-ast  Print AST\n"
+      "  -c          Do not link (default)\n"
       "  -h          Print this help\n"
       "\n"
       );
@@ -59,7 +60,7 @@ parse_opts(int argc, char **argv, struct clannad_options *opts)
   while ((opt = getopt(argc, argv, "chf:o:")) != -1) {
     switch (opt) {
       case 'c':
-        break; // ignore
+        break; // ignored since linker is not integrated yet
       case 'o':
         opts->outfile = optarg;
         break;
