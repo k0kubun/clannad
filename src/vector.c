@@ -9,6 +9,7 @@ Vector*
 create_vector()
 {
   Vector *ret = malloc(sizeof(Vector));
+  ret->data   = malloc(sizeof(void *));
   ret->length = 0;
   return ret;
 }
