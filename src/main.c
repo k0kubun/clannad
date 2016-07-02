@@ -56,8 +56,10 @@ parse_opts(int argc, char **argv, struct clannad_options *opts)
   };
 
   int opt;
-  while ((opt = getopt(argc, argv, "hf:o:")) != -1) {
+  while ((opt = getopt(argc, argv, "chf:o:")) != -1) {
     switch (opt) {
+      case 'c':
+        break; // ignore
       case 'o':
         opts->outfile = optarg;
         break;
