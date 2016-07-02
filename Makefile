@@ -4,7 +4,9 @@ LDFLAGS=`llvm-config --cxxflags --ldflags --libs core executionengine jit interp
 OBJS=src/assembler.o src/debug.o src/dict.o src/main.o src/vector.o src/compiler.o \
 		 src/optimizer.o src/parser.tab.o src/lex.yy.o
 TESTS := $(patsubst %.c,%.bin,$(filter-out test/test_helper.c,$(wildcard test/*.c)))
+TESTOBJS := $(patsubst %.c,%.o,$(wildcard test/*.c))
 .PHONY: all compile run clean test
+.SECONDARY: $(TESTOBJS)
 
 all: compile
 
