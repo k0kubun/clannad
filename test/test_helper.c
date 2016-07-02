@@ -11,6 +11,5 @@ int expect_int(int a, int b) {
 
 int main() {
   test();
-  printf("\n\nFinished to run tests.\n\n");
   return 0;
 }

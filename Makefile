@@ -24,8 +24,12 @@ $(OBJS): src/clannad.h
 
 test: clannad $(TESTS)
 	@for test in $(TESTS); do \
+		echo $$test: ; \
 		./$$test || exit; \
+		echo && echo; \
 	done
+	@echo All tests have been passed!
+	@echo
 
 test/%.bin: test/%.o test/test_helper.o
 	gcc $< test/test_helper.o -o $@
