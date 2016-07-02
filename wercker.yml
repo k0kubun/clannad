@@ -1,0 +1,9 @@
+box: k0kubun/llvm35
+build:
+  steps:
+    - script:
+        name: compile
+        code: make clannad
+    - script:
+        name: test
+        code: make test
