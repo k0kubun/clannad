@@ -78,6 +78,9 @@ typedef struct Node {
   };
 } Node;
 
+// assembler.c
+void assemble(LLVMModuleRef mod, char *outfile);
+
 // debug.c
 void dump_ast(Node *ast);
 char* kind_label(enum NodeKind kind);

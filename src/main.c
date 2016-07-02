@@ -8,6 +8,7 @@
 
 struct clannad_options {
   bool dump_ast;
+  char *outfile;
 };
 
 void
@@ -18,6 +19,7 @@ usage(int status)
       stream,
       "Usage: clannad <file>\n"
       "\n"
+      "  -o outfile  Place output in outfile\n"
       "  -fdump-ast  Print AST\n"
       "  -h          Print this help\n"
       "\n"
@@ -26,15 +28,39 @@ usage(int status)
 }
 
 char*
+default_outfile(char *filename)
+{
+  if (!strcmp(filename, "-"))
+    return "a.o";
+
+  int len = strlen(filename);
+  if (filename[len-2] == '.' && filename[len-1] == 'c') {
+    char *out = (char *)malloc(sizeof(char) * (len+1));
+    strcpy(out, filename);
+    out[len-1] = 'o';
+    return out;
+  }
+
+  char *out = (char *)malloc(sizeof(char) * (len+3));
+  strcpy(out, filename);
+  strcat(out, ".o");
+  return out;
+}
+
+char*
 parse_opts(int argc, char **argv, struct clannad_options *opts)
 {
   *opts = (struct clannad_options){
     .dump_ast = false,
+    .outfile  = NULL,
   };
 
   int opt;
-  while ((opt = getopt(argc, argv, "hf:")) != -1) {
+  while ((opt = getopt(argc, argv, "hf:o:")) != -1) {
     switch (opt) {
+      case 'o':
+        opts->outfile = optarg;
+        break;
       case 'f':
         opts->dump_ast = true;
         break;
@@ -47,7 +73,12 @@ parse_opts(int argc, char **argv, struct clannad_options *opts)
 
   if (optind != argc - 1)
     usage(1);
-  return argv[optind];
+  char *filename = argv[optind];
+
+  if (!opts->outfile)
+    opts->outfile = default_outfile(filename);
+
+  return filename;
 }
 
 FILE*
@@ -84,7 +115,6 @@ main(int argc, char **argv)
   LLVMModuleRef mod = compile(ast);
   optimize(mod);
 
-  LLVMWriteBitcodeToFile(mod, "main.bc");
-
+  assemble(mod, opts.outfile);
   return 0;
 }
