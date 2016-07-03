@@ -2,9 +2,15 @@ void expect_int(int a, int b);
 void pass();
 
 int ret_func() { return 3; }
+int var_ret_func() {
+  int n;
+  n = 3;
+  return n;
+}
 
 void test_return() {
   expect_int(3, ret_func());
+  expect_int(3, var_ret_func());
   return;
 }
 

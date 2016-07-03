@@ -22,7 +22,7 @@ int shallow_else(int flag1, int flag2) {
   return n;
 }
 
-void test() {
+void test_dangling_else() {
   expect_int(0, deep_else(0, 0));
   expect_int(0, deep_else(0, 1));
   expect_int(0, shallow_else(0, 0));
@@ -32,6 +32,10 @@ void test() {
   expect_int(1, deep_else(1, 1));
   expect_int(2, shallow_else(1, 0));
   expect_int(1, shallow_else(1, 1));
+  return;
+}
 
+void test() {
+  test_dangling_else();
   return;
 }
