@@ -169,7 +169,7 @@ ANSI X3.159-1989, ISO/IEC 9899:1990
 - [ ] hexadecimal floating-point constants and %a and %A printf/scanf conversion specifiers
 - [ ] compound literals
 - [ ] designated initializers
-- [ ] // comments
+- [x] // comments
 - [ ] remove implicit function declaration
 - [ ] preprocessor arithmetic done in intmax\_t/uintmax\_t
 - [ ] mixed declarations and code

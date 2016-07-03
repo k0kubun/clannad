@@ -56,6 +56,10 @@ char* read_string_literal(char *str);
   return tSTRING_LITERAL;
 }
 
+\/\/[^\n]* {
+  // ignore
+}
+
 " "|\t|\r|\n {
   // ignore
 }
