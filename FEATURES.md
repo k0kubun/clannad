@@ -2,7 +2,7 @@
 ## C89/C90
 ANSI X3.159-1989, ISO/IEC 9899:1990
 
-#### 21 / 122 (17.2%)
+#### 22 / 122 (18.0%)
 
 - 2 environment
   - 2.1 conceptual models
@@ -66,9 +66,9 @@ ANSI X3.159-1989, ISO/IEC 9899:1990
      - [x] 3.1.4 string literals
      - 3.1.5 operators
          - [x] `++` `--` `*` `+` `-` `/` `==` `!=` `=` `%` `!`
-         - [x] `<` `>`
-         - [ ] `&` `~` `sizeof` `[ ]` `( )` `.` `->` `<<` `>>` `<=` `>=` `^` `|` `&&` `||`
-         - [ ] `*=` `/=` `%=` `+=`` `-=` `<<=` ``>>=` `&=` `^=` `|=` `,` `#` `##` `?` `:`
+         - [x] `<` `>` `<=` `>=`
+         - [ ] `&` `~` `sizeof` `[ ]` `( )` `.` `->` `<<` `>>` `^` `|` `&&` `||` `:`
+         - [ ] `*=` `/=` `%=` `+=`` `-=` `<<=` ``>>=` `&=` `^=` `|=` `,` `#` `##` `?`
      - 3.1.6 punctuators
          - [x] `;` `=`
          - [ ] `[ ]` `( )` `{ }` `*` `,` `:` `...` `#`
@@ -94,7 +94,7 @@ ANSI X3.159-1989, ISO/IEC 9899:1990
      - [x] 3.3.5 Multiplicative operators
      - [x] 3.3.6 Additive operators
      - [ ] 3.3.7 Bitwise shift operators
-     - [ ] 3.3.8 Relational operators
+     - [x] 3.3.8 Relational operators
      - [x] 3.3.9 Equality operators
      - [ ] 3.3.10 Bitwise AND operator
      - [ ] 3.3.11 Bitwise exclusive OR operator

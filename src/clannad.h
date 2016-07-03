@@ -30,6 +30,8 @@ enum UnaryOp {
   DEC_OP,
   EQ_OP,
   NE_OP,
+  LE_OP,
+  GE_OP,
 };
 
 typedef struct {

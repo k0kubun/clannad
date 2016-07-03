@@ -29,6 +29,8 @@ static Node *parse_result;
 %token <id>   tDEC_OP
 %token <id>   tEQ_OP
 %token <id>   tNE_OP
+%token <id>   tLE_OP
+%token <id>   tGE_OP
 
 %type <list> translation_unit
 %type <node> declaration_specifiers
@@ -282,6 +284,14 @@ relational_expression
   | relational_expression '>' shift_expression
   {
     $$ = create_node(&(Node){ NODE_BINOP, .lhs = $1, .op = '>', .rhs = $3 });
+  }
+  | relational_expression tLE_OP shift_expression
+  {
+    $$ = create_node(&(Node){ NODE_BINOP, .lhs = $1, .op = LE_OP, .rhs = $3 });
+  }
+  | relational_expression tGE_OP shift_expression
+  {
+    $$ = create_node(&(Node){ NODE_BINOP, .lhs = $1, .op = GE_OP, .rhs = $3 });
   }
   ;
 
