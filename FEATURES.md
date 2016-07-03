@@ -2,7 +2,7 @@
 ## C89/C90
 ANSI X3.159-1989, ISO/IEC 9899:1990
 
-#### 22 / 122 (18.0%)
+#### 23 / 115 (20.0%)
 
 - 2 environment
   - 2.1 conceptual models
@@ -15,8 +15,8 @@ ANSI X3.159-1989, ISO/IEC 9899:1990
          - [ ] concatenate adjacent character string literal and wide string literal
   - 2.2 environmental considerations
      - 2.2.1 character sets
-         - [ ] 2.2.1.1 trigraph sequences
-         - [ ] 2.2.1.2 multibyte characters
+         - 2.2.1.1 trigraph sequences (not supported)
+         - [x] 2.2.1.2 multibyte characters
 - 3 language
   - 3.1 lexical elements
      - 3.1.1 keywords
@@ -36,18 +36,11 @@ ANSI X3.159-1989, ISO/IEC 9899:1990
          - [ ] 3.1.2.4 storage durations of objects
          - 3.1.2.5. types
               - object types
-                    - [ ] char
-                    - [ ] signed char
-                    - [ ] short int
                     - [x] int
-                    - [ ] long int
-                    - [ ] unsigned char
-                    - [ ] unsigned short int
-                    - [ ] unsigned int
-                    - [ ] unsigned long int
-                    - [ ] float
-                    - [ ] double
-                    - [ ] long double
+                    - [ ] unsigned int, short int, long int
+                    - [ ] unsigned short int, unsigned long int
+                    - [ ] char, signed char, unsigned char
+                    - [ ] float, double, long double
                     - [ ] enum
                     - [ ] array
                     - [ ] struct

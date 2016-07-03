@@ -6,7 +6,14 @@ void test_newline() {
   return;
 }
 
+void test_multibyte_string() {
+  "クラナド";
+  pass();
+  return;
+}
+
 void test() {
   test_newline();
+  test_multibyte_string();
   return;
 }
