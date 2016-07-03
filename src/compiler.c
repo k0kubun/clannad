@@ -55,7 +55,11 @@ void
 compile_return(LLVMBuilderRef builder, Node *node)
 {
   assert_node(node, NODE_RETURN);
-  LLVMBuildRet(builder, compile_exp(builder, node->param));
+  if (node->param) {
+    LLVMBuildRet(builder, compile_exp(builder, node->param));
+  } else {
+    LLVMBuildRetVoid(builder);
+  }
 }
 
 LLVMValueRef
@@ -162,10 +166,12 @@ compile_type(Node *node)
 {
   assert_node(node, NODE_TYPE);
 
-  if (strcmp(node->id, "int") == 0) {
+  if (!strcmp(node->id, "int")) {
     return LLVMInt32Type();
-  } else if (strcmp(node->id, "char") == 0) {
+  } else if (!strcmp(node->id, "char")) {
     return LLVMInt8Type();
+  } else if (!strcmp(node->id, "void")) {
+    return LLVMVoidType();
   } else {
     fprintf(stderr, "Unexpected id in compile_type: %s\n", node->id);
     exit(1);

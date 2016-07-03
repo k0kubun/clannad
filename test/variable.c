@@ -1,14 +1,14 @@
-int printf(char *__format);
+void pass();
 
-int test_variable() {
+void test_variable() {
   int n;
   n = 10;
   n = n + 3;
-  printf(".");
-  return 0;
+  pass();
+  return;
 }
 
-int test() {
+void test() {
   test_variable();
-  return 0;
+  return;
 }

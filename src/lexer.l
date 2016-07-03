@@ -10,6 +10,7 @@ char* read_string_literal(char *str);
 
 "int"    return tINT;
 "char"   return tCHAR;
+"void"   return tVOID;
 "if"     return tIF;
 "else"   return tELSE;
 "return" return tRETURN;

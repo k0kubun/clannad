@@ -1,4 +1,4 @@
-int expect_int(int a, int b);
+void expect_int(int a, int b);
 
 int deep_else(int flag1, int flag2) {
   int n;
@@ -22,7 +22,7 @@ int shallow_else(int flag1, int flag2) {
   return n;
 }
 
-int test() {
+void test() {
   expect_int(0, deep_else(0, 0));
   expect_int(0, deep_else(0, 1));
   expect_int(0, shallow_else(0, 0));
@@ -33,5 +33,5 @@ int test() {
   expect_int(2, shallow_else(1, 0));
   expect_int(1, shallow_else(1, 1));
 
-  return 0;
+  return;
 }

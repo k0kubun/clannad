@@ -1,12 +1,12 @@
-int printf(char *__format);
+void pass();
 
-int test_newline() {
+void test_newline() {
   "Hello world\n";
-  printf(".");
-  return 0;
+  pass();
+  return;
 }
 
-int test() {
+void test() {
   test_newline();
-  return 0;
+  return;
 }

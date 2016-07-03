@@ -17,6 +17,7 @@ static Node *parse_result;
 
 %token <id>   tINT
 %token <id>   tCHAR
+%token <id>   tVOID
 %token <id>   tIF
 %token <id>   tELSE
 %token <id>   tRETURN
@@ -381,6 +382,10 @@ type_specifier
   | tCHAR
   {
     $$ = "char";
+  }
+  | tVOID
+  {
+    $$ = "void";
   }
   ;
 
