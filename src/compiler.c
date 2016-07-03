@@ -105,6 +105,8 @@ compile_binop(LLVMBuilderRef builder, Node *node)
       return LLVMBuildMul(builder, compile_exp(builder, node->lhs), compile_exp(builder, node->rhs), "");
     case '/':
       return LLVMBuildSDiv(builder, compile_exp(builder, node->lhs), compile_exp(builder, node->rhs), "");
+    case '%':
+      return LLVMBuildSRem(builder, compile_exp(builder, node->lhs), compile_exp(builder, node->rhs), "");
     case '=':
       var = dict_get(compiler.syms, node->lhs->id);
       if (var == NULL) {

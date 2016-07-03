@@ -2,7 +2,7 @@
 ## C89/C90
 ANSI X3.159-1989, ISO/IEC 9899:1990
 
-#### 18 / 122 (14.7%)
+#### 19 / 122 (15.6%)
 
 - 2 environment
   - 2.1 conceptual models
@@ -21,12 +21,12 @@ ANSI X3.159-1989, ISO/IEC 9899:1990
   - 3.1 lexical elements
      - 3.1.1 keywords
          - [x] int char if else return
-         - [ ] auto double struct
-         - [ ] break long switch
+         - [x] void
+         - [ ] break long switch auto
          - [ ] case enum register typedef
-         - [ ] extern union
+         - [ ] extern union double
          - [ ] const float short unsigned
-         - [ ] continue for signed void
+         - [ ] continue for signed struct
          - [ ] default goto sizeof volatile
          - [ ] do static while
      - 3.1.2 identifiers
@@ -65,13 +65,13 @@ ANSI X3.159-1989, ISO/IEC 9899:1990
          - [ ] 3.1.3.4 character constants
      - [x] 3.1.4 string literals
      - 3.1.5 operators
-         - [x] `++` `--` `*` `+` `-` `/` `==` `!=`
-         - [ ] `%` `<<` `>>` `<` `>` `<=` `>=` `^` `|` `&&` `||` `?` `:`
+         - [x] `++` `--` `*` `+` `-` `/` `==` `!=` `=` `%`
+         - [ ] `<<` `>>` `<` `>` `<=` `>=` `^` `|` `&&` `||` `?` `:`
          - [ ] `&` `~` `!` `sizeof` `[ ]` `( )` `.` `->`
-         - [ ] `=` `*=` `/=` `%=` `+=`` `-=` `<<=` ``>>=` `&=` `^=` `|=` `,` `#` `##`
+         - [ ] `*=` `/=` `%=` `+=`` `-=` `<<=` ``>>=` `&=` `^=` `|=` `,` `#` `##`
      - 3.1.6 punctuators
-         - [x] `;`
-         - [ ] `[ ]` `( )` `{ }` `*` `,` `:` `=` `...` `#`
+         - [x] `;` `=`
+         - [ ] `[ ]` `( )` `{ }` `*` `,` `:` `...` `#`
      - [ ] 3.1.7 header names
      - [ ] 3.1.8 preprocessing numbers
      - [ ] 3.1.9 comments

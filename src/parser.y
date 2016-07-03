@@ -297,6 +297,10 @@ multiplicative_expression
   {
     $$ = create_node(&(Node){ NODE_BINOP, .lhs = $1, .op = '/', .rhs = $3 });
   }
+  | multiplicative_expression '%' cast_expression
+  {
+    $$ = create_node(&(Node){ NODE_BINOP, .lhs = $1, .op = '%', .rhs = $3 });
+  }
   ;
 
 cast_expression
