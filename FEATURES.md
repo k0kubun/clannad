@@ -2,7 +2,7 @@
 ## C89/C90
 ANSI X3.159-1989, ISO/IEC 9899:1990
 
-#### 24 / 114 (21.1%)
+#### 25 / 114 (21.9%)
 
 - 2 environment
   - 2.1 conceptual models
@@ -66,7 +66,7 @@ ANSI X3.159-1989, ISO/IEC 9899:1990
          - [ ] `[ ]` `( )` `{ }` `*` `,` `:` `...` `#`
      - [ ] 3.1.7 header names
      - [ ] 3.1.8 preprocessing numbers
-     - [ ] 3.1.9 comments
+     - [x] 3.1.9 comments
   - 3.2. conversions
      - [ ] 3.2.1 arithmetic operands
      - [ ] 3.2.2 other operands

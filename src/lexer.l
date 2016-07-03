@@ -6,7 +6,19 @@ char* copy_string(char *str);
 char* read_string_literal(char *str);
 %}
 
+%s COMMENT
+
 %%
+
+<INITIAL>{
+  "/*" BEGIN(COMMENT);
+}
+<COMMENT>{
+  "*/"    BEGIN(INITIAL);
+  [^*\n]+ // eat comment in chunks
+  "*"     // eat the lone star
+  \n      yylineno++;
+}
 
 "int"    return tINT;
 "char"   return tCHAR;
