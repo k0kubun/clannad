@@ -13,6 +13,7 @@ static Node *parse_result;
   char *id;
   long ival;
   Vector *list;
+  char ch;
 }
 
 %token <id>   tINT
@@ -57,6 +58,7 @@ static Node *parse_result;
 %type <node> equality_expression
 %type <node> cast_expression
 %type <node> unary_expression
+%type <ch>   unary_operator
 %type <node> assignment_expression
 %type <node> postfix_expression
 %type <list> argument_expression_list
@@ -309,7 +311,17 @@ cast_expression
 
 unary_expression
   : postfix_expression
+  | unary_operator cast_expression
+  {
+    $$ = create_node(&(Node){ NODE_UNARY, .lhs = $2, .op = $1, .rhs = NULL });
+  }
   ;
+
+unary_operator
+  : '!'
+  {
+    $$ = '!';
+  }
 
 postfix_expression
   : primary_expression

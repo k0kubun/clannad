@@ -82,11 +82,15 @@ compile_unary(LLVMBuilderRef builder, Node *node)
       var = dict_get(compiler.syms, target->id);
       LLVMBuildStore(builder, LLVMBuildSub(builder, result, LLVMConstInt(LLVMInt32Type(), 1, 0), ""), var);
       break;
+    case '!':
+      result = LLVMBuildICmp(builder, LLVMIntEQ, result, LLVMConstInt(LLVMTypeOf(result), 0, 0), "");
+      break;
     default:
       fprintf(stderr, "Unexpected operator in compile_unary: %d\n", (int)node->op);
       exit(1);
   }
   // TODO: check whether result is correct or not to return
+  // Increment and decrement should be done in another layer
   return result;
 }
 

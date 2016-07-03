@@ -2,7 +2,7 @@
 ## C89/C90
 ANSI X3.159-1989, ISO/IEC 9899:1990
 
-#### 19 / 122 (15.6%)
+#### 20 / 122 (16.4%)
 
 - 2 environment
   - 2.1 conceptual models
@@ -55,7 +55,7 @@ ANSI X3.159-1989, ISO/IEC 9899:1990
               - function types
                     - [ ] derived functions
               - incomplete types
-                    - [ ] void
+                    - [x] void
                     - [ ] union
          - [ ] 3.1.2.6 compatible type and composite type
      - 3.1.3 constants
@@ -65,9 +65,9 @@ ANSI X3.159-1989, ISO/IEC 9899:1990
          - [ ] 3.1.3.4 character constants
      - [x] 3.1.4 string literals
      - 3.1.5 operators
-         - [x] `++` `--` `*` `+` `-` `/` `==` `!=` `=` `%`
+         - [x] `++` `--` `*` `+` `-` `/` `==` `!=` `=` `%` `!`
          - [ ] `<<` `>>` `<` `>` `<=` `>=` `^` `|` `&&` `||` `?` `:`
-         - [ ] `&` `~` `!` `sizeof` `[ ]` `( )` `.` `->`
+         - [ ] `&` `~` `sizeof` `[ ]` `( )` `.` `->`
          - [ ] `*=` `/=` `%=` `+=`` `-=` `<<=` ``>>=` `&=` `^=` `|=` `,` `#` `##`
      - 3.1.6 punctuators
          - [x] `;` `=`

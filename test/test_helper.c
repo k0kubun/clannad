@@ -1,8 +1,8 @@
-int printf(char *__format);
+int printf(char *__format, int a, int b);
 void test();
 
 void pass() {
-  printf(".");
+  printf(".", 0, 0);
   return;
 }
 
