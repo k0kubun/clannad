@@ -31,6 +31,7 @@ static Node *parse_result;
 %token <id>   tNE_OP
 %token <id>   tLE_OP
 %token <id>   tGE_OP
+%token <id>   tSIZEOF
 
 %type <list> translation_unit
 %type <node> declaration_specifiers
@@ -61,6 +62,8 @@ static Node *parse_result;
 %type <node> cast_expression
 %type <node> unary_expression
 %type <ch>   unary_operator
+%type <node> type_name
+%type <node> specifier_qualifier_list
 %type <node> assignment_expression
 %type <node> postfix_expression
 %type <list> argument_expression_list
@@ -332,6 +335,21 @@ unary_expression
   | unary_operator cast_expression
   {
     $$ = create_node(&(Node){ NODE_UNARY, .lhs = $2, .op = $1, .rhs = NULL });
+  }
+  | tSIZEOF '(' type_name ')'
+  {
+    $$ = create_node(&(Node){ NODE_UNARY, .lhs = $3, .op = SIZEOF, .rhs = NULL });
+  }
+  ;
+
+type_name
+  : specifier_qualifier_list
+  ;
+
+specifier_qualifier_list
+  : type_specifier
+  {
+    $$ = create_node(&(Node){ NODE_TYPE, .id = $1 });
   }
   ;
 

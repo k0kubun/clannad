@@ -2,7 +2,7 @@
 ## C89/C90
 ANSI X3.159-1989, ISO/IEC 9899:1990
 
-#### 23 / 115 (20.0%)
+#### 24 / 114 (21.1%)
 
 - 2 environment
   - 2.1 conceptual models
@@ -21,14 +21,13 @@ ANSI X3.159-1989, ISO/IEC 9899:1990
   - 3.1 lexical elements
      - 3.1.1 keywords
          - [x] int char if else return
-         - [x] void
-         - [ ] break long switch auto
+         - [x] void sizeof
+         - [ ] break long switch auto do
          - [ ] case enum register typedef
-         - [ ] extern union double
+         - [ ] extern union double static
          - [ ] const float short unsigned
          - [ ] continue for signed struct
-         - [ ] default goto sizeof volatile
-         - [ ] do static while
+         - [ ] default goto volatile while
      - 3.1.2 identifiers
          - [ ] 3.1.2.1 scopes of identifiers
          - [ ] 3.1.2.2 linkages of identifiers
@@ -59,8 +58,8 @@ ANSI X3.159-1989, ISO/IEC 9899:1990
      - [x] 3.1.4 string literals
      - 3.1.5 operators
          - [x] `++` `--` `*` `+` `-` `/` `==` `!=` `=` `%` `!`
-         - [x] `<` `>` `<=` `>=`
-         - [ ] `&` `~` `sizeof` `[ ]` `( )` `.` `->` `<<` `>>` `^` `|` `&&` `||` `:`
+         - [x] `<` `>` `<=` `>=` `sizeof`
+         - [ ] `&` `~` `[ ]` `( )` `.` `->` `<<` `>>` `^` `|` `&&` `||` `:`
          - [ ] `*=` `/=` `%=` `+=`` `-=` `<<=` ``>>=` `&=` `^=` `|=` `,` `#` `##` `?`
      - 3.1.6 punctuators
          - [x] `;` `=`
@@ -82,7 +81,7 @@ ANSI X3.159-1989, ISO/IEC 9899:1990
          - [ ] 3.3.3.1 Prefix increment and decrement operators
          - [ ] 3.3.3.2 Address and indirection operators
          - [ ] 3.3.3.3 Unary arithmetic operators
-         - [ ] 3.3.3.4 The sizeof operator
+         - [x] 3.3.3.4 The sizeof operator
      - [ ] 3.3.4 Cast operators
      - [x] 3.3.5 Multiplicative operators
      - [x] 3.3.6 Additive operators

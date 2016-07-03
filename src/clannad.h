@@ -32,6 +32,7 @@ enum UnaryOp {
   NE_OP,
   LE_OP,
   GE_OP,
+  SIZEOF,
 };
 
 typedef struct {

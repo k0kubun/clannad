@@ -14,6 +14,7 @@ char* read_string_literal(char *str);
 "if"     return tIF;
 "else"   return tELSE;
 "return" return tRETURN;
+"sizeof" return tSIZEOF;
 "++"     return tINC_OP;
 "--"     return tDEC_OP;
 "=="     return tEQ_OP;

@@ -62,12 +62,32 @@ compile_return(LLVMBuilderRef builder, Node *node)
   }
 }
 
+LLVMTypeRef
+compile_type(Node *node)
+{
+  assert_node(node, NODE_TYPE);
+
+  if (!strcmp(node->id, "int")) {
+    return LLVMInt32Type();
+  } else if (!strcmp(node->id, "char")) {
+    return LLVMInt8Type();
+  } else if (!strcmp(node->id, "void")) {
+    return LLVMVoidType();
+  } else {
+    fprintf(stderr, "Unexpected id in compile_type: %s\n", node->id);
+    exit(1);
+  }
+}
+
 LLVMValueRef
 compile_unary(LLVMBuilderRef builder, Node *node)
 {
   Node *target;
   if (node->lhs) target = node->lhs;
   if (node->rhs) target = node->rhs;
+
+  if (node->op == SIZEOF)
+    return LLVMConstIntCast(LLVMSizeOf(compile_type(target)), LLVMInt32Type(), 0);
 
   LLVMValueRef var;
   LLVMValueRef result = compile_exp(builder, target);
@@ -172,23 +192,6 @@ compile_exp(LLVMBuilderRef builder, Node *node)
     default:
       fprintf(stderr, "Unexpected node in compile_exp: %s\n", kind_label(node->kind));
       exit(1);
-  }
-}
-
-LLVMTypeRef
-compile_type(Node *node)
-{
-  assert_node(node, NODE_TYPE);
-
-  if (!strcmp(node->id, "int")) {
-    return LLVMInt32Type();
-  } else if (!strcmp(node->id, "char")) {
-    return LLVMInt8Type();
-  } else if (!strcmp(node->id, "void")) {
-    return LLVMVoidType();
-  } else {
-    fprintf(stderr, "Unexpected id in compile_type: %s\n", node->id);
-    exit(1);
   }
 }
 
