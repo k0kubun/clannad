@@ -69,6 +69,9 @@ static Node *parse_result;
 %type <node> assignment_expression
 %type <node> logical_or_expression
 %type <node> logical_and_expression
+%type <node> and_expression
+%type <node> inclusive_or_expression
+%type <node> exclusive_or_expression
 %type <node> postfix_expression
 %type <list> argument_expression_list
 %type <node> primary_expression
@@ -410,15 +413,37 @@ logical_or_expression
   }
   ;
 
-/* FIXME: skipping many reductions before equality_expression */
 logical_and_expression
-  : equality_expression
-  | logical_and_expression tAND_OP equality_expression
+  : inclusive_or_expression
+  | logical_and_expression tAND_OP inclusive_or_expression
   {
     $$ = create_node(&(Node){ NODE_BINOP, .lhs = $1, .op = AND_OP, .rhs = $3 });
   }
   ;
 
+and_expression
+  : equality_expression
+  | and_expression '&' equality_expression
+  {
+    $$ = create_node(&(Node){ NODE_BINOP, .lhs = $1, .op = '&', .rhs = $3 });
+  }
+  ;
+
+exclusive_or_expression
+  : and_expression
+  | exclusive_or_expression '^' and_expression
+  {
+    $$ = create_node(&(Node){ NODE_BINOP, .lhs = $1, .op = '^', .rhs = $3 });
+  }
+  ;
+
+inclusive_or_expression
+  : exclusive_or_expression
+  | inclusive_or_expression '|' exclusive_or_expression
+  {
+    $$ = create_node(&(Node){ NODE_BINOP, .lhs = $1, .op = '|', .rhs = $3 });
+  }
+  ;
 
 primary_expression
   : tIDENTIFIER

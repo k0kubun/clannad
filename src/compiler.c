@@ -142,6 +142,12 @@ compile_binop(LLVMBuilderRef builder, Node *node)
       return LLVMBuildICmp(builder, LLVMIntSLT, compile_exp(builder, node->lhs), compile_exp(builder, node->rhs), "");
     case '>':
       return LLVMBuildICmp(builder, LLVMIntSGT, compile_exp(builder, node->lhs), compile_exp(builder, node->rhs), "");
+    case '&':
+      return LLVMBuildAnd(builder, compile_exp(builder, node->lhs), compile_exp(builder, node->rhs), "");
+    case '|':
+      return LLVMBuildOr(builder, compile_exp(builder, node->lhs), compile_exp(builder, node->rhs), "");
+    case '^':
+      return LLVMBuildXor(builder, compile_exp(builder, node->lhs), compile_exp(builder, node->rhs), "");
     case LE_OP:
       return LLVMBuildICmp(builder, LLVMIntSLE, compile_exp(builder, node->lhs), compile_exp(builder, node->rhs), "");
     case GE_OP:

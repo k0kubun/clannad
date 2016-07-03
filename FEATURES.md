@@ -2,7 +2,7 @@
 ## C89/C90
 ANSI X3.159-1989, ISO/IEC 9899:1990
 
-#### 27 / 114 (23.7%)
+#### 30 / 113 (26.3%)
 
 - 2 environment
   - 2.1 conceptual models
@@ -36,9 +36,8 @@ ANSI X3.159-1989, ISO/IEC 9899:1990
          - 3.1.2.5. types
               - object types
                     - [x] int
-                    - [ ] unsigned int, short int, long int
-                    - [ ] unsigned short int, unsigned long int
-                    - [ ] char, signed char, unsigned char
+                    - [ ] unsigned int, short int, long int, unsigned short int
+                    - [ ] char, signed char, unsigned char, unsigned long int
                     - [ ] float, double, long double
                     - [ ] enum
                     - [ ] array
@@ -58,8 +57,8 @@ ANSI X3.159-1989, ISO/IEC 9899:1990
      - [x] 3.1.4 string literals
      - 3.1.5 operators
          - [x] `++` `--` `*` `+` `-` `/` `%` `==` `!=` `sizeof`
-         - [x] `<` `>` `<=` `>=` `!` `=` `&&` `||`
-         - [ ] `&` `~` `[ ]` `( )` `.` `->` `<<` `>>` `^` `|` `:` `##` `?`
+         - [x] `<` `>` `<=` `>=` `!` `=` `&&` `||`, `&`, `|` `^`
+         - [ ] `~` `[ ]` `( )` `.` `->` `<<` `>>` `:` `##` `?`
          - [ ] `*=` `/=` `%=` `+=` `-=` `<<=` `>>=` `&=` `^=` `|=` `,` `#`
      - 3.1.6 punctuators
          - [x] `;` `=`
@@ -88,9 +87,9 @@ ANSI X3.159-1989, ISO/IEC 9899:1990
      - [ ] 3.3.7 Bitwise shift operators
      - [x] 3.3.8 Relational operators
      - [x] 3.3.9 Equality operators
-     - [ ] 3.3.10 Bitwise AND operator
-     - [ ] 3.3.11 Bitwise exclusive OR operator
-     - [ ] 3.3.12 Bitwise inclusive OR operator
+     - [x] 3.3.10 Bitwise AND operator
+     - [x] 3.3.11 Bitwise exclusive OR operator
+     - [x] 3.3.12 Bitwise inclusive OR operator
      - [x] 3.3.13 Logical AND operator
      - [x] 3.3.14 Logical OR operator
      - [ ] 3.3.15 Conditional operator
