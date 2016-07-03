@@ -25,17 +25,6 @@ void test_not() {
   return;
 }
 
-void test_equal() {
-  int n;
-  n = 1;
-  if (n == 1)
-    n = 2;
-  else
-    n = 3;
-  expect_int(2, n);
-  return;
-}
-
 int factorial(int n) {
   int ret;
   if (n == 1)
@@ -53,7 +42,6 @@ void test_factorial() {
 void test() {
   test_arithmetic();
   test_not();
-  test_equal();
   test_factorial();
   return;
 }

@@ -118,6 +118,10 @@ compile_binop(LLVMBuilderRef builder, Node *node)
         exit(1);
       }
       return LLVMBuildStore(builder, compile_exp(builder, node->rhs), var);
+    case '<':
+      return LLVMBuildICmp(builder, LLVMIntSLT, compile_exp(builder, node->lhs), compile_exp(builder, node->rhs), "");
+    case '>':
+      return LLVMBuildICmp(builder, LLVMIntSGT, compile_exp(builder, node->lhs), compile_exp(builder, node->rhs), "");
     case EQ_OP:
       return LLVMBuildICmp(builder, LLVMIntEQ, compile_exp(builder, node->lhs), compile_exp(builder, node->rhs), "");
     case NE_OP:
