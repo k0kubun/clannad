@@ -63,6 +63,20 @@ void test_le() {
   return;
 }
 
+void test_and_op() {
+  expect_int(1, 2 && 2);
+  expect_int(0, 2 && 0);
+  expect_int(0, 0 && 0);
+  return;
+}
+
+void test_or_op() {
+  expect_int(1, 2 || 2);
+  expect_int(1, 2 || 0);
+  expect_int(0, 0 || 0);
+  return;
+}
+
 void test() {
   test_equal();
   test_gt();

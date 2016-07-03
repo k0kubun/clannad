@@ -31,6 +31,8 @@ static Node *parse_result;
 %token <id>   tNE_OP
 %token <id>   tLE_OP
 %token <id>   tGE_OP
+%token <id>   tAND_OP
+%token <id>   tOR_OP
 %token <id>   tSIZEOF
 
 %type <list> translation_unit
@@ -65,6 +67,8 @@ static Node *parse_result;
 %type <node> type_name
 %type <node> specifier_qualifier_list
 %type <node> assignment_expression
+%type <node> logical_or_expression
+%type <node> logical_and_expression
 %type <node> postfix_expression
 %type <list> argument_expression_list
 %type <node> primary_expression
@@ -390,14 +394,31 @@ argument_expression_list
   }
   ;
 
-/* FIXME: skipping many reductions before equality_expression */
 assignment_expression
-  : equality_expression
+  : logical_or_expression
   | unary_expression '=' assignment_expression
   {
     $$ = create_node(&(Node){ NODE_BINOP, .lhs = $1, .op = '=', .rhs = $3 });
   }
   ;
+
+logical_or_expression
+  : logical_and_expression
+  | logical_or_expression tOR_OP logical_and_expression
+  {
+    $$ = create_node(&(Node){ NODE_BINOP, .lhs = $1, .op = OR_OP, .rhs = $3 });
+  }
+  ;
+
+/* FIXME: skipping many reductions before equality_expression */
+logical_and_expression
+  : equality_expression
+  | logical_and_expression tAND_OP equality_expression
+  {
+    $$ = create_node(&(Node){ NODE_BINOP, .lhs = $1, .op = AND_OP, .rhs = $3 });
+  }
+  ;
+
 
 primary_expression
   : tIDENTIFIER

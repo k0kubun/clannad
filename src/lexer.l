@@ -33,6 +33,8 @@ char* read_string_literal(char *str);
 "!="     return tNE_OP;
 "<="     return tLE_OP;
 ">="     return tGE_OP;
+"&&"     return tAND_OP;
+"||"     return tOR_OP;
 
 [a-zA-Z_][a-zA-Z0-9_]* {
   yylval.id = copy_string(yytext);

@@ -2,7 +2,7 @@
 ## C89/C90
 ANSI X3.159-1989, ISO/IEC 9899:1990
 
-#### 25 / 114 (21.9%)
+#### 27 / 114 (23.7%)
 
 - 2 environment
   - 2.1 conceptual models
@@ -57,10 +57,10 @@ ANSI X3.159-1989, ISO/IEC 9899:1990
          - [ ] 3.1.3.4 character constants
      - [x] 3.1.4 string literals
      - 3.1.5 operators
-         - [x] `++` `--` `*` `+` `-` `/` `==` `!=` `=` `%` `!`
-         - [x] `<` `>` `<=` `>=` `sizeof`
-         - [ ] `&` `~` `[ ]` `( )` `.` `->` `<<` `>>` `^` `|` `&&` `||` `:`
-         - [ ] `*=` `/=` `%=` `+=`` `-=` `<<=` ``>>=` `&=` `^=` `|=` `,` `#` `##` `?`
+         - [x] `++` `--` `*` `+` `-` `/` `%` `==` `!=` `sizeof`
+         - [x] `<` `>` `<=` `>=` `!` `=` `&&` `||`
+         - [ ] `&` `~` `[ ]` `( )` `.` `->` `<<` `>>` `^` `|` `:` `##` `?`
+         - [ ] `*=` `/=` `%=` `+=` `-=` `<<=` `>>=` `&=` `^=` `|=` `,` `#`
      - 3.1.6 punctuators
          - [x] `;` `=`
          - [ ] `[ ]` `( )` `{ }` `*` `,` `:` `...` `#`
@@ -91,8 +91,8 @@ ANSI X3.159-1989, ISO/IEC 9899:1990
      - [ ] 3.3.10 Bitwise AND operator
      - [ ] 3.3.11 Bitwise exclusive OR operator
      - [ ] 3.3.12 Bitwise inclusive OR operator
-     - [ ] 3.3.13 Logical AND operator
-     - [ ] 3.3.14 Logical OR operator
+     - [x] 3.3.13 Logical AND operator
+     - [x] 3.3.14 Logical OR operator
      - [ ] 3.3.15 Conditional operator
      - 3.3.16 Assignment operators
          - [x] 3.3.16.1 Simple assignment

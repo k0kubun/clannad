@@ -25,14 +25,16 @@ enum NodeKind {
   NODE_UNARY,
 };
 
-enum UnaryOp {
-  INC_OP = 256,
+enum DoubleCharOp {
+  SIZEOF = 256,
+  INC_OP,
   DEC_OP,
   EQ_OP,
   NE_OP,
   LE_OP,
   GE_OP,
-  SIZEOF,
+  AND_OP,
+  OR_OP,
 };
 
 typedef struct {
