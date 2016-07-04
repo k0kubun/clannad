@@ -46,6 +46,13 @@ char* read_string_literal(char *str);
   return tINTEGER;
 }
 
+(u|U|L)?'[^']' {
+  // FIXME: u|U|L is not considered, `+` is removed and {ES} is not lexed
+  char* str = read_string_literal(yytext);
+  yylval.ival = str[0];
+  return tINTEGER;
+}
+
 0 {
   // TODO: support all octal digits
   yylval.ival = 0;

@@ -12,8 +12,15 @@ void test_multibyte_string() {
   return;
 }
 
+void test_char() {
+  char ch;
+  ch = 'a';
+  return;
+}
+
 void test() {
   test_newline();
   test_multibyte_string();
+  test_char();
   return;
 }

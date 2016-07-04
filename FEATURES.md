@@ -2,7 +2,7 @@
 ## C89/C90
 ANSI X3.159-1989, ISO/IEC 9899:1990
 
-#### 30 / 113 (26.3%)
+#### 31 / 113 (27.4%)
 
 - 2 environment
   - 2.1 conceptual models
@@ -35,9 +35,9 @@ ANSI X3.159-1989, ISO/IEC 9899:1990
          - [ ] 3.1.2.4 storage durations of objects
          - 3.1.2.5. types
               - object types
-                    - [x] int
+                    - [x] int, char
                     - [ ] unsigned int, short int, long int, unsigned short int
-                    - [ ] char, signed char, unsigned char, unsigned long int
+                    - [ ] signed char, unsigned char, unsigned long int
                     - [ ] float, double, long double
                     - [ ] enum
                     - [ ] array
@@ -53,7 +53,7 @@ ANSI X3.159-1989, ISO/IEC 9899:1990
          - [ ] 3.1.3.1 floating constants
          - [x] 3.1.3.2 integer constants
          - [ ] 3.1.3.3 enumeration constants
-         - [ ] 3.1.3.4 character constants
+         - [x] 3.1.3.4 character constants
      - [x] 3.1.4 string literals
      - 3.1.5 operators
          - [x] `++` `--` `*` `+` `-` `/` `%` `==` `!=` `sizeof`
