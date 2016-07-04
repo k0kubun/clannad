@@ -160,6 +160,10 @@ compile_binop(LLVMBuilderRef builder, Node *node)
       return LLVMBuildBinOp(builder, LLVMAnd, compile_exp(builder, node->lhs), compile_exp(builder, node->rhs), "");
     case OR_OP:
       return LLVMBuildBinOp(builder, LLVMOr, compile_exp(builder, node->lhs), compile_exp(builder, node->rhs), "");
+    case LEFT_OP:
+      return LLVMBuildBinOp(builder, LLVMShl, compile_exp(builder, node->lhs), compile_exp(builder, node->rhs), "");
+    case RIGHT_OP:
+      return LLVMBuildBinOp(builder, LLVMLShr, compile_exp(builder, node->lhs), compile_exp(builder, node->rhs), "");
     default:
       fprintf(stderr, "Unexpected binary operation: %c\n", node->op);
       exit(1);

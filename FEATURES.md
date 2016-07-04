@@ -2,7 +2,7 @@
 ## C89/C90
 ANSI X3.159-1989, ISO/IEC 9899:1990
 
-#### 31 / 113 (27.4%)
+#### 32 / 113 (28.3%)
 
 - 2 environment
   - 2.1 conceptual models
@@ -56,9 +56,9 @@ ANSI X3.159-1989, ISO/IEC 9899:1990
          - [x] 3.1.3.4 character constants
      - [x] 3.1.4 string literals
      - 3.1.5 operators
-         - [x] `++` `--` `*` `+` `-` `/` `%` `==` `!=` `sizeof`
+         - [x] `++` `--` `*` `+` `-` `/` `%` `==` `!=` `sizeof`, `<<`, `>>`
          - [x] `<` `>` `<=` `>=` `!` `=` `&&` `||`, `&`, `|` `^`
-         - [ ] `~` `[ ]` `( )` `.` `->` `<<` `>>` `:` `##` `?`
+         - [ ] `~` `[ ]` `( )` `.` `->` `:` `##` `?`
          - [ ] `*=` `/=` `%=` `+=` `-=` `<<=` `>>=` `&=` `^=` `|=` `,` `#`
      - 3.1.6 punctuators
          - [x] `;` `=`
@@ -84,7 +84,7 @@ ANSI X3.159-1989, ISO/IEC 9899:1990
      - [ ] 3.3.4 Cast operators
      - [x] 3.3.5 Multiplicative operators
      - [x] 3.3.6 Additive operators
-     - [ ] 3.3.7 Bitwise shift operators
+     - [x] 3.3.7 Bitwise shift operators
      - [x] 3.3.8 Relational operators
      - [x] 3.3.9 Equality operators
      - [x] 3.3.10 Bitwise AND operator

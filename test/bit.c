@@ -21,9 +21,21 @@ void test_bit_xor() {
   return;
 }
 
+void test_left_shift() {
+  expect_int(8, 2 << 2);
+  return;
+}
+
+void test_right_shift() {
+  expect_int(2, 8 >> 2);
+  return;
+}
+
 void test() {
   test_bit_and();
   test_bit_or();
   test_bit_xor();
+  test_left_shift();
+  test_right_shift();
   return;
 }

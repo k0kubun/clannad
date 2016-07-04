@@ -25,6 +25,7 @@ static Node *parse_result;
 %token <ival> tINTEGER
 %token <id>   tIDENTIFIER
 %token <id>   tSTRING_LITERAL
+%token <id>   tSIZEOF
 %token <id>   tINC_OP
 %token <id>   tDEC_OP
 %token <id>   tEQ_OP
@@ -33,7 +34,8 @@ static Node *parse_result;
 %token <id>   tGE_OP
 %token <id>   tAND_OP
 %token <id>   tOR_OP
-%token <id>   tSIZEOF
+%token <id>   tLEFT_OP
+%token <id>   tRIGHT_OP
 
 %type <list> translation_unit
 %type <node> declaration_specifiers
@@ -283,6 +285,14 @@ additive_expression
 
 shift_expression
   : additive_expression
+  | shift_expression tLEFT_OP additive_expression
+  {
+    $$ = create_node(&(Node){ NODE_BINOP, .lhs = $1, .op = LEFT_OP, .rhs = $3 });
+  }
+  | shift_expression tRIGHT_OP additive_expression
+  {
+    $$ = create_node(&(Node){ NODE_BINOP, .lhs = $1, .op = RIGHT_OP, .rhs = $3 });
+  }
   ;
 
 relational_expression

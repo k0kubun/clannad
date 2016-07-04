@@ -35,6 +35,8 @@ enum DoubleCharOp {
   GE_OP,
   AND_OP,
   OR_OP,
+  LEFT_OP,
+  RIGHT_OP,
 };
 
 typedef struct {
