@@ -13,6 +13,8 @@ typedef struct {
 
 static Compiler compiler;
 
+void compile_node(Node *node);
+
 void
 assert_node(Node *node, enum NodeKind kind)
 {
@@ -56,6 +58,7 @@ void
 compile_return(Node *node)
 {
   assert_node(node, NODE_RETURN);
+
   if (node->param) {
     LLVMBuildRet(compiler.builder, compile_exp(node->param));
   } else {
@@ -83,6 +86,8 @@ compile_type(Node *node)
 LLVMValueRef
 compile_unary(Node *node)
 {
+  assert_node(node, NODE_UNARY);
+
   Node *target;
   if (node->lhs) target = node->lhs;
   if (node->rhs) target = node->rhs;
@@ -224,6 +229,8 @@ void compile_stmt(Node *node);
 void
 compile_if(Node *node)
 {
+  assert_node(node, NODE_IF);
+
   LLVMBasicBlockRef if_block   = LLVMAppendBasicBlock(compiler.func, "if");
   LLVMBasicBlockRef else_block = LLVMAppendBasicBlock(compiler.func, "else");
   LLVMBasicBlockRef end_block  = LLVMAppendBasicBlock(compiler.func, "end");
@@ -245,6 +252,17 @@ compile_if(Node *node)
 }
 
 void
+compile_comp_stmt(Node *node)
+{
+  assert_node(node, NODE_COMPOUND_STMT);
+
+  for (int i = 0; i < node->children->length; i++) {
+    Node *child = (Node *)vector_get(node->children, i);
+    compile_stmt(child);
+  }
+}
+
+void
 compile_stmt(Node *node)
 {
   switch (node->kind) {
@@ -256,8 +274,8 @@ compile_stmt(Node *node)
     case NODE_UNARY:
       compile_exp(node);
       break;
-    case NODE_VAR_DECL:
-      compile_var_decl(node);
+    case NODE_COMPOUND_STMT:
+      compile_comp_stmt(node);
       break;
     case NODE_IF:
       compile_if(node);
@@ -265,20 +283,12 @@ compile_stmt(Node *node)
     case NODE_RETURN:
       compile_return(node);
       break;
+    case NODE_VAR_DECL:
+      compile_var_decl(node);
+      break;
     default:
       fprintf(stderr, "Unexpected node kind in compile_stmt: %s\n", kind_label(node->kind));
       exit(1);
-  }
-}
-
-void
-compile_comp_stmt(Node *node)
-{
-  assert_node(node, NODE_COMPOUND_STMT);
-
-  for (int i = 0; i < node->children->length; i++) {
-    Node *child = (Node *)vector_get(node->children, i);
-    compile_stmt(child);
   }
 }
 
@@ -305,6 +315,8 @@ compile_param_decl(Node *node)
 void
 compile_func(Node *node)
 {
+  assert_node(node, NODE_FUNC);
+
   // declare function
   LLVMTypeRef param_types[256]; // FIXME: dynamic allocation
   for (int i = 0; i < node->spec->params->length; i++) {
@@ -340,12 +352,14 @@ compile_func(Node *node)
     LLVMBuildStore(compiler.builder, val, var);
   }
 
-  compile_comp_stmt(node->stmts);
+  compile_stmt(node->stmts);
 }
 
 void
 compile_func_decl(Node *node)
 {
+  assert_node(node, NODE_FUNC_DECL);
+
   LLVMTypeRef params[256]; // FIXME: dynamic allocation
   for (int i = 0; i < node->spec->params->length; i++) {
     params[i] = compile_param_decl((Node *)vector_get(node->spec->params, i));
@@ -355,33 +369,24 @@ compile_func_decl(Node *node)
       LLVMFunctionType(compile_type(node->type), params, node->spec->params->length, false));
 }
 
-void compile_node(Node *node);
-
 void
 compile_root(Node *node)
 {
+  assert_node(node, NODE_ROOT);
+
   for (int i = 0; i < node->children->length; i++) {
     Node *child = (Node *)vector_get(node->children, i);
-    compile_node(child);
-  }
-}
-
-void
-compile_node(Node *node)
-{
-  switch (node->kind) {
-    case NODE_FUNC:
-      compile_func(node);
-      break;
-    case NODE_FUNC_DECL:
-      compile_func_decl(node);
-      break;
-    case NODE_ROOT:
-      compile_root(node);
-      break;
-    default:
-      fprintf(stderr, "Unexpected node kind in compile_node: %s\n", kind_label(node->kind));
-      exit(1);
+    switch (child->kind) {
+      case NODE_FUNC:
+        compile_func(child);
+        break;
+      case NODE_FUNC_DECL:
+        compile_func_decl(child);
+        break;
+      default:
+        fprintf(stderr, "Unexpected node kind in compile_root: %s\n", kind_label(child->kind));
+        exit(1);
+    }
   }
 }
 
@@ -392,6 +397,6 @@ compile(Node *ast)
     .mod  = LLVMModuleCreateWithName("clannad"),
     .syms = create_dict(),
   };
-  compile_node(ast);
+  compile_root(ast);
   return compiler.mod;
 }
