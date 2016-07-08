@@ -21,6 +21,12 @@ run: clannad
 ast: clannad
 	$(CLND) -fdump-ast input.c
 
+ir1: clannad
+	$(CLND) -fdump-ir1 input.c
+
+ir2: clannad
+	$(CLND) -fdump-ir2 input.c
+
 clean:
 	for file in $$(git check-ignore **/* * | grep -v input.c); do \
 		rm $$file ; \

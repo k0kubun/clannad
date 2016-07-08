@@ -8,6 +8,8 @@
 
 struct clannad_options {
   bool dump_ast;
+  bool dump_ir1;
+  bool dump_ir2;
   char *outfile;
 };
 
@@ -21,6 +23,8 @@ usage(int status)
       "\n"
       "  -o outfile  Place output in outfile\n"
       "  -fdump-ast  Print AST\n"
+      "  -fdump-ir1  Print LLVM IR before optimization\n"
+      "  -fdump-ir2  Print LLVM IR after optimization\n"
       "  -c          Do not link (default)\n"
       "  -h          Print this help\n"
       "\n"
@@ -53,6 +57,8 @@ parse_opts(int argc, char **argv, struct clannad_options *opts)
 {
   *opts = (struct clannad_options){
     .dump_ast = false,
+    .dump_ir1 = false,
+    .dump_ir2 = false,
     .outfile  = NULL,
   };
 
@@ -65,7 +71,16 @@ parse_opts(int argc, char **argv, struct clannad_options *opts)
         opts->outfile = optarg;
         break;
       case 'f':
-        opts->dump_ast = true;
+        if (!strcmp(optarg, "dump-ast")) {
+          opts->dump_ast = true;
+        } else if (!strcmp(optarg, "dump-ir1")) {
+          opts->dump_ir1 = true;
+        } else if (!strcmp(optarg, "dump-ir2")) {
+          opts->dump_ir2 = true;
+        } else {
+          fprintf(stderr, "Unknown option: -f%s\n\n", optarg);
+          usage(1);
+        }
         break;
       case 'h':
         usage(0);
@@ -116,7 +131,10 @@ main(int argc, char **argv)
   analyze(ast);
 
   LLVMModuleRef mod = compile(ast);
+  if (opts.dump_ir1) LLVMDumpModule(mod);
+
   optimize(mod);
+  if (opts.dump_ir2) LLVMDumpModule(mod);
 
   assemble(mod, opts.outfile);
   return 0;
