@@ -304,8 +304,6 @@ compile_param_decl(Node *node)
 void
 compile_func(Node *node)
 {
-  assert_node(node, NODE_FUNC);
-
   // declare function
   LLVMTypeRef param_types[256]; // FIXME: dynamic allocation
   for (int i = 0; i < node->spec->params->length; i++) {
@@ -346,8 +344,6 @@ compile_func(Node *node)
 void
 compile_func_decl(Node *node)
 {
-  assert_node(node, NODE_FUNC_DECL);
-
   LLVMTypeRef params[256]; // FIXME: dynamic allocation
   for (int i = 0; i < node->spec->params->length; i++) {
     params[i] = compile_param_decl((Node *)vector_get(node->spec->params, i));
@@ -357,24 +353,33 @@ compile_func_decl(Node *node)
       LLVMFunctionType(compile_type(node->type), params, node->spec->params->length, false));
 }
 
+void compile_node(Node *node);
+
 void
 compile_root(Node *node)
 {
-  assert_node(node, NODE_ROOT);
-
   for (int i = 0; i < node->children->length; i++) {
     Node *child = (Node *)vector_get(node->children, i);
-    switch (child->kind) {
-      case NODE_FUNC:
-        compile_func(child);
-        break;
-      case NODE_FUNC_DECL:
-        compile_func_decl(child);
-        break;
-      default:
-        fprintf(stderr, "Unexpected node kind in compile_root: %s\n", kind_label(child->kind));
-        exit(1);
-    }
+    compile_node(child);
+  }
+}
+
+void
+compile_node(Node *node)
+{
+  switch (node->kind) {
+    case NODE_FUNC:
+      compile_func(node);
+      break;
+    case NODE_FUNC_DECL:
+      compile_func_decl(node);
+      break;
+    case NODE_ROOT:
+      compile_root(node);
+      break;
+    default:
+      fprintf(stderr, "Unexpected node kind in compile_node: %s\n", kind_label(node->kind));
+      exit(1);
   }
 }
 
@@ -385,6 +390,6 @@ compile(Node *ast)
     .mod  = LLVMModuleCreateWithName("clannad"),
     .syms = create_dict(),
   };
-  compile_root(ast);
+  compile_node(ast);
   return compiler.mod;
 }
