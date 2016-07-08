@@ -7,22 +7,24 @@ OBJS=src/analyzer.o src/assembler.o src/compiler.o src/debug.o src/dict.o src/le
      src/main.o src/optimizer.o src/parser.tab.o src/vector.o
 TESTS := $(patsubst %.c,%.bin,$(filter-out test/test_helper.c,$(wildcard test/*.c)))
 TESTOBJS := $(patsubst %.c,%.o,$(wildcard test/*.c))
-.PHONY: all compile run clean test
+.PHONY: all run clean test
 .SECONDARY: $(TESTOBJS)
 
-all: compile
-
-compile: clannad
-	$(CLND) input.c && gcc input.o
-
-run: compile
-	./a.out
-
-clean:
-	git check-ignore **/* * | xargs rm
+all: clannad
 
 clannad: $(OBJS)
 	$(LD) $(OBJS) $(LDFLAGS) -o $@
+
+run: clannad
+	$(CLND) input.c && gcc input.o && ./a.out
+
+ast: clannad
+	$(CLND) -fdump-ast input.c
+
+clean:
+	for file in $$(git check-ignore **/* * | grep -v input.c); do \
+		rm $$file ; \
+	done
 
 $(OBJS): src/clannad.h
 

@@ -9,3 +9,4 @@ lex.yy.c
 *.tab.c
 *.tab.h
 *.bin
+/input.c
