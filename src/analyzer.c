@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "clannad.h"
 
 void
@@ -125,16 +126,34 @@ analyze_stmt(Node *node)
 }
 
 void
+strip_single_void(Node *node)
+{
+  assert_node(node, NODE_FUNC_SPEC);
+
+  if (node->params->length == 1) {
+    Node *first = vector_get(node->params, 0);
+    if (!strcmp(first->type->id, "void") && !first->spec) {
+      // FIXME: free old vector
+      node->params = create_vector();
+    }
+  }
+}
+
+void
 analyze_func(Node *node)
 {
   assert_node(node, NODE_FUNC);
 
+  strip_single_void(node->spec);
   analyze_stmt(node->stmts);
 }
 
 void
 analyze_func_decl(Node *node)
 {
+  assert_node(node, NODE_FUNC_DECL);
+
+  strip_single_void(node->spec);
   assert_node(node, NODE_FUNC_DECL);
 }
 

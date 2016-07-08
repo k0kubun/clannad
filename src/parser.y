@@ -198,6 +198,10 @@ parameter_declaration
   {
     $$ = create_node(&(Node){ NODE_PARAM_DECL, .type = $1, .spec = $2 });
   }
+  | declaration_specifiers
+  {
+    $$ = create_node(&(Node){ NODE_PARAM_DECL, .type = $1, .spec = NULL });
+  }
   ;
 
 compound_statement

@@ -26,9 +26,17 @@ void test_funcall() {
   return;
 }
 
+void test_void_decl(void);
+
+void test_void_arg(void) {
+  pass();
+  return;
+}
+
 void test() {
   test_return();
   test_void_return();
   test_funcall();
+  test_void_arg();
   return;
 }

@@ -1,4 +1,5 @@
 #include <stdarg.h>
+#include <stdlib.h>
 #include <stdio.h>
 #include "clannad.h"
 
@@ -107,8 +108,12 @@ dump_node(int indent, Node *node)
       indented_puts(indent, kind_label(node->kind));
       dump_nodes(indent + 1, 3, node->type, node->spec, node->stmts);
       break;
-    case NODE_FUNC_DECL:
     case NODE_PARAM_DECL:
+      indented_puts(indent, kind_label(node->kind));
+      dump_node(indent + 1, node->type);
+      if (node->spec) dump_node(indent + 1, node->spec);
+      break;
+    case NODE_FUNC_DECL:
     case NODE_VAR_DECL:
       indented_puts(indent, kind_label(node->kind));
       dump_nodes(indent + 1, 2, node->type, node->spec);
@@ -158,4 +163,5 @@ void
 dump_ast(Node *ast)
 {
   dump_node(0, ast);
+  exit(0);
 }
