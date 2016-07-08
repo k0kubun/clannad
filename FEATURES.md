@@ -2,7 +2,7 @@
 ## C89/C90
 ANSI X3.159-1989, ISO/IEC 9899:1990
 
-#### 32 / 113 (28.3%)
+#### 33 / 113 (29.2%)
 
 - 2 environment
   - 2.1 conceptual models
@@ -77,7 +77,7 @@ ANSI X3.159-1989, ISO/IEC 9899:1990
          - [ ] 3.3.2.3 Structure and union members
          - [x] 3.3.2.4 Postfix increment and decrement operators
      - 3.3.3 Unary operators
-         - [ ] 3.3.3.1 Prefix increment and decrement operators
+         - [x] 3.3.3.1 Prefix increment and decrement operators
          - [ ] 3.3.3.2 Address and indirection operators
          - [ ] 3.3.3.3 Unary arithmetic operators
          - [x] 3.3.3.4 The sizeof operator

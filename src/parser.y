@@ -349,13 +349,21 @@ cast_expression
 
 unary_expression
   : postfix_expression
+  | tINC_OP unary_expression
+  {
+    $$ = create_node(&(Node){ NODE_UNARY, .val = $2, .op = PRE_INC_OP });
+  }
+  | tDEC_OP unary_expression
+  {
+    $$ = create_node(&(Node){ NODE_UNARY, .val = $2, .op = PRE_DEC_OP });
+  }
   | unary_operator cast_expression
   {
-    $$ = create_node(&(Node){ NODE_UNARY, .lhs = $2, .op = $1, .rhs = NULL });
+    $$ = create_node(&(Node){ NODE_UNARY, .val = $2, .op = $1 });
   }
   | tSIZEOF '(' type_name ')'
   {
-    $$ = create_node(&(Node){ NODE_UNARY, .lhs = $3, .op = SIZEOF, .rhs = NULL });
+    $$ = create_node(&(Node){ NODE_UNARY, .val = $3, .op = SIZEOF });
   }
   ;
 
@@ -388,11 +396,11 @@ postfix_expression
   }
   | postfix_expression tINC_OP
   {
-    $$ = create_node(&(Node){ NODE_UNARY, .lhs = $1, .op = INC_OP, .rhs = NULL });
+    $$ = create_node(&(Node){ NODE_UNARY, .val = $1, .op = POST_INC_OP });
   }
   | postfix_expression tDEC_OP
   {
-    $$ = create_node(&(Node){ NODE_UNARY, .lhs = $1, .op = DEC_OP, .rhs = NULL });
+    $$ = create_node(&(Node){ NODE_UNARY, .val = $1, .op = POST_DEC_OP });
   }
   ;
 

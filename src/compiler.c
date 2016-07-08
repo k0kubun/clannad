@@ -37,7 +37,7 @@ compile_variable(Node *node)
     fprintf(stderr, "Undefined variable: %s\n", node->id);
     exit(1);
   }
-  return LLVMBuildLoad(compiler.builder, var, node->id);
+  return LLVMBuildLoad(compiler.builder, var, "");
 }
 
 LLVMValueRef compile_exp(Node *node);
@@ -76,36 +76,33 @@ compile_unary(Node *node)
 {
   assert_node(node, NODE_UNARY);
 
-  Node *target;
-  if (node->lhs) target = node->lhs;
-  if (node->rhs) target = node->rhs;
-
   if (node->op == SIZEOF)
-    return LLVMConstIntCast(LLVMSizeOf(compile_type(target)), LLVMInt32Type(), 0);
+    return LLVMConstIntCast(LLVMSizeOf(compile_type(node->val)), LLVMInt32Type(), 0);
 
-  LLVMValueRef var;
-  LLVMValueRef result = compile_exp(target);
+  LLVMValueRef var, result = compile_exp(node->val);
   switch ((int)node->op) {
-    case INC_OP:
-      // FIXME: maybe some assertion required
-      var = dict_get(compiler.syms, target->id);
+    case PRE_INC_OP:
+      var = dict_get(compiler.syms, node->val->id);
       LLVMBuildStore(compiler.builder, LLVMBuildAdd(compiler.builder, result, LLVMConstInt(LLVMInt32Type(), 1, 0), ""), var);
-      break;
-    case DEC_OP:
-      // FIXME: maybe some assertion required
-      var = dict_get(compiler.syms, target->id);
+      return LLVMBuildLoad(compiler.builder, var, "");
+    case PRE_DEC_OP:
+      var = dict_get(compiler.syms, node->val->id);
       LLVMBuildStore(compiler.builder, LLVMBuildSub(compiler.builder, result, LLVMConstInt(LLVMInt32Type(), 1, 0), ""), var);
-      break;
+      return LLVMBuildLoad(compiler.builder, var, "");
+    case POST_INC_OP:
+      var = dict_get(compiler.syms, node->val->id);
+      LLVMBuildStore(compiler.builder, LLVMBuildAdd(compiler.builder, result, LLVMConstInt(LLVMInt32Type(), 1, 0), ""), var);
+      return result;
+    case POST_DEC_OP:
+      var = dict_get(compiler.syms, node->val->id);
+      LLVMBuildStore(compiler.builder, LLVMBuildSub(compiler.builder, result, LLVMConstInt(LLVMInt32Type(), 1, 0), ""), var);
+      return result;
     case '!':
-      result = LLVMBuildICmp(compiler.builder, LLVMIntEQ, result, LLVMConstInt(LLVMTypeOf(result), 0, 0), "");
-      break;
+      return LLVMBuildICmp(compiler.builder, LLVMIntEQ, result, LLVMConstInt(LLVMTypeOf(result), 0, 0), "");
     default:
       fprintf(stderr, "Unexpected operator in compile_unary: %d\n", (int)node->op);
       exit(1);
   }
-  // TODO: check whether result is correct or not to return
-  // Increment and decrement should be done in another layer
-  return result;
 }
 
 LLVMValueRef

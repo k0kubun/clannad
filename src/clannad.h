@@ -27,8 +27,6 @@ enum NodeKind {
 
 enum DoubleCharOp {
   SIZEOF = 256,
-  INC_OP,
-  DEC_OP,
   EQ_OP,
   NE_OP,
   LE_OP,
@@ -37,6 +35,10 @@ enum DoubleCharOp {
   OR_OP,
   LEFT_OP,
   RIGHT_OP,
+  PRE_INC_OP,
+  PRE_DEC_OP,
+  POST_INC_OP,
+  POST_DEC_OP,
 };
 
 typedef struct {
@@ -72,9 +74,14 @@ typedef struct Node {
     long ival;
     // NODE_BINOP, NODE_UNARY
     struct {
-      struct Node *lhs;
       int op;
-      struct Node *rhs;
+      union {
+        struct Node *val; // for NODE_UNARY
+        struct { // for NODE_BINOP
+          struct Node *lhs;
+          struct Node *rhs;
+        };
+      };
     };
     // NODE_IF
     struct {

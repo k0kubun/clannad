@@ -39,9 +39,39 @@ void test_factorial() {
   return;
 }
 
+void test_increment() {
+  int n;
+
+  n = 0;
+  expect_int(0, n++);
+  expect_int(1, n);
+
+  n = 0;
+  expect_int(1, ++n);
+  expect_int(1, n);
+
+  return;
+}
+
+void test_decrement() {
+  int n;
+
+  n = 0;
+  expect_int(0, n--);
+  expect_int(-1, n);
+
+  n = 0;
+  expect_int(-1, --n);
+  expect_int(-1, n);
+
+  return;
+}
+
 void test() {
   test_arithmetic();
   test_not();
   test_factorial();
+  test_increment();
+  test_decrement();
   return;
 }
