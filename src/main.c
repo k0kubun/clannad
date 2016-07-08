@@ -112,8 +112,8 @@ main(int argc, char **argv)
   }
   fclose(file);
 
-  if (opts.dump_ast)
-    dump_ast(ast);
+  if (opts.dump_ast) dump_ast(ast);
+  analyze(ast);
 
   LLVMModuleRef mod = compile(ast);
   optimize(mod);

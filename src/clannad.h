@@ -85,6 +85,10 @@ typedef struct Node {
   };
 } Node;
 
+// analyzer.c
+void analyze(Node *ast);
+void assert_node(Node *node, enum NodeKind kind);
+
 // assembler.c
 void assemble(LLVMModuleRef mod, char *outfile);
 

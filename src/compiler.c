@@ -13,18 +13,6 @@ typedef struct {
 
 static Compiler compiler;
 
-void compile_node(Node *node);
-
-void
-assert_node(Node *node, enum NodeKind kind)
-{
-  if (node->kind != kind) {
-    fprintf(stderr, "InternalError: node kind assertion failed!\n");
-    fprintf(stderr, "  expected '%s' but got '%s'\n", kind_label(kind), kind_label(node->kind));
-    exit(1);
-  }
-}
-
 LLVMValueRef
 compile_int(Node *node)
 {
