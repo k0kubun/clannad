@@ -68,6 +68,19 @@ void test_unary_minus() {
   expect_int(-3, -1 + -2);
 }
 
+void test_arithmetic_compound_assign() {
+  int a;
+  a = 1;
+  a += 3;
+  expect_int(4, a);
+  a -= 2;
+  expect_int(2, a);
+  a *= 3;
+  expect_int(6, a);
+  a /= 2;
+  expect_int(3, a);
+}
+
 void test() {
   test_arithmetic();
   test_not();
@@ -76,4 +89,5 @@ void test() {
   test_decrement();
   test_unary_plus();
   test_unary_minus();
+  test_arithmetic_compound_assign();
 }

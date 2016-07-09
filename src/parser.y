@@ -478,6 +478,22 @@ assignment_operator
   {
     $$ = LEFT_ASSIGN;
   }
+  | tADD_ASSIGN
+  {
+    $$ = ADD_ASSIGN;
+  }
+  | tSUB_ASSIGN
+  {
+    $$ = SUB_ASSIGN;
+  }
+  | tMUL_ASSIGN
+  {
+    $$ = MUL_ASSIGN;
+  }
+  | tDIV_ASSIGN
+  {
+    $$ = DIV_ASSIGN;
+  }
   ;
 
 logical_or_expression
