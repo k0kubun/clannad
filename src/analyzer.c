@@ -47,6 +47,8 @@ analyze_unary(Node *node)
 
   if (node->op == SIZEOF) return;
   analyze_exp(node->val);
+
+  // FIXME: reject arithmetic unary op for non-integers
 }
 
 void

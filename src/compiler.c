@@ -90,6 +90,12 @@ compile_unary(Node *node)
       var = node->val->ref_node->ref;
       LLVMBuildStore(compiler.builder, LLVMBuildSub(compiler.builder, result, LLVMConstInt(LLVMInt32Type(), 1, 0), ""), var);
       return result;
+    case '+':
+      return result;
+    case '-':
+      return LLVMBuildNeg(compiler.builder, result, "");
+    case '~':
+      return LLVMBuildNot(compiler.builder, result, "");
     case '!':
       return LLVMBuildICmp(compiler.builder, LLVMIntEQ, result, LLVMConstInt(LLVMTypeOf(result), 0, 0), "");
     default:

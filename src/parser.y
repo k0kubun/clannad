@@ -392,10 +392,23 @@ specifier_qualifier_list
   ;
 
 unary_operator
-  : '!'
+  : '+'
+  {
+    $$ = '+';
+  }
+  | '-'
+  {
+    $$ = '-';
+  }
+  | '~'
+  {
+    $$ = '~';
+  }
+  | '!'
   {
     $$ = '!';
   }
+  ;
 
 postfix_expression
   : primary_expression
