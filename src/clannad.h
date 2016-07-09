@@ -25,7 +25,7 @@ enum NodeKind {
   NODE_UNARY,
 };
 
-enum DoubleCharOp {
+enum MultiCharsOp {
   SIZEOF = 256,
   EQ_OP,
   NE_OP,
@@ -39,6 +39,16 @@ enum DoubleCharOp {
   PRE_DEC_OP,
   POST_INC_OP,
   POST_DEC_OP,
+  RIGHT_ASSIGN,
+  LEFT_ASSIGN,
+  ADD_ASSIGN,
+  SUB_ASSIGN,
+  MUL_ASSIGN,
+  DIV_ASSIGN,
+  MOD_ASSIGN,
+  AND_ASSIGN,
+  XOR_ASSIGN,
+  OR_ASSIGN,
 };
 
 typedef struct {

@@ -104,11 +104,27 @@ compile_unary(Node *node)
   }
 }
 
+void
+convert_compound_assign(Node *node)
+{
+  switch (node->op) {
+    case RIGHT_ASSIGN:
+      node->rhs = create_node(&(Node){ NODE_BINOP, .lhs = node->lhs, .op = RIGHT_OP, .rhs = node->rhs });
+      node->op  = '=';
+      break;
+    case LEFT_ASSIGN:
+      node->rhs = create_node(&(Node){ NODE_BINOP, .lhs = node->lhs, .op = LEFT_OP, .rhs = node->rhs });
+      node->op  = '=';
+      break;
+  }
+}
+
 LLVMValueRef
 compile_binop(Node *node)
 {
   assert_node(node, NODE_BINOP);
 
+  convert_compound_assign(node);
   LLVMValueRef var;
   switch (node->op) {
     case '+':

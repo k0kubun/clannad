@@ -68,13 +68,6 @@ void test_unary_minus() {
   expect_int(-3, -1 + -2);
 }
 
-void test_bitwise_not() {
-  int a;
-  a = -4;
-  expect_int(3, ~a);
-  expect_int(-3, ~2);
-}
-
 void test() {
   test_arithmetic();
   test_not();

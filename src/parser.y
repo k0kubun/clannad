@@ -35,6 +35,16 @@ static Node *parse_result;
 %token <id>   tOR_OP
 %token <id>   tLEFT_OP
 %token <id>   tRIGHT_OP
+%token <id>   tRIGHT_ASSIGN;
+%token <id>   tLEFT_ASSIGN;
+%token <id>   tADD_ASSIGN;
+%token <id>   tSUB_ASSIGN;
+%token <id>   tMUL_ASSIGN;
+%token <id>   tDIV_ASSIGN;
+%token <id>   tMOD_ASSIGN;
+%token <id>   tAND_ASSIGN;
+%token <id>   tXOR_ASSIGN;
+%token <id>   tOR_ASSIGN;
 
 %type <list> translation_unit
 %type <node> declaration_specifiers
@@ -68,7 +78,9 @@ static Node *parse_result;
 %type <ch>   unary_operator
 %type <node> type_name
 %type <node> specifier_qualifier_list
+%type <node> conditional_expression
 %type <node> assignment_expression
+%type <ival> assignment_operator
 %type <node> logical_or_expression
 %type <node> logical_and_expression
 %type <node> and_expression
@@ -441,11 +453,30 @@ argument_expression_list
   }
   ;
 
-assignment_expression
+conditional_expression
   : logical_or_expression
-  | unary_expression '=' assignment_expression
+  ;
+
+assignment_expression
+  : conditional_expression
+  | unary_expression assignment_operator assignment_expression
   {
-    $$ = create_node(&(Node){ NODE_BINOP, .lhs = $1, .op = '=', .rhs = $3 });
+    $$ = create_node(&(Node){ NODE_BINOP, .lhs = $1, .op = $2, .rhs = $3 });
+  }
+  ;
+
+assignment_operator
+  : '='
+  {
+    $$ = '=';
+  }
+  | tRIGHT_ASSIGN
+  {
+    $$ = RIGHT_ASSIGN;
+  }
+  | tLEFT_ASSIGN
+  {
+    $$ = LEFT_ASSIGN;
   }
   ;
 
