@@ -22,7 +22,7 @@ ANSI X3.159-1989, ISO/IEC 9899:1990
      - 3.1.1 keywords
          - [x] int char if else return
          - [x] void sizeof
-         - [ ] break long switch auto do
+         - [ ] break long switch auto do (!!!)
          - [ ] case enum register typedef
          - [ ] extern union double static
          - [ ] const float short unsigned
@@ -36,7 +36,7 @@ ANSI X3.159-1989, ISO/IEC 9899:1990
          - 3.1.2.5. types
               - object types
                     - [x] int, char
-                    - [ ] unsigned int, short int, long int, unsigned short int
+                    - [ ] unsigned int, short int, long int, unsigned short int (!!!)
                     - [ ] signed char, unsigned char, unsigned long int
                     - [ ] float, double, long double
                     - [ ] enum
@@ -50,7 +50,7 @@ ANSI X3.159-1989, ISO/IEC 9899:1990
                     - [ ] union
          - [ ] 3.1.2.6 compatible type and composite type
      - 3.1.3 constants
-         - [ ] 3.1.3.1 floating constants
+         - [ ] 3.1.3.1 floating constants (!!!)
          - [x] 3.1.3.2 integer constants
          - [ ] 3.1.3.3 enumeration constants
          - [x] 3.1.3.4 character constants
@@ -58,7 +58,7 @@ ANSI X3.159-1989, ISO/IEC 9899:1990
      - 3.1.5 operators
          - [x] `++` `--` `*` `+` `-` `/` `%` `==` `!=` `sizeof`, `<<`, `>>`
          - [x] `<` `>` `<=` `>=` `!` `=` `&&` `||`, `&`, `|` `^`
-         - [ ] `~` `[ ]` `( )` `.` `->` `:` `##` `?`
+         - [ ] `~` `[ ]` `( )` `.` `->` `:` `##` `?` (!!!)
          - [ ] `*=` `/=` `%=` `+=` `-=` `<<=` `>>=` `&=` `^=` `|=` `,` `#`
      - 3.1.6 punctuators
          - [x] `;` `=` `{` `}`
@@ -79,7 +79,7 @@ ANSI X3.159-1989, ISO/IEC 9899:1990
      - 3.3.3 Unary operators
          - [x] 3.3.3.1 Prefix increment and decrement operators
          - [ ] 3.3.3.2 Address and indirection operators
-         - [ ] 3.3.3.3 Unary arithmetic operators
+         - [ ] 3.3.3.3 Unary arithmetic operators (!!!)
          - [x] 3.3.3.4 The sizeof operator
      - [ ] 3.3.4 Cast operators
      - [x] 3.3.5 Multiplicative operators
@@ -108,28 +108,28 @@ ANSI X3.159-1989, ISO/IEC 9899:1990
          - [ ] 3.5.2.2 Enumeration specifiers
          - [ ] 3.5.2.3 Tags
      - 3.5.3 Type qualifiers
-         - [ ] const
+         - [ ] const (!!!)
          - [ ] volatile
      - 3.5.4 Declarators
          - [ ] 3.5.4.1 Pointer declarators
          - [ ] 3.5.4.2 Array declarators
          - [x] 3.5.4.3 Function declarators (including prototypes)
      - [ ] 3.5.5 Type names
-     - [ ] 3.5.6 Type definitions
+     - [ ] 3.5.6 Type definitions (!!!)
      - [ ] 3.5.7 Initialization
   - 3.6. statements
-     - [ ] 3.6.1 Labeled statements
+     - [ ] 3.6.1 Labeled statements (!!!)
      - [x] 3.6.2 Compound statement, or block
      - [x] 3.6.3 Expression and null statements
      - 3.6.4 Selection statements
          - [x] 3.6.4.1 The if statement
-         - [ ] 3.6.4.2 The switch statement
+         - [ ] 3.6.4.2 The switch statement (!!!)
      - 3.6.5 Iteration statements
-         - [ ] 3.6.5.1 The while statement
+         - [ ] 3.6.5.1 The while statement (!!!)
          - [ ] 3.6.5.2 The do statement
          - [ ] 3.6.5.3 The for statement
      - 3.6.6 Jump statements
-         - [ ] 3.6.6.1 The goto statement
+         - [ ] 3.6.6.1 The goto statement (!!!)
          - [ ] 3.6.6.2 The continue statement
          - [ ] 3.6.6.3 The break statement
          - [x] 3.6.6.4 The return statement
@@ -138,7 +138,7 @@ ANSI X3.159-1989, ISO/IEC 9899:1990
      - [ ] 3.7.2 External object definitions
   - 3.8. preprocessing directives
      - [ ] 3.8.1 Conditional inclusion
-     - [ ] 3.8.2 Source file inclusion
+     - [ ] 3.8.2 Source file inclusion (!!!)
      - 3.8.3 Macro replacement
          - [ ] 3.8.3.1 Argument substitution
          - [ ] 3.8.3.2 The # operator
