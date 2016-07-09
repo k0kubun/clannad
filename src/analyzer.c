@@ -140,12 +140,29 @@ strip_single_void(Node *node)
 }
 
 void
+autocomplete_return(Node *node)
+{
+  assert_node(node, NODE_COMPOUND_STMT);
+
+  Node *last = vector_last(node->children);
+  if (node->children->length == 0 ||
+      ((Node *)vector_last(node->children))->kind != NODE_RETURN) {
+    Node *ret_node = create_node(&(Node){ NODE_RETURN, .param = NULL });
+    vector_push(node->children, ret_node);
+  }
+}
+
+void
 analyze_func(Node *node)
 {
   assert_node(node, NODE_FUNC);
 
   strip_single_void(node->spec);
   analyze_stmt(node->stmts);
+
+  if (!strcmp(node->type->id, "void")) {
+    autocomplete_return(node->stmts);
+  }
 }
 
 void

@@ -11,26 +11,26 @@ int var_ret_func() {
 void test_return() {
   expect_int(3, ret_func());
   expect_int(3, var_ret_func());
-  return;
 }
 
 void test_void_return() {
   pass();
-  return;
+}
+
+void test_implicit_return() {
+  pass();
 }
 
 int sum_func(int a, int b, int c) { return a + b + c; }
 
 void test_funcall() {
   expect_int(10, sum_func(2, 3, 5));
-  return;
 }
 
 void test_void_decl(void);
 
 void test_void_arg(void) {
   pass();
-  return;
 }
 
 void test() {
@@ -38,5 +38,4 @@ void test() {
   test_void_return();
   test_funcall();
   test_void_arg();
-  return;
 }

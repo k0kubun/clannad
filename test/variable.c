@@ -5,10 +5,8 @@ void test_variable() {
   n = 10;
   n = n + 3;
   pass();
-  return;
 }
 
 void test() {
   test_variable();
-  return;
 }

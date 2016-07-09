@@ -8,7 +8,6 @@ void test_equal() {
   else
     n = 3;
   expect_int(2, n);
-  return;
 }
 
 void test_gt() {
@@ -21,7 +20,6 @@ void test_gt() {
   if (n > 2)
     n = 3;
   expect_int(2, n);
-  return;
 }
 
 void test_lt() {
@@ -34,7 +32,6 @@ void test_lt() {
   if (n < 2)
     n = 3;
   expect_int(2, n);
-  return;
 }
 
 void test_ge() {
@@ -47,7 +44,6 @@ void test_ge() {
   if (n >= 2)
     n = 3;
   expect_int(3, n);
-  return;
 }
 
 void test_le() {
@@ -60,21 +56,18 @@ void test_le() {
   if (n <= 2)
     n = 3;
   expect_int(3, n);
-  return;
 }
 
 void test_and_op() {
   expect_int(1, 2 && 2);
   expect_int(0, 2 && 0);
   expect_int(0, 0 && 0);
-  return;
 }
 
 void test_or_op() {
   expect_int(1, 2 || 2);
   expect_int(1, 2 || 0);
   expect_int(0, 0 || 0);
-  return;
 }
 
 void test() {
@@ -83,5 +76,4 @@ void test() {
   test_lt();
   test_ge();
   test_le();
-  return;
 }

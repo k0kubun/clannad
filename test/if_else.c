@@ -32,10 +32,8 @@ void test_dangling_else() {
   expect_int(1, deep_else(1, 1));
   expect_int(2, shallow_else(1, 0));
   expect_int(1, shallow_else(1, 1));
-  return;
 }
 
 void test() {
   test_dangling_else();
-  return;
 }

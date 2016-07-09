@@ -3,7 +3,6 @@ void test();
 
 void pass() {
   printf(".", 0, 0);
-  return;
 }
 
 void expect_int(int a, int b) {
@@ -11,7 +10,6 @@ void expect_int(int a, int b) {
     pass();
   else
     printf("F\nexpected %d but got %d\n", a, b);
-  return;
 }
 
 int main() {

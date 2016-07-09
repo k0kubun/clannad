@@ -104,6 +104,7 @@ void dump_ast(Node *ast);
 char* kind_label(enum NodeKind kind);
 
 // parser.y
+Node* create_node(Node *temp);
 int parse_file(Node **astptr, FILE *file);
 
 // compiler.c
@@ -118,6 +119,7 @@ void dict_set(Dict *dict, char *key, void *value);
 Vector* create_vector();
 Vector* vector_push(Vector *vec, void *ptr);
 void* vector_get(Vector *vec, int index);
+void* vector_last(Vector *vec);
 
 // optimizer.c
 void optimize(LLVMModuleRef mod);

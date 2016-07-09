@@ -29,6 +29,12 @@ vector_get(Vector *vec, int index)
   return vec->data[index];
 }
 
+void*
+vector_last(Vector *vec)
+{
+  return vec->data[vec->length-1];
+}
+
 Vector*
 vector_push(Vector *vec, void *ptr)
 {

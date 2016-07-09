@@ -6,7 +6,6 @@ void test_arithmetic() {
   expect_int(6, 2 * 3);
   expect_int(3, 9 / 3);
   expect_int(2, 8 % 3);
-  return;
 }
 
 void test_not() {
@@ -22,7 +21,6 @@ void test_not() {
   else
     n = 4;
   expect_int(4, n);
-  return;
 }
 
 int factorial(int n) {
@@ -36,7 +34,6 @@ int factorial(int n) {
 
 void test_factorial() {
   expect_int(120, factorial(5));
-  return;
 }
 
 void test_increment() {
@@ -49,8 +46,6 @@ void test_increment() {
   n = 0;
   expect_int(1, ++n);
   expect_int(1, n);
-
-  return;
 }
 
 void test_decrement() {
@@ -63,8 +58,6 @@ void test_decrement() {
   n = 0;
   expect_int(-1, --n);
   expect_int(-1, n);
-
-  return;
 }
 
 void test() {
@@ -73,5 +66,4 @@ void test() {
   test_factorial();
   test_increment();
   test_decrement();
-  return;
 }

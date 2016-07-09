@@ -4,7 +4,6 @@
 #include "clannad.h"
 int yylex(void);
 int yyerror(char const *str);
-static Node* create_node(Node *temp);
 static Node *parse_result;
 %}
 
@@ -511,7 +510,7 @@ type_specifier
 
 %%
 
-static Node*
+Node*
 create_node(Node *temp)
 {
   Node *ret = malloc(sizeof(Node));
