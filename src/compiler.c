@@ -8,7 +8,6 @@ typedef struct {
   LLVMModuleRef mod;
   LLVMValueRef func;
   LLVMBuilderRef builder;
-  Dict *syms; /* Symbol table for compiling scope */
 } Compiler;
 
 static Compiler compiler;
@@ -31,13 +30,7 @@ LLVMValueRef
 compile_variable(Node *node)
 {
   assert_node(node, NODE_IDENTIFIER);
-
-  LLVMValueRef var = dict_get(compiler.syms, node->id);
-  if (var == NULL) {
-    fprintf(stderr, "Undefined variable: %s\n", node->id);
-    exit(1);
-  }
-  return LLVMBuildLoad(compiler.builder, var, "");
+  return LLVMBuildLoad(compiler.builder, node->ref_node->ref, "");
 }
 
 LLVMValueRef compile_exp(Node *node);
@@ -82,19 +75,19 @@ compile_unary(Node *node)
   LLVMValueRef var, result = compile_exp(node->val);
   switch ((int)node->op) {
     case PRE_INC_OP:
-      var = dict_get(compiler.syms, node->val->id);
+      var = node->val->ref_node->ref;
       LLVMBuildStore(compiler.builder, LLVMBuildAdd(compiler.builder, result, LLVMConstInt(LLVMInt32Type(), 1, 0), ""), var);
       return LLVMBuildLoad(compiler.builder, var, "");
     case PRE_DEC_OP:
-      var = dict_get(compiler.syms, node->val->id);
+      var = node->val->ref_node->ref;
       LLVMBuildStore(compiler.builder, LLVMBuildSub(compiler.builder, result, LLVMConstInt(LLVMInt32Type(), 1, 0), ""), var);
       return LLVMBuildLoad(compiler.builder, var, "");
     case POST_INC_OP:
-      var = dict_get(compiler.syms, node->val->id);
+      var = node->val->ref_node->ref;
       LLVMBuildStore(compiler.builder, LLVMBuildAdd(compiler.builder, result, LLVMConstInt(LLVMInt32Type(), 1, 0), ""), var);
       return result;
     case POST_DEC_OP:
-      var = dict_get(compiler.syms, node->val->id);
+      var = node->val->ref_node->ref;
       LLVMBuildStore(compiler.builder, LLVMBuildSub(compiler.builder, result, LLVMConstInt(LLVMInt32Type(), 1, 0), ""), var);
       return result;
     case '!':
@@ -123,12 +116,7 @@ compile_binop(Node *node)
     case '%':
       return LLVMBuildSRem(compiler.builder, compile_exp(node->lhs), compile_exp(node->rhs), "");
     case '=':
-      var = dict_get(compiler.syms, node->lhs->id);
-      if (var == NULL) {
-        fprintf(stderr, "Undefined variable: %s\n", node->lhs->id);
-        exit(1);
-      }
-      return LLVMBuildStore(compiler.builder, compile_exp(node->rhs), var);
+      return LLVMBuildStore(compiler.builder, compile_exp(node->rhs), node->lhs->ref_node->ref);
     case '<':
       return LLVMBuildICmp(compiler.builder, LLVMIntSLT, compile_exp(node->lhs), compile_exp(node->rhs), "");
     case '>':
@@ -166,12 +154,12 @@ compile_funcall(Node *node)
 {
   assert_node(node, NODE_FUNCALL);
 
-  LLVMValueRef args[256]; // FIXME: Handle array limit properly
+  LLVMValueRef args[node->params->length];
   LLVMValueRef func = LLVMGetNamedFunction(compiler.mod, node->func->id);
 
   // Build arguments
   for (int i = 0; i < node->params->length; i++) {
-    Node *param = (Node *)vector_get(node->params, i);
+    Node *param = vector_get(node->params, i);
     args[i] = compile_exp(param);
   }
 
@@ -204,9 +192,7 @@ void
 compile_var_decl(Node *node)
 {
   assert_node(node, NODE_VAR_DECL);
-
-  LLVMValueRef var = LLVMBuildAlloca(compiler.builder, compile_type(node->type), node->spec->id);
-  dict_set(compiler.syms, node->spec->id, var);
+  node->ref = LLVMBuildAlloca(compiler.builder, compile_type(node->type), node->spec->id);
 }
 
 void compile_stmt(Node *node);
@@ -303,38 +289,25 @@ compile_func(Node *node)
   assert_node(node, NODE_FUNC);
 
   // declare function
-  LLVMTypeRef param_types[256]; // FIXME: dynamic allocation
+  LLVMTypeRef param_types[node->spec->params->length];
   for (int i = 0; i < node->spec->params->length; i++) {
     param_types[i] = compile_param_decl((Node *)vector_get(node->spec->params, i));
   }
   compiler.func = LLVMAddFunction(compiler.mod, func_name(node->spec),
       LLVMFunctionType(compile_type(node->type), param_types, node->spec->params->length, false));
 
-  // Create local scope
-  compiler.syms = create_dict();
-
-  // set argument names
-  LLVMValueRef params[256]; // FIXME: dynamic allocation
-  LLVMGetParams(compiler.func, params);
-  for (int i = 0; i < node->spec->params->length; i++) {
-    char *param_name = ((Node *)vector_get(node->spec->params, i))->spec->id;
-    dict_set(compiler.syms, param_name, params[i]);
-    LLVMSetValueName(params[i], param_name);
-  }
-
   // build block instructions
   LLVMBasicBlockRef block = LLVMAppendBasicBlock(compiler.func, "entry");
-  LLVMBuilderRef builder = LLVMCreateBuilder();
-  compiler.builder = builder;
+  compiler.builder = LLVMCreateBuilder();
   LLVMPositionBuilderAtEnd(compiler.builder, block);
 
-  // store argument
+  // set and store argument names
+  LLVMValueRef param_refs[node->spec->params->length];
+  LLVMGetParams(compiler.func, param_refs);
   for (int i = 0; i < node->spec->params->length; i++) {
     Node *param = vector_get(node->spec->params, i);
-    LLVMValueRef val = dict_get(compiler.syms, param->spec->id);
-    LLVMValueRef var = LLVMBuildAlloca(compiler.builder, compile_type(param->type), param->spec->id);
-    dict_set(compiler.syms, param->spec->id, var);
-    LLVMBuildStore(compiler.builder, val, var);
+    param->ref = LLVMBuildAlloca(compiler.builder, compile_type(param->type), param->spec->id);
+    LLVMBuildStore(compiler.builder, param_refs[i], param->ref);
   }
 
   compile_stmt(node->stmts);
@@ -379,8 +352,7 @@ LLVMModuleRef
 compile(Node *ast)
 {
   compiler = (Compiler){
-    .mod  = LLVMModuleCreateWithName("clannad"),
-    .syms = create_dict(),
+    .mod = LLVMModuleCreateWithName("clannad"),
   };
   compile_root(ast);
   return compiler.mod;

@@ -1,3 +1,5 @@
+// Dict is an associated list of void pointers, which can compose a tree structure.
+
 #include <stdlib.h>
 #include <string.h>
 #include "clannad.h"
@@ -14,6 +16,7 @@ create_dict()
 {
   Dict *ret = malloc(sizeof(Dict));
   ret->entries = create_vector();
+  ret->parent  = NULL;
   return ret;
 }
 

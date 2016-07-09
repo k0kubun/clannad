@@ -46,12 +46,14 @@ typedef struct {
   int length;
 } Vector;
 
-typedef struct {
+typedef struct Dict {
   Vector *entries;
+  struct Dict *parent;
 } Dict;
 
 typedef struct Node {
   enum NodeKind kind;
+  LLVMValueRef ref;
   union {
     // NODE_ROOT, NODE_COUMPOUND_STMT
     Vector *children;
@@ -69,7 +71,10 @@ typedef struct Node {
       struct Node *stmts; // NODE_FUNC only
     };
     // NODE_SPEC, NODE_TYPE, NODE_IDENTIFIER, NODE_STRING
-    char *id;
+    struct {
+      char *id;
+      struct Node *ref_node; // NODE_IDENTIFIER only
+    };
     // NODE_INTEGER
     long ival;
     // NODE_BINOP, NODE_UNARY
