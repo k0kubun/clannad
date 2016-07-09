@@ -2,7 +2,7 @@
 ## C89/C90
 ANSI X3.159-1989, ISO/IEC 9899:1990
 
-#### 33 / 113 (29.2%)
+#### 35 / 113 (31.0%)
 
 - 2 environment
   - 2.1 conceptual models
@@ -29,7 +29,7 @@ ANSI X3.159-1989, ISO/IEC 9899:1990
          - [ ] continue for signed struct
          - [ ] default goto volatile while
      - 3.1.2 identifiers
-         - [ ] 3.1.2.1 scopes of identifiers
+         - [x] 3.1.2.1 scopes of identifiers
          - [ ] 3.1.2.2 linkages of identifiers
          - [ ] 3.1.2.3 name spaces of identifiers
          - [ ] 3.1.2.4 storage durations of objects
@@ -61,8 +61,8 @@ ANSI X3.159-1989, ISO/IEC 9899:1990
          - [ ] `~` `[ ]` `( )` `.` `->` `:` `##` `?`
          - [ ] `*=` `/=` `%=` `+=` `-=` `<<=` `>>=` `&=` `^=` `|=` `,` `#`
      - 3.1.6 punctuators
-         - [x] `;` `=`
-         - [ ] `[ ]` `( )` `{ }` `*` `,` `:` `...` `#`
+         - [x] `;` `=` `{` `}`
+         - [ ] `[ ]` `( )` `*` `,` `:` `...` `#`
      - [ ] 3.1.7 header names
      - [ ] 3.1.8 preprocessing numbers
      - [x] 3.1.9 comments
@@ -119,7 +119,7 @@ ANSI X3.159-1989, ISO/IEC 9899:1990
      - [ ] 3.5.7 Initialization
   - 3.6. statements
      - [ ] 3.6.1 Labeled statements
-     - [ ] 3.6.2 Compound statement, or block
+     - [x] 3.6.2 Compound statement, or block
      - [x] 3.6.3 Expression and null statements
      - 3.6.4 Selection statements
          - [x] 3.6.4.1 The if statement

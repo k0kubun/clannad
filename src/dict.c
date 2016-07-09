@@ -35,7 +35,11 @@ dict_get(Dict *dict, char *key)
 {
   int i = dict_index(dict, key);
   if (i == ENTRY_NOT_FOUND) {
-    return NULL;
+    if (dict->parent) {
+      return dict_get(dict->parent, key);
+    } else {
+      return NULL;
+    }
   } else {
     DictEntry *entry = vector_get(dict->entries, i);
     return entry->data;

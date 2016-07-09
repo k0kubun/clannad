@@ -310,7 +310,12 @@ compile_func(Node *node)
     LLVMBuildStore(compiler.builder, param_refs[i], param->ref);
   }
 
-  compile_stmt(node->stmts);
+  // Avoiding compile_comp_stmt since we have extra variables (argument variables) for this block
+  assert_node(node->stmts, NODE_COMPOUND_STMT);
+  for (int i = 0; i < node->stmts->children->length; i++) {
+    Node *child = (Node *)vector_get(node->stmts->children, i);
+    compile_stmt(child);
+  }
 }
 
 void

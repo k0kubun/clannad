@@ -241,6 +241,7 @@ block_item
 
 statement
   : expression_statement
+  | compound_statement
   | selection_statement
   | jump_statement
   ;

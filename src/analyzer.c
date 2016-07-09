@@ -150,10 +150,12 @@ analyze_comp_stmt(Node *node)
 {
   assert_node(node, NODE_COMPOUND_STMT);
 
+  scope_enter();
   for (int i = 0; i < node->children->length; i++) {
     Node *child = (Node *)vector_get(node->children, i);
     analyze_stmt(child);
   }
+  scope_leave();
 }
 
 void
@@ -225,7 +227,14 @@ analyze_func(Node *node)
     Node *param = vector_get(node->spec->params, i);
     dict_set(analyzer.scope, param->spec->id, param);
   }
-  analyze_stmt(node->stmts);
+
+  // Avoiding compile_comp_stmt since scopes of argument variables
+  // and function's compound statement should be the same.
+  assert_node(node->stmts, NODE_COMPOUND_STMT);
+  for (int i = 0; i < node->stmts->children->length; i++) {
+    Node *child = (Node *)vector_get(node->stmts->children, i);
+    analyze_stmt(child);
+  }
 
   scope_leave();
   if (!strcmp(node->type->id, "void")) {

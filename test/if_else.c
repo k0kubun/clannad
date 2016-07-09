@@ -34,6 +34,37 @@ void test_dangling_else() {
   expect_int(1, shallow_else(1, 1));
 }
 
+void test_if_without_block() {
+  int a;
+  a = 1;
+  if (1)
+    a = a * 2;
+  else
+    a = 0;
+  expect_int(2, a);
+}
+
+void test_if_with_block() {
+  int a;
+  a = 1;
+  if (1) {
+    a = a * 2;
+    a = a + 1;
+  } else {
+    a = 0;
+  }
+  expect_int(3, a);
+
+  if (0) {
+    a = 0;
+  } else {
+    a = a * 2;
+  }
+  expect_int(6, a);
+}
+
 void test() {
   test_dangling_else();
+  test_if_without_block();
+  test_if_with_block();
 }
