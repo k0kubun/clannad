@@ -132,6 +132,22 @@ convert_compound_assign(Node *node)
       node->rhs = create_node(&(Node){ NODE_BINOP, .lhs = node->lhs, .op = '/', .rhs = node->rhs });
       node->op  = '=';
       break;
+    case MOD_ASSIGN:
+      node->rhs = create_node(&(Node){ NODE_BINOP, .lhs = node->lhs, .op = '%', .rhs = node->rhs });
+      node->op  = '=';
+      break;
+    case AND_ASSIGN:
+      node->rhs = create_node(&(Node){ NODE_BINOP, .lhs = node->lhs, .op = '&', .rhs = node->rhs });
+      node->op  = '=';
+      break;
+    case XOR_ASSIGN:
+      node->rhs = create_node(&(Node){ NODE_BINOP, .lhs = node->lhs, .op = '^', .rhs = node->rhs });
+      node->op  = '=';
+      break;
+    case OR_ASSIGN:
+      node->rhs = create_node(&(Node){ NODE_BINOP, .lhs = node->lhs, .op = '|', .rhs = node->rhs });
+      node->op  = '=';
+      break;
   }
 }
 

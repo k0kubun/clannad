@@ -18,6 +18,17 @@ void test_bit_xor() {
   expect_int(6, 4 ^ 2);
 }
 
+void test_bit_assign() {
+  int a;
+  a = 3;
+  a &= 2;
+  expect_int(2, a);
+  a |= 3;
+  expect_int(3, a);
+  a ^= 2;
+  expect_int(1, a);
+}
+
 void test_bit_not() {
   int a;
   a = -4;
@@ -52,6 +63,7 @@ void test() {
   test_bit_or();
   test_bit_xor();
   test_bit_not();
+  test_bit_assign();
   test_left_shift();
   test_left_assign();
   test_right_shift();

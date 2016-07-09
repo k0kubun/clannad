@@ -2,7 +2,7 @@
 ## C89/C90
 ANSI X3.159-1989, ISO/IEC 9899:1990
 
-#### 36 / 113 (31.9%)
+#### 38 / 113 (33.6%)
 
 - 2 environment
   - 2.1 conceptual models
@@ -57,8 +57,8 @@ ANSI X3.159-1989, ISO/IEC 9899:1990
      - [x] 3.1.4 string literals
      - 3.1.5 operators
          - [x] `++` `--` `*` `+` `-` `/` `%` `==` `!=` `sizeof`, `<<`, `>>`
-         - [x] `<` `>` `<=` `>=` `!` `=` `&&` `||`, `&`, `|` `^` `~` `<<=` `>>=` `+=` `-=` `*=` `/=`
-         - [ ] `%=` `&=` `^=` `|=`
+         - [x] `<` `>` `<=` `>=` `!` `=` `&&` `||`, `&`, `|` `^` `~`
+         - [x] `<<=` `>>=` `+=` `-=` `*=` `/=` `%=` `&=` `^=` `|=`
          - [ ] `[ ]` `( )` `.` `->` `:` `#` `##` `?` `,`
      - 3.1.6 punctuators
          - [x] `;` `=` `{` `}`
@@ -95,7 +95,7 @@ ANSI X3.159-1989, ISO/IEC 9899:1990
      - [ ] 3.3.15 Conditional operator
      - 3.3.16 Assignment operators
          - [x] 3.3.16.1 Simple assignment
-         - [ ] 3.3.16.2 Compound assignment
+         - [x] 3.3.16.2 Compound assignment
      - [ ] 3.3.17 Comma operator
   - 3.4. constant expressions
      - [x] an arithmetic constant expression

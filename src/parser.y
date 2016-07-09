@@ -494,6 +494,22 @@ assignment_operator
   {
     $$ = DIV_ASSIGN;
   }
+  | tMOD_ASSIGN
+  {
+    $$ = MOD_ASSIGN;
+  }
+  | tAND_ASSIGN
+  {
+    $$ = AND_ASSIGN;
+  }
+  | tXOR_ASSIGN
+  {
+    $$ = XOR_ASSIGN;
+  }
+  | tOR_ASSIGN
+  {
+    $$ = OR_ASSIGN;
+  }
   ;
 
 logical_or_expression

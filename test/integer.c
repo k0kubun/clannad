@@ -79,6 +79,8 @@ void test_arithmetic_compound_assign() {
   expect_int(6, a);
   a /= 2;
   expect_int(3, a);
+  a %= 2;
+  expect_int(1, a);
 }
 
 void test() {
