@@ -1,4 +1,4 @@
-void expect_int(int a, int b);
+void expect_int(int, int);
 
 void test_equal() {
   int n;

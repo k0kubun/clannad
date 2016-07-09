@@ -1,4 +1,4 @@
-void expect_int(int a, int b);
+void expect_int(int, int);
 
 void test_arithmetic() {
   expect_int(3, 1 + 2);

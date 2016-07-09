@@ -1,4 +1,4 @@
-int printf(char *__format, int a, int b);
+int printf(char *, int, int);
 void test();
 
 void pass() {

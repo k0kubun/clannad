@@ -43,6 +43,7 @@ static Node *parse_result;
 %type <node> declaration
 %type <node> init_declarator_list
 %type <node> init_declarator
+%type <node> abstract_declarator
 %type <node> declarator
 %type <node> pointer
 %type <node> direct_declarator
@@ -197,10 +198,18 @@ parameter_declaration
   {
     $$ = create_node(&(Node){ NODE_PARAM_DECL, .type = $1, .spec = $2 });
   }
+  | declaration_specifiers abstract_declarator
+  {
+    $$ = create_node(&(Node){ NODE_PARAM_DECL, .type = $1, .spec = $2 });
+  }
   | declaration_specifiers
   {
     $$ = create_node(&(Node){ NODE_PARAM_DECL, .type = $1, .spec = NULL });
   }
+  ;
+
+abstract_declarator
+  : pointer
   ;
 
 compound_statement

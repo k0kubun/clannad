@@ -29,6 +29,9 @@ void test_funcall() {
 
 void test_void_decl(void);
 
+void test_pointer_decl_with_name(char *s1, char *s2);
+void test_pointer_decl_without_name(char *, char *);
+
 void test_void_arg(void) {
   pass();
 }

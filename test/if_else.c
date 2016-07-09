@@ -1,4 +1,4 @@
-void expect_int(int a, int b);
+void expect_int(int, int);
 
 int deep_else(int flag1, int flag2) {
   int n;

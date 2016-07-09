@@ -290,7 +290,7 @@ compile_param_decl(Node *node)
 {
   assert_node(node, NODE_PARAM_DECL);
 
-  if (node->spec->kind == NODE_PTR) {
+  if (node->spec && node->spec->kind == NODE_PTR) {
     return LLVMPointerType(compile_type(node->type), false);
   } else {
     return compile_type(node->type);
