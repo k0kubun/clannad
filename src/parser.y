@@ -330,6 +330,9 @@ selection_statement
 expression
   : assignment_expression
   | expression ',' assignment_expression
+  {
+    $$ = create_node(&(Node){ NODE_COMMA, .lhs = $1, .rhs = $3 });
+  }
   ;
 
 additive_expression

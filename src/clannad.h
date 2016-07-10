@@ -25,6 +25,7 @@ enum NodeKind {
   NODE_UNARY,
   NODE_DECLN,
   NODE_TERNARY,
+  NODE_COMMA,
 };
 
 enum MultiCharsOp {
@@ -92,12 +93,12 @@ typedef struct Node {
     };
     // NODE_INTEGER
     long ival;
-    // NODE_BINOP, NODE_UNARY
+    // NODE_BINOP, NODE_UNARY, NODE_COMMA
     struct {
       int op;
       union {
         struct Node *val; // for NODE_UNARY
-        struct { // for NODE_BINOP
+        struct { // for NODE_BINOP, NODE_COMMA
           struct Node *lhs;
           struct Node *rhs;
         };

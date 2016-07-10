@@ -229,6 +229,15 @@ compile_ternary(Node *node)
 }
 
 LLVMValueRef
+compile_comma(Node *node)
+{
+  assert_node(node, NODE_COMMA);
+
+  compile_exp(node->lhs);
+  return compile_exp(node->rhs);
+}
+
+LLVMValueRef
 compile_exp(Node *node)
 {
   switch (node->kind) {
@@ -246,6 +255,8 @@ compile_exp(Node *node)
       return compile_funcall(node);
     case NODE_TERNARY:
       return compile_ternary(node);
+    case NODE_COMMA:
+      return compile_comma(node);
     default:
       fprintf(stderr, "Unexpected node in compile_exp: %s\n", kind_label(node->kind));
       exit(1);
