@@ -5,15 +5,23 @@ LD=clang++
 LDFLAGS=`llvm-config --cxxflags --ldflags --libs core executionengine jit interpreter analysis native bitwriter --system-libs`
 OBJS=src/analyzer.o src/assembler.o src/compiler.o src/debug.o src/dict.o src/lex.yy.o \
      src/main.o src/optimizer.o src/parser.tab.o src/vector.o
+SRCS := $(patsubst %.o,%.c,$(OBJS))
 TESTS := $(patsubst %.c,%.bin,$(filter-out test/test_helper.c,$(wildcard test/*.c)))
 TESTOBJS := $(patsubst %.c,%.o,$(wildcard test/*.c))
-.PHONY: all run clean test
+.PHONY: all run clean test self
 .SECONDARY: $(TESTOBJS)
 
 all: clannad
 
 clannad: $(OBJS)
 	$(LD) $(OBJS) $(LDFLAGS) -o $@
+
+self: clannad
+	@for src in $$(echo $(SRCS)); do \
+		echo "===[Compiling $$src...]======================" ; \
+		($(CLND) $$src && echo "*** Succeeded! ***") || echo "--- Failed. ---"; \
+		echo ; \
+	done
 
 run: clannad
 	$(CLND) input.c && gcc input.o && ./a.out
