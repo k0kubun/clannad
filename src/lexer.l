@@ -1,12 +1,25 @@
 %{
+#include <stdio.h>
+#include <stdbool.h>
 #include "clannad.h"
 #include "parser.tab.h"
 
 char* copy_string(char *str);
 char* read_string_literal(char *str);
+bool push_file(char *filename);
+bool pop_file();
+
+struct buffer_node {
+  struct buffer_node *parent;
+  YY_BUFFER_STATE buf;
+  FILE *file;
+};
+
+static struct buffer_node *buffer_stack = NULL;
 %}
 
 %s COMMENT
+%x INCLUDE_FILE
 
 %%
 
@@ -19,6 +32,32 @@ char* read_string_literal(char *str);
   "*"     // eat the lone star
   \n      yylineno++;
 }
+
+^"#"[ \t]*include[ \t]*[\"<] {
+  BEGIN(INCLUDE_FILE);
+}
+<INCLUDE_FILE>[^ \t\n\">]+ {
+  {
+    int c;
+    while ((c = input()) && c != '\n');
+  }
+
+  if (!push_file(strdup(yytext))) {
+    yyterminate();
+  }
+
+  BEGIN(INITIAL);
+}
+<INCLUDE_FILE>.|\n {
+  fprintf(stderr, "Bad #include is found.\n");
+  yyterminate();
+}
+<<EOF>> {
+  if (!pop_file()) {
+    yyterminate();
+  }
+}
+
 
 "int"      return tINT;
 "char"     return tCHAR;
@@ -145,4 +184,37 @@ read_string_literal(char *str)
   }
   ret[pos] = '\0';
   return ret;
+}
+
+bool
+push_file(char *filename)
+{
+  FILE *file = fopen(filename, "r");
+  if (!file) {
+    fprintf(stderr, "Failed to open: '%s'\n", filename);
+    return false;
+  }
+
+  struct buffer_node *new_node = malloc(sizeof(struct buffer_node));
+  *new_node = (struct buffer_node){
+    .file   = file,
+    .parent = buffer_stack,
+    .buf    = YY_CURRENT_BUFFER,
+  };
+  buffer_stack = new_node;
+
+  yy_switch_to_buffer(yy_create_buffer(file, YY_BUF_SIZE));
+  return true;
+}
+
+bool
+pop_file()
+{
+  if (buffer_stack == NULL) return false;
+
+  fclose(buffer_stack->file);
+  yy_switch_to_buffer(buffer_stack->buf);
+
+  buffer_stack = buffer_stack->parent;
+  return true;
 }
