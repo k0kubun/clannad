@@ -403,7 +403,7 @@ compile_func_decl(Node *node)
 {
   assert_node(node, NODE_FUNC_DECL);
 
-  LLVMTypeRef params[256]; // FIXME: dynamic allocation
+  LLVMTypeRef params[node->spec->params->length];
   for (int i = 0; i < node->spec->params->length; i++) {
     params[i] = compile_param_decl((Node *)vector_get(node->spec->params, i));
   }
