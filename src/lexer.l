@@ -111,8 +111,18 @@ char
 read_escaped_char(char c)
 {
   switch (c) {
+    case 'a':
+      return '\a';
+    case 'b':
+      return '\b';
+    case 'f':
+      return '\f';
     case 'n':
       return '\n';
+    case 'r':
+      return '\r';
+    case 't':
+      return '\t';
     default:
       fprintf(stderr, "unexpected escape sequence: '\\%c'", c);
       exit(1);

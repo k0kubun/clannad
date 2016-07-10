@@ -10,6 +10,11 @@ void test_multibyte_string() {
   pass();
 }
 
+void test_escape_sequences() {
+  "\a\b\f\n\r\t";
+  pass();
+}
+
 void test_char() {
   char ch = 'a';
 }

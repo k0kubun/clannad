@@ -2,16 +2,13 @@
 ## C89/C90
 ANSI X3.159-1989, ISO/IEC 9899:1990
 
-#### 41 / 113 (36.2%)
+#### 42 / 110 (38.2%)
 
 - 2 environment
   - 2.1 conceptual models
      - 2.1.2.1 translation phases
-         - [ ] source character mapping
          - [ ] remove newline preceding backslach
-         - [ ] replace comment with one space character
-         - [ ] preprocessor
-         - [ ] escape sequence in string literal
+         - [x] escape sequence in string literal
          - [ ] concatenate adjacent character string literal and wide string literal
   - 2.2 environmental considerations
      - 2.2.1 character sets
