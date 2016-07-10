@@ -79,7 +79,10 @@ typedef struct Node {
     struct {
       struct Node *type;
       struct Node *spec;
-      struct Node *stmts; // NODE_FUNC only
+      union {
+        struct Node *init; // NODE_VAR_DECL only
+        struct Node *stmts; // NODE_FUNC only
+      };
     };
     // NODE_SPEC, NODE_TYPE, NODE_IDENTIFIER, NODE_STRING
     struct {

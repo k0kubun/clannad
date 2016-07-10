@@ -7,8 +7,7 @@ void test_empty_comp_stmt() {
 }
 
 void test_variable_redefinition() {
-  int a;
-  a = 1;
+  int a = 1;
   {
     int a;
     a = 2;
@@ -18,8 +17,7 @@ void test_variable_redefinition() {
 }
 
 void test_variable_outside_comp_stmt() {
-  int a;
-  a = 1;
+  int a = 1;
   {
     expect_int(1, a);
   }

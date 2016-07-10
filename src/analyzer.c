@@ -145,6 +145,7 @@ analyze_var_decl(Node *node)
   assert_node(node, NODE_VAR_DECL);
 
   dict_set(analyzer.scope, node->spec->id, node);
+  if (node->init) analyze_exp(node->init);
 }
 
 void

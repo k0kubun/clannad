@@ -3,8 +3,7 @@ void pass();
 
 int ret_func() { return 3; }
 int var_ret_func() {
-  int n;
-  n = 3;
+  int n = 3;
   return n;
 }
 

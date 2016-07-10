@@ -19,8 +19,7 @@ void test_bit_xor() {
 }
 
 void test_bit_assign() {
-  int a;
-  a = 3;
+  int a = 3;
   a &= 2;
   expect_int(2, a);
   a |= 3;
@@ -30,8 +29,7 @@ void test_bit_assign() {
 }
 
 void test_bit_not() {
-  int a;
-  a = -4;
+  int a = -4;
   expect_int(3, ~a);
   expect_int(-3, ~2);
 }
@@ -41,8 +39,7 @@ void test_left_shift() {
 }
 
 void test_left_assign() {
-  int n;
-  n = 2;
+  int n = 2;
   n <<= 2;
   expect_int(8, n);
 }
@@ -52,8 +49,7 @@ void test_right_shift() {
 }
 
 void test_right_assign() {
-  int n;
-  n = 8;
+  int n = 8;
   n >>= 2;
   expect_int(2, n);
 }

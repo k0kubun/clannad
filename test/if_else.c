@@ -1,8 +1,7 @@
 void expect_int(int, int);
 
 int deep_else(int flag1, int flag2) {
-  int n;
-  n = 0;
+  int n = 0;
   if (flag1)
     if (flag2)
       n = 1;
@@ -12,8 +11,7 @@ int deep_else(int flag1, int flag2) {
 }
 
 int shallow_else(int flag1, int flag2) {
-  int n;
-  n = 0;
+  int n = 0;
   if (flag1)
     if (flag2)
       n = 1;
@@ -35,8 +33,7 @@ void test_dangling_else() {
 }
 
 void test_if_without_block() {
-  int a;
-  a = 1;
+  int a = 1;
   if (1)
     a = a * 2;
   else
@@ -45,8 +42,7 @@ void test_if_without_block() {
 }
 
 void test_if_with_block() {
-  int a;
-  a = 1;
+  int a = 1;
   if (1) {
     a = a * 2;
     a = a + 1;

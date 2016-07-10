@@ -247,6 +247,9 @@ compile_var_decl(Node *node)
 {
   assert_node(node, NODE_VAR_DECL);
   node->ref = LLVMBuildAlloca(compiler.builder, compile_type(node->type), node->spec->id);
+  if (node->init) {
+    LLVMBuildStore(compiler.builder, compile_exp(node->init), node->ref);
+  }
 }
 
 void compile_stmt(Node *node);

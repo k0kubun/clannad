@@ -1,8 +1,7 @@
 void expect_int(int, int);
 
 void test_equal() {
-  int n;
-  n = 1;
+  int n = 1;
   if (n == 1)
     n = 2;
   else
@@ -11,8 +10,7 @@ void test_equal() {
 }
 
 void test_gt() {
-  int n;
-  n = 1;
+  int n = 1;
   if (n > 0)
     n = 2;
   expect_int(2, n);
@@ -23,8 +21,7 @@ void test_gt() {
 }
 
 void test_lt() {
-  int n;
-  n = 1;
+  int n = 1;
   if (n < 2)
     n = 2;
   expect_int(2, n);
@@ -35,8 +32,7 @@ void test_lt() {
 }
 
 void test_ge() {
-  int n;
-  n = 1;
+  int n = 1;
   if (n >= 0)
     n = 2;
   expect_int(2, n);
@@ -47,8 +43,7 @@ void test_ge() {
 }
 
 void test_le() {
-  int n;
-  n = 1;
+  int n = 1;
   if (n <= 2)
     n = 2;
   expect_int(2, n);

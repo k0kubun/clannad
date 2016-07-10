@@ -37,9 +37,7 @@ void test_factorial() {
 }
 
 void test_increment() {
-  int n;
-
-  n = 0;
+  int n = 0;
   expect_int(0, n++);
   expect_int(1, n);
 
@@ -49,9 +47,7 @@ void test_increment() {
 }
 
 void test_decrement() {
-  int n;
-
-  n = 0;
+  int n = 0;
   expect_int(0, n--);
   expect_int(-1, n);
 
@@ -69,8 +65,7 @@ void test_unary_minus() {
 }
 
 void test_arithmetic_compound_assign() {
-  int a;
-  a = 1;
+  int a = 1;
   a += 3;
   expect_int(4, a);
   a -= 2;

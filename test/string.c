@@ -11,8 +11,7 @@ void test_multibyte_string() {
 }
 
 void test_char() {
-  char ch;
-  ch = 'a';
+  char ch = 'a';
 }
 
 void test() {
