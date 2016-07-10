@@ -67,6 +67,8 @@ kind_label(enum NodeKind type)
       return "NODE_UNARY";
     case NODE_IF:
       return "NODE_IF";
+    case NODE_TERNARY:
+      return "NODE_TERNARY";
     default:
       fprintf(stderr, "kind_label is not defined for %d\n", type);
       return "NODE_UNSUPPORTED";

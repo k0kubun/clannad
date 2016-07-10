@@ -221,6 +221,14 @@ compile_funcall(Node *node)
 }
 
 LLVMValueRef
+compile_ternary(Node *node)
+{
+  assert_node(node, NODE_TERNARY);
+  return LLVMBuildSelect(compiler.builder, compile_exp(node->cond),
+      compile_exp(node->if_stmt), compile_exp(node->else_stmt), "");
+}
+
+LLVMValueRef
 compile_exp(Node *node)
 {
   switch (node->kind) {
@@ -236,6 +244,8 @@ compile_exp(Node *node)
       return compile_variable(node);
     case NODE_FUNCALL:
       return compile_funcall(node);
+    case NODE_TERNARY:
+      return compile_ternary(node);
     default:
       fprintf(stderr, "Unexpected node in compile_exp: %s\n", kind_label(node->kind));
       exit(1);

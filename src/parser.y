@@ -491,6 +491,10 @@ argument_expression_list
 
 conditional_expression
   : logical_or_expression
+  | logical_or_expression '?' expression ':' conditional_expression
+  {
+    $$ = create_node(&(Node){ NODE_TERNARY, .cond = $1, .if_stmt = $3, .else_stmt = $5 });
+  }
   ;
 
 assignment_expression

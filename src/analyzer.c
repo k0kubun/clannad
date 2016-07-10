@@ -99,6 +99,16 @@ analyze_funcall(Node *node)
 }
 
 void
+analyze_ternary(Node *node)
+{
+  assert_node(node, NODE_TERNARY);
+
+  analyze_exp(node->cond);
+  analyze_exp(node->if_stmt);
+  analyze_exp(node->else_stmt);
+}
+
+void
 analyze_exp(Node *node)
 {
   switch (node->kind) {
@@ -114,6 +124,8 @@ analyze_exp(Node *node)
       return analyze_variable(node);
     case NODE_FUNCALL:
       return analyze_funcall(node);
+    case NODE_TERNARY:
+      return analyze_ternary(node);
     default:
       fprintf(stderr, "Unexpected node in analyze_exp: %s\n", kind_label(node->kind));
       exit(1);

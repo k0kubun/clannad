@@ -24,6 +24,7 @@ enum NodeKind {
   NODE_IF,
   NODE_UNARY,
   NODE_DECLN,
+  NODE_TERNARY,
 };
 
 enum MultiCharsOp {
@@ -102,7 +103,7 @@ typedef struct Node {
         };
       };
     };
-    // NODE_IF
+    // NODE_IF, NODE_TERNARY
     struct {
       struct Node *cond;
       struct Node *if_stmt;

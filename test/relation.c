@@ -65,10 +65,16 @@ void test_or_op() {
   expect_int(0, 0 || 0);
 }
 
+void test_cond_op() {
+  expect_int(2, 1 ? 2 : 3);
+  expect_int(3, 0 ? 2 : 3);
+}
+
 void test() {
   test_equal();
   test_gt();
   test_lt();
   test_ge();
   test_le();
+  test_cond_op();
 }

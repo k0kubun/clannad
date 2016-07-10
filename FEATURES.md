@@ -2,7 +2,7 @@
 ## C89/C90
 ANSI X3.159-1989, ISO/IEC 9899:1990
 
-#### 38 / 113 (33.6%)
+#### 39 / 113 (34.5%)
 
 - 2 environment
   - 2.1 conceptual models
@@ -58,8 +58,8 @@ ANSI X3.159-1989, ISO/IEC 9899:1990
      - 3.1.5 operators
          - [x] `++` `--` `*` `+` `-` `/` `%` `==` `!=` `sizeof`, `<<`, `>>`
          - [x] `<` `>` `<=` `>=` `!` `=` `&&` `||`, `&`, `|` `^` `~`
-         - [x] `<<=` `>>=` `+=` `-=` `*=` `/=` `%=` `&=` `^=` `|=`
-         - [ ] `[ ]` `( )` `.` `->` `:` `#` `##` `?` `,`
+         - [x] `<<=` `>>=` `+=` `-=` `*=` `/=` `%=` `&=` `^=` `|=` `?` `:`
+         - [ ] `[ ]` `( )` `.` `->` `#` `##` `,`
      - 3.1.6 punctuators
          - [x] `;` `=` `{` `}`
          - [ ] `[ ]` `( )` `*` `,` `:` `...` `#`
@@ -92,7 +92,7 @@ ANSI X3.159-1989, ISO/IEC 9899:1990
      - [x] 3.3.12 Bitwise inclusive OR operator
      - [x] 3.3.13 Logical AND operator
      - [x] 3.3.14 Logical OR operator
-     - [ ] 3.3.15 Conditional operator
+     - [x] 3.3.15 Conditional operator
      - 3.3.16 Assignment operators
          - [x] 3.3.16.1 Simple assignment
          - [x] 3.3.16.2 Compound assignment
