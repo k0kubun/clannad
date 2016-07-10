@@ -51,6 +51,7 @@ create_decl_node(Node *spec, Node *init)
 %token <id>   tSTRING_LITERAL
 %token <id>   tSIZEOF
 %token <id>   tCONST
+%token <id>   tVOLATILE
 %token <id>   tINC_OP
 %token <id>   tDEC_OP
 %token <id>   tEQ_OP
@@ -201,6 +202,9 @@ declaration_specifiers
       case tCONST:
         $2->flags |= TYPE_CONST;
         break;
+      case tVOLATILE:
+        $2->flags |= TYPE_VOLATILE;
+        break;
       default:
         yyerror("unexpected type_qualifier");
         exit(1);
@@ -213,6 +217,10 @@ type_qualifier
   : tCONST
   {
     $$ = tCONST;
+  }
+  | tVOLATILE
+  {
+    $$ = tVOLATILE;
   }
   ;
 

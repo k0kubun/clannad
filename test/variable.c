@@ -26,6 +26,12 @@ void test_const_variable() {
   expect_int(4, b);
 }
 
+void test_volatile_variable() {
+  volatile int a = 3;
+  a++;
+  expect_int(4, a);
+}
+
 void test() {
   test_variable();
   test_multiple_declarations();

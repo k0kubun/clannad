@@ -55,7 +55,8 @@ enum MultiCharsOp {
 };
 
 // NODE_TYPE's flags
-static const int TYPE_CONST = 1;
+static const int TYPE_CONST    = 1;
+static const int TYPE_VOLATILE = 2;
 
 typedef struct {
   void **data;
