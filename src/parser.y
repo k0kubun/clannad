@@ -5,6 +5,7 @@
 int yylex(void);
 int yyerror(char const *str);
 static Node *parse_result;
+void set_type(Vector *nodes, Node *type);
 %}
 
 %union {
@@ -51,7 +52,7 @@ static Node *parse_result;
 %type <node> external_declaration
 %type <node> function_definition
 %type <node> declaration
-%type <node> init_declarator_list
+%type <list> init_declarator_list
 %type <node> init_declarator
 %type <node> abstract_declarator
 %type <node> declarator
@@ -131,25 +132,37 @@ function_definition
 declaration
   : declaration_specifiers init_declarator_list ';'
   {
-    switch ($2->kind) {
-    case NODE_FUNC_SPEC:
-      $$ = create_node(&(Node){ NODE_FUNC_DECL, .type = $1, .spec = $2 });
-      break;
-    case NODE_SPEC:
-      $$ = create_node(&(Node){ NODE_VAR_DECL, .type = $1, .spec = $2 });
-      break;
-    default:
-      yyerror("unexpected decl type in declaration");
-    }
+    set_type($2, $1);
+    $$ = create_node(&(Node){ NODE_DECLN, .children = $2 });
   }
   ;
 
 init_declarator_list
   : init_declarator
+  {
+    $$ = vector_push(create_vector(), $1);
+  }
+  | init_declarator_list ',' init_declarator
+  {
+    $$ = vector_push($1, $3);
+  }
   ;
 
 init_declarator
   : declarator
+  {
+    // type must be set on "declaration"
+    switch ($1->kind) {
+    case NODE_FUNC_SPEC:
+      $$ = create_node(&(Node){ NODE_FUNC_DECL, .type = NULL, .spec = $1 });
+      break;
+    case NODE_SPEC:
+      $$ = create_node(&(Node){ NODE_VAR_DECL, .type = NULL, .spec = $1 });
+      break;
+    default:
+      yyerror("unexpected decl type in init_declarator");
+    }
+  }
   ;
 
 declaration_specifiers
@@ -602,6 +615,15 @@ create_node(Node *temp)
   Node *ret = malloc(sizeof(Node));
   *ret = *temp;
   return ret;
+}
+
+void
+set_type(Vector *nodes, Node *type)
+{
+  for (int i = 0; i < nodes->length; i++) {
+    Node *node = vector_get(nodes, i);
+    node->type = type;
+  }
 }
 
 int

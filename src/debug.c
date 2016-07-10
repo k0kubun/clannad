@@ -31,6 +31,8 @@ kind_label(enum NodeKind type)
   switch (type) {
     case NODE_ROOT:
       return "NODE_ROOT";
+    case NODE_DECLN:
+      return "NODE_DECLN";
     case NODE_FUNC:
       return "NODE_FUNC";
     case NODE_FUNC_DECL:
@@ -95,6 +97,7 @@ dump_node(int indent, Node *node)
 {
   switch (node->kind) {
     case NODE_ROOT:
+    case NODE_DECLN:
     case NODE_COMPOUND_STMT:
       indented_puts(indent, kind_label(node->kind));
       dump_vector(indent + 1, node->children);

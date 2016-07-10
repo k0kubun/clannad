@@ -160,6 +160,8 @@ analyze_comp_stmt(Node *node)
   scope_leave();
 }
 
+void analyze_decln(Node *node);
+
 void
 analyze_stmt(Node *node)
 {
@@ -181,8 +183,8 @@ analyze_stmt(Node *node)
     case NODE_RETURN:
       analyze_return(node);
       break;
-    case NODE_VAR_DECL:
-      analyze_var_decl(node);
+    case NODE_DECLN:
+      analyze_decln(node);
       break;
     default:
       fprintf(stderr, "Unexpected node kind in analyze_stmt: %s\n", kind_label(node->kind));
@@ -254,6 +256,27 @@ analyze_func_decl(Node *node)
 }
 
 void
+analyze_decln(Node *node)
+{
+  assert_node(node, NODE_DECLN);
+
+  for (int i = 0; i < node->children->length; i++) {
+    Node *child = (Node *)vector_get(node->children, i);
+    switch (child->kind) {
+      case NODE_FUNC_DECL:
+        analyze_func_decl(child);
+        break;
+      case NODE_VAR_DECL:
+        analyze_var_decl(child);
+        break;
+      default:
+        fprintf(stderr, "Unexpected node kind in analyze_decln: %s\n", kind_label(child->kind));
+        exit(1);
+    }
+  }
+}
+
+void
 analyze_root(Node *node)
 {
   assert_node(node, NODE_ROOT);
@@ -264,8 +287,8 @@ analyze_root(Node *node)
       case NODE_FUNC:
         analyze_func(child);
         break;
-      case NODE_FUNC_DECL:
-        analyze_func_decl(child);
+      case NODE_DECLN:
+        analyze_decln(child);
         break;
       default:
         fprintf(stderr, "Unexpected node kind in analyze_root: %s\n", kind_label(child->kind));

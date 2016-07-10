@@ -23,6 +23,7 @@ enum NodeKind {
   NODE_BINOP,
   NODE_IF,
   NODE_UNARY,
+  NODE_DECLN,
 };
 
 enum MultiCharsOp {
@@ -65,7 +66,7 @@ typedef struct Node {
   enum NodeKind kind;
   LLVMValueRef ref;
   union {
-    // NODE_ROOT, NODE_COUMPOUND_STMT
+    // NODE_ROOT, NODE_COUMPOUND_STMT, NODE_DECLN
     Vector *children;
     // NODE_FUNCALL, NODE_FUNC_SPEC
     struct {

@@ -287,6 +287,8 @@ compile_comp_stmt(Node *node)
   }
 }
 
+void compile_decln(Node *node);
+
 void
 compile_stmt(Node *node)
 {
@@ -308,8 +310,8 @@ compile_stmt(Node *node)
     case NODE_RETURN:
       compile_return(node);
       break;
-    case NODE_VAR_DECL:
-      compile_var_decl(node);
+    case NODE_DECLN:
+      compile_decln(node);
       break;
     default:
       fprintf(stderr, "Unexpected node kind in compile_stmt: %s\n", kind_label(node->kind));
@@ -387,6 +389,27 @@ compile_func_decl(Node *node)
 }
 
 void
+compile_decln(Node *node)
+{
+  assert_node(node, NODE_DECLN);
+
+  for (int i = 0; i < node->children->length; i++) {
+    Node *child = (Node *)vector_get(node->children, i);
+    switch (child->kind) {
+      case NODE_FUNC_DECL:
+        compile_func_decl(child);
+        break;
+      case NODE_VAR_DECL:
+        compile_var_decl(child);
+        break;
+      default:
+        fprintf(stderr, "Unexpected node kind in analyze_decln: %s\n", kind_label(child->kind));
+        exit(1);
+    }
+  }
+}
+
+void
 compile_root(Node *node)
 {
   assert_node(node, NODE_ROOT);
@@ -397,8 +420,8 @@ compile_root(Node *node)
       case NODE_FUNC:
         compile_func(child);
         break;
-      case NODE_FUNC_DECL:
-        compile_func_decl(child);
+      case NODE_DECLN:
+        compile_decln(child);
         break;
       default:
         fprintf(stderr, "Unexpected node kind in compile_root: %s\n", kind_label(child->kind));
