@@ -20,6 +20,17 @@ assert_node(Node *node, enum NodeKind kind)
 }
 
 void
+assert_const(Node *node, char *operation, char *var_name)
+{
+  assert_node(node, NODE_TYPE);
+
+  if (node->flags & TYPE_CONST) {
+    fprintf(stderr, "error: %s of read-only variable '%s'\n", operation, var_name);
+    exit(1);
+  }
+}
+
+void
 scope_enter()
 {
   Dict *new_scope = create_dict();
@@ -49,6 +60,18 @@ analyze_unary(Node *node)
   analyze_exp(node->val);
 
   // FIXME: reject arithmetic unary op for non-integers
+  switch ((int)node->op) {
+    case PRE_INC_OP:
+    case PRE_DEC_OP:
+    case POST_INC_OP:
+    case POST_DEC_OP:
+      if (node->val->ref_node->kind != NODE_VAR_DECL) {
+        fprintf(stderr, "lvalue required as increment operand\n");
+        exit(1);
+      }
+      assert_const(node->val->ref_node->type, "increment", node->val->id);
+      break;
+  }
 }
 
 void
@@ -59,7 +82,15 @@ analyze_binop(Node *node)
   analyze_exp(node->lhs);
   analyze_exp(node->rhs);
 
-  // FIXME: ensure assign target is variable
+  switch (node->op) {
+    case '=':
+      if (node->lhs->ref_node->kind != NODE_VAR_DECL) {
+        fprintf(stderr, "lvalue required as left operand of assignment\n");
+        exit(1);
+      }
+      assert_const(node->lhs->ref_node->type, "assignment", node->lhs->id);
+      break;
+  }
 }
 
 void

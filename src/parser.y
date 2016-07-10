@@ -50,6 +50,7 @@ create_decl_node(Node *spec, Node *init)
 %token <id>   tIDENTIFIER
 %token <id>   tSTRING_LITERAL
 %token <id>   tSIZEOF
+%token <id>   tCONST
 %token <id>   tINC_OP
 %token <id>   tDEC_OP
 %token <id>   tEQ_OP
@@ -73,6 +74,7 @@ create_decl_node(Node *spec, Node *init)
 
 %type <list> translation_unit
 %type <node> declaration_specifiers
+%type <ival> type_qualifier
 %type <node> external_declaration
 %type <node> function_definition
 %type <node> declaration
@@ -191,7 +193,26 @@ initializer
 declaration_specifiers
   : type_specifier
   {
-    $$ = create_node(&(Node){ NODE_TYPE, .id = $1 });
+    $$ = create_node(&(Node){ NODE_TYPE, .id = $1, .flags = 0 });
+  }
+  | type_qualifier declaration_specifiers
+  {
+    switch ($1) {
+      case tCONST:
+        $2->flags |= TYPE_CONST;
+        break;
+      default:
+        yyerror("unexpected type_qualifier");
+        exit(1);
+    }
+    $$ = $2;
+  }
+  ;
+
+type_qualifier
+  : tCONST
+  {
+    $$ = tCONST;
   }
   ;
 

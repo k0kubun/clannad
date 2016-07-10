@@ -54,6 +54,9 @@ enum MultiCharsOp {
   OR_ASSIGN,
 };
 
+// NODE_TYPE's flags
+static const int TYPE_CONST = 1;
+
 typedef struct {
   void **data;
   int length;
@@ -89,7 +92,10 @@ typedef struct Node {
     // NODE_SPEC, NODE_TYPE, NODE_IDENTIFIER, NODE_STRING
     struct {
       char *id;
-      struct Node *ref_node; // NODE_IDENTIFIER only
+      union {
+        struct Node *ref_node; // NODE_IDENTIFIER only
+        int flags; // NODE_TYPE only
+      };
     };
     // NODE_INTEGER
     long ival;
