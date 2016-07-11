@@ -1,6 +1,8 @@
 %{
 #include <stdio.h>
 #include <stdbool.h>
+#include <string.h>
+#include <libgen.h>
 #include "clannad.h"
 #include "parser.tab.h"
 
@@ -12,10 +14,14 @@ bool pop_file();
 struct buffer_node {
   struct buffer_node *parent;
   YY_BUFFER_STATE buf;
+  char *filename;
   FILE *file;
 };
 
 static struct buffer_node *buffer_stack = NULL;
+static Vector *std_search_paths = NULL;
+static char* compile_dir = NULL;
+static char* compile_file = NULL;
 %}
 
 %s COMMENT
@@ -46,11 +52,13 @@ static struct buffer_node *buffer_stack = NULL;
         fprintf(stderr, "error: missing terminating > character\n");
         yyterminate();
       }
+      break;
     case '"':
       if (c != '"') {
         fprintf(stderr, "error: missing terminating \" character\n");
         yyterminate();
       }
+      break;
   }
   while ((c = input()) && c != '\n');
 
@@ -198,20 +206,67 @@ read_string_literal(char *str)
   return ret;
 }
 
+void
+init_search_paths()
+{
+  std_search_paths = create_vector();
+  vector_push(std_search_paths, "/usr/include/linux");
+  vector_push(std_search_paths, "/usr/include");
+  vector_push(std_search_paths, "/usr/local/include");
+}
+
+void
+set_compile_path(char* filename)
+{
+  compile_file = filename;
+  compile_dir  = dirname(strdup(filename));
+}
+
+char*
+get_reading_file()
+{
+  if (buffer_stack) {
+    return buffer_stack->filename;
+  } else {
+    return compile_file;
+  }
+}
+
+FILE*
+try_include(char *filename, bool std)
+{
+  FILE *file;
+  char *dir, path[256];
+  if (!std && compile_dir) {
+    sprintf(path, "%s/%s", compile_dir, filename);
+    file = fopen(path, "r");
+    if (file) return file;
+  }
+
+  for (int i = 0; i < std_search_paths->length; i++) {
+    dir = vector_get(std_search_paths, i);
+    sprintf(path, "%s/%s", dir, filename);
+    file = fopen(path, "r");
+    if (file) break;
+  }
+  return file;
+}
+
 bool
 push_file(char *filename, bool std)
 {
-  FILE *file = fopen(filename, "r");
+  FILE *file = try_include(filename, std);
   if (!file) {
-    fprintf(stderr, "Failed to open: '%s'\n", filename);
+    fprintf(stderr, "Failed to include: '%s'\n", filename);
     return false;
   }
 
   struct buffer_node *new_node = malloc(sizeof(struct buffer_node));
   *new_node = (struct buffer_node){
-    .file   = file,
-    .parent = buffer_stack,
-    .buf    = YY_CURRENT_BUFFER,
+    .file     = file,
+    .filename = filename,
+    .parent   = buffer_stack,
+    .buf      = YY_CURRENT_BUFFER,
   };
   buffer_stack = new_node;
 

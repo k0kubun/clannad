@@ -99,33 +99,17 @@ parse_opts(int argc, char **argv, struct clannad_options *opts)
   return filename;
 }
 
-FILE*
-open_file(char *filename)
-{
-  if (!strcmp(filename, "-"))
-    return stdin;
-
-  FILE *file = fopen(filename, "r");
-  if (!file) {
-    fprintf(stderr, "Failed to open: '%s'\n", filename);
-    exit(1);
-  }
-  return file;
-}
-
 int
 main(int argc, char **argv)
 {
   struct clannad_options opts;
   char *filename = parse_opts(argc, argv, &opts);
-  FILE *file     = open_file(filename);
 
   Node *ast;
-  if (parse_file(&ast, file)) {
+  if (parse_file(&ast, filename)) {
     fprintf(stderr, "Error!\n");
     return 1;
   }
-  fclose(file);
 
   if (opts.dump_ast) dump_ast(ast);
   analyze(ast);

@@ -1,6 +1,7 @@
 %{
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "clannad.h"
 int yylex(void);
 int yyerror(char const *str);
@@ -680,18 +681,38 @@ int
 yyerror(char const *str)
 {
   extern char *yytext;
-  fprintf(stderr, "parser error near '%s': %s\n", yytext, str);
+  extern int yyget_lineno(void);
+  fprintf(stderr, "%s:%d: parse error near '%s': %s\n", get_reading_file(), yyget_lineno(), yytext, str);
   return 0;
 }
 
+FILE*
+open_file(char *filename)
+{
+  if (!strcmp(filename, "-"))
+    return stdin;
+
+  FILE *file = fopen(filename, "r");
+  if (!file) {
+    fprintf(stderr, "Failed to open: '%s'\n", filename);
+    exit(1);
+  }
+  return file;
+}
+
 int
-parse_file(Node **astptr, FILE *file)
+parse_file(Node **astptr, char *filename)
 {
   extern int yyparse(void);
   extern FILE *yyin;
 
-  yyin = file;
+  init_search_paths();
+  set_compile_path(filename);
+
+  yyin = open_file(filename);
   int ret = yyparse();
   *astptr = parse_result;
+
+  fclose(yyin);
   return ret;
 }

@@ -1,4 +1,4 @@
-#include "test/include.h"
+#include "include.h"
 
 void test_included_func_call() {
   pass();

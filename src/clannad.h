@@ -133,7 +133,7 @@ char* kind_label(enum NodeKind kind);
 
 // parser.y
 Node* create_node(Node *temp);
-int parse_file(Node **astptr, FILE *file);
+int parse_file(Node **astptr, char *filename);
 
 // compiler.c
 LLVMModuleRef compile(Node *ast);
@@ -142,6 +142,11 @@ LLVMModuleRef compile(Node *ast);
 Dict* create_dict();
 void* dict_get(Dict *dict, char *key);
 void dict_set(Dict *dict, char *key, void *value);
+
+// lexer.l
+void init_search_paths();
+void set_compile_path(char *filename);
+char* get_reading_file();
 
 // vector.c
 Vector* create_vector();
