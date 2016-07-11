@@ -6,7 +6,7 @@
 
 char* copy_string(char *str);
 char* read_string_literal(char *str);
-bool push_file(char *filename);
+bool push_file(char *filename, bool std);
 bool pop_file();
 
 struct buffer_node {
@@ -33,16 +33,28 @@ static struct buffer_node *buffer_stack = NULL;
   \n      yylineno++;
 }
 
-^"#"[ \t]*include[ \t]*[\"<] {
+^"#"[ \t]*include[ \t]* {
   BEGIN(INCLUDE_FILE);
 }
-<INCLUDE_FILE>[^ \t\n\">]+ {
-  {
-    int c;
-    while ((c = input()) && c != '\n');
+<INCLUDE_FILE>[\"<][^ \t\n\">]+ {
+  bool std = false;
+  int c = input();
+  switch (yytext[0]) {
+    case '<':
+      std = true;
+      if (c != '>') {
+        fprintf(stderr, "error: missing terminating > character\n");
+        yyterminate();
+      }
+    case '"':
+      if (c != '"') {
+        fprintf(stderr, "error: missing terminating \" character\n");
+        yyterminate();
+      }
   }
+  while ((c = input()) && c != '\n');
 
-  if (!push_file(strdup(yytext))) {
+  if (!push_file(strdup(yytext + 1), std)) {
     yyterminate();
   }
 
@@ -187,7 +199,7 @@ read_string_literal(char *str)
 }
 
 bool
-push_file(char *filename)
+push_file(char *filename, bool std)
 {
   FILE *file = fopen(filename, "r");
   if (!file) {
