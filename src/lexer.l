@@ -8,6 +8,7 @@
 
 char* read_string_literal(char *str);
 void set_reading_file(char *filename);
+bool pp_eval(Node *node);
 bool is_defined(char *identifier);
 bool push_file(char *filename, bool std);
 bool push_string(char *str);
@@ -113,7 +114,12 @@ static char* define_from  = NULL;
     fprintf(stderr, "Preprocessor parse error!\n");
     yyterminate();
   }
-  BEGIN(INITIAL);
+
+  if (pp_eval(ast)) {
+    BEGIN(INITIAL);
+  } else {
+    BEGIN(IGNORED);
+  }
 }
 
 ^"#"[ \t]*ifndef[ \t]+ {
@@ -298,6 +304,36 @@ static char* define_from  = NULL;
 }
 
 %%
+
+// Eval `#if`'s parameter
+bool
+pp_eval(Node *node)
+{
+  switch (node->kind) {
+    case NODE_DEFINED:
+      return is_defined(node->id);
+    case NODE_UNARY:
+      switch (node->op) {
+        case '!':
+          return !pp_eval(node->val);
+        default:
+          fprintf(stderr, "Unexpected unary operation in pp_eval: %c (%d)\n", node->op, node->op);
+          exit(1);
+      }
+    case NODE_BINOP:
+      switch (node->op) {
+        case AND_OP:
+          return pp_eval(node->lhs) && pp_eval(node->rhs);
+        default:
+          fprintf(stderr, "Unexpected binary operation in pp_eval: %c (%d)\n", node->op, node->op);
+          exit(1);
+      }
+      break;
+    default:
+      fprintf(stderr, "Unexpected node in pp_eval: %s\n", kind_label(node->kind));
+      exit(1);
+  }
+}
 
 // To avoid compilation failure for some environments
 int

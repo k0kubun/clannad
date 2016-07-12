@@ -71,6 +71,8 @@ kind_label(enum NodeKind type)
       return "NODE_TERNARY";
     case NODE_COMMA:
       return "NODE_COMMA";
+    case NODE_DEFINED:
+      return "NODE_DEFINED";
     default:
       fprintf(stderr, "kind_label is not defined for %d\n", type);
       return "NODE_UNSUPPORTED";
@@ -135,6 +137,7 @@ dump_node(int indent, Node *node)
     case NODE_SPEC:
     case NODE_TYPE:
     case NODE_STRING:
+    case NODE_DEFINED:
       indented_printf(indent, "%s id=%s\n", kind_label(node->kind), node->id);
       break;
     case NODE_INTEGER:
@@ -170,5 +173,5 @@ void
 dump_ast(Node *ast)
 {
   dump_node(0, ast);
-  exit(0);
+  exit(1);
 }

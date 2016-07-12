@@ -51,6 +51,38 @@ void test_nested_ifdef() {
   expect_int(5, n);
 }
 
+void test_nested_if_without_parenthesis() {
+  int n = 0;
+# if defined defined_val
+  n += 1;
+#   if defined undefined_val
+  n += 2;
+#   endif
+  n += 4;
+# endif
+  expect_int(5, n);
+}
+
+void test_nested_if_with_parenthesis() {
+  int n = 0;
+# if defined(defined_val)
+  n += 1;
+#   if defined(undefined_val)
+  n += 2;
+#   endif
+  n += 4;
+# endif
+  expect_int(5, n);
+}
+
+void test_if_expression() {
+  int n = 0;
+# if defined defined_val && !defined undefined_val
+  n = 1;
+# endif
+  expect_int(1, n);
+}
+
 int main() {
   test_define_replacement();
   test_empty_define();
@@ -58,5 +90,8 @@ int main() {
   test_ifdef();
   test_undef();
   test_nested_ifdef();
+  test_nested_if_without_parenthesis();
+  test_nested_if_with_parenthesis();
+  test_if_expression();
   return 0;
 }

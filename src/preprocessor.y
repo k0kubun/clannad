@@ -32,6 +32,7 @@ Node* create_decl_node(Node *spec, Node *init);
 %token <ival> tINTEGER
 %token <id>   tIDENTIFIER
 %token <id>   tSTRING_LITERAL
+%token <id>   tDEFINED
 %token <id>   tSIZEOF
 %token <id>   tINC_OP
 %token <id>   tDEC_OP
@@ -193,6 +194,14 @@ unary_expression
   | tSIZEOF '(' type_name ')'
   {
     $$ = create_node(&(Node){ NODE_UNARY, .val = $3, .op = SIZEOF });
+  }
+  | tDEFINED '(' tIDENTIFIER ')'
+  {
+    $$ = create_node(&(Node){ NODE_DEFINED, .id = $3 });
+  }
+  | tDEFINED tIDENTIFIER
+  {
+    $$ = create_node(&(Node){ NODE_DEFINED, .id = $2 });
   }
   ;
 

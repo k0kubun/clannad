@@ -2,7 +2,7 @@
 ## C89/C90
 ANSI X3.159-1989, ISO/IEC 9899:1990
 
-#### 48 / 111 (43.2%)
+#### 49 / 111 (44.1%)
 
 - 2 environment
   - 2.1 conceptual models
@@ -134,7 +134,7 @@ ANSI X3.159-1989, ISO/IEC 9899:1990
      - [x] 3.7.1 Function definitions
      - [ ] 3.7.2 External object definitions
   - 3.8. preprocessing directives
-     - [ ] 3.8.1 Conditional inclusion
+     - [x] 3.8.1 Conditional inclusion
      - [x] 3.8.2 Source file inclusion
      - [x] 3.8.3 Macro replacement
          - [ ] 3.8.3.1 Argument substitution

@@ -27,6 +27,7 @@ enum NodeKind {
   NODE_DECLN,
   NODE_TERNARY,
   NODE_COMMA,
+  NODE_DEFINED, // preprocessor only
 };
 
 enum MultiCharsOp {
@@ -91,7 +92,7 @@ typedef struct Node {
         struct Node *stmts; // NODE_FUNC only
       };
     };
-    // NODE_SPEC, NODE_TYPE, NODE_IDENTIFIER, NODE_STRING
+    // NODE_SPEC, NODE_TYPE, NODE_IDENTIFIER, NODE_STRING, NODE_DEFINED
     struct {
       char *id;
       union {
