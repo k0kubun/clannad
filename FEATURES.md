@@ -2,7 +2,7 @@
 ## C89/C90
 ANSI X3.159-1989, ISO/IEC 9899:1990
 
-#### 49 / 111 (44.1%)
+#### 50 / 111 (45.0%)
 
 - 2 environment
   - 2.1 conceptual models
@@ -17,12 +17,12 @@ ANSI X3.159-1989, ISO/IEC 9899:1990
 - 3 language
   - 3.1 lexical elements
      - 3.1.1 keywords
-         - [x] int char if else return
+         - [x] int char if else return float
          - [x] void sizeof const volatile
-         - [ ] break long switch auto do (!!!)
+         - [ ] break long switch auto
          - [ ] case enum register typedef
          - [ ] extern union double static
-         - [ ] float short unsigned
+         - [ ] short unsigned do
          - [ ] continue for signed struct
          - [ ] default goto while
      - 3.1.2 identifiers
@@ -32,10 +32,10 @@ ANSI X3.159-1989, ISO/IEC 9899:1990
          - [ ] 3.1.2.4 storage durations of objects
          - 3.1.2.5. types
               - object types
-                    - [x] int, char
+                    - [x] int, char, float
                     - [ ] unsigned int, short int, long int, unsigned short int (!!!)
                     - [ ] signed char, unsigned char, unsigned long int
-                    - [ ] float, double, long double
+                    - [ ] double, long double
                     - [ ] enum
                     - [ ] array
                     - [ ] struct
@@ -47,7 +47,7 @@ ANSI X3.159-1989, ISO/IEC 9899:1990
                     - [ ] union
          - [ ] 3.1.2.6 compatible type and composite type
      - 3.1.3 constants
-         - [ ] 3.1.3.1 floating constants (!!!)
+         - [x] 3.1.3.1 floating constants
          - [x] 3.1.3.2 integer constants
          - [ ] 3.1.3.3 enumeration constants
          - [x] 3.1.3.4 character constants

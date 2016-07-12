@@ -59,6 +59,8 @@ kind_label(enum NodeKind type)
       return "NODE_IDENTIFIER";
     case NODE_INTEGER:
       return "NODE_INTEGER";
+    case NODE_FLOAT:
+      return "NODE_FLOAT";
     case NODE_STRING:
       return "NODE_STRING";
     case NODE_BINOP:

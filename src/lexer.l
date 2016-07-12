@@ -39,6 +39,21 @@ static char* compile_file = NULL;
 static char* define_from  = NULL;
 static char* pp_exp       = NULL;
 %}
+O   [0-7]
+D   [0-9]
+NZ  [1-9]
+L   [a-zA-Z_]
+A   [a-zA-Z_0-9]
+H   [a-fA-F0-9]
+HP  (0[xX])
+E   ([Ee][+-]?{D}+)
+P   ([Pp][+-]?{D}+)
+FS  (f|F|l|L)
+IS  (((u|U)(l|L|ll|LL)?)|((l|L|ll|LL)(u|U)?))
+CP  (u|U|L)
+SP  (u8|u|U|L)
+ES  (\\(['"\?\\abfnrtv]|[0-7]{1,3}|x[a-fA-F0-9]+))
+WS  [ \t\v\n\f]
 
 %x COMMENT
 %x DEFINE_FROM
@@ -276,6 +291,7 @@ static char* pp_exp       = NULL;
 }
 
 "int"      return tINT;
+"float"    return tFLOAT;
 "char"     return tCHAR;
 "void"     return tVOID;
 "if"       return tIF;
@@ -319,20 +335,45 @@ static char* pp_exp       = NULL;
 
 [1-9][0-9]* {
   yylval.ival = atoi(yytext);
-  return tINTEGER;
+  return tI_CONSTANT;
+}
+
+{D}+{E}{FS}? {
+  yylval.fval = atof(yytext);
+  return tF_CONSTANT;
+}
+{D}*"."{D}+{E}?{FS}? {
+  yylval.fval = atof(yytext);
+  return tF_CONSTANT;
+}
+{D}+"."{E}?{FS}? {
+  yylval.fval = atof(yytext);
+  return tF_CONSTANT;
+}
+{HP}{H}+{P}{FS}? {
+  yylval.fval = atof(yytext);
+  return tF_CONSTANT;
+}
+{HP}{H}*"."{H}+{P}{FS}? {
+  yylval.fval = atof(yytext);
+  return tF_CONSTANT;
+}
+{HP}{H}+"."{P}{FS}? {
+  yylval.fval = atof(yytext);
+  return tF_CONSTANT;
 }
 
 (u|U|L)?'[^']' {
   // FIXME: u|U|L is not considered, `+` is removed and {ES} is not lexed
   char* str = read_string_literal(yytext);
   yylval.ival = str[0];
-  return tINTEGER;
+  return tI_CONSTANT;
 }
 
 0 {
   // TODO: support all octal digits
   yylval.ival = 0;
-  return tINTEGER;
+  return tI_CONSTANT;
 }
 
 \"([^"]|\\\")*\" {

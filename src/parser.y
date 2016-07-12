@@ -37,17 +37,20 @@ create_decl_node(Node *spec, Node *init)
   Node *node;
   char *id;
   long ival;
+  double fval;
   Vector *list;
   char ch;
 }
 
 %token <id>   tINT
+%token <id>   tFLOAT
 %token <id>   tCHAR
 %token <id>   tVOID
 %token <id>   tIF
 %token <id>   tELSE
 %token <id>   tRETURN
-%token <ival> tINTEGER
+%token <ival> tI_CONSTANT
+%token <fval> tF_CONSTANT
 %token <id>   tIDENTIFIER
 %token <id>   tSTRING_LITERAL
 %token <id>   tSIZEOF
@@ -121,7 +124,6 @@ create_decl_node(Node *spec, Node *init)
 %type <node> primary_expression
 %type <node> constant
 %type <node> string
-%type <node> integer_constant
 %type <id>   type_specifier
 
 %start program
@@ -639,7 +641,14 @@ primary_expression
   ;
 
 constant
-  : integer_constant
+  : tI_CONSTANT
+  {
+    $$ = create_node(&(Node){ NODE_INTEGER, .ival = $1 });
+  }
+  | tF_CONSTANT
+  {
+    $$ = create_node(&(Node){ NODE_FLOAT, .fval = $1 });
+  }
   ;
 
 string
@@ -649,17 +658,14 @@ string
   }
   ;
 
-integer_constant
-  : tINTEGER
-  {
-    $$ = create_node(&(Node){ NODE_INTEGER, .ival = $1 });
-  }
-  ;
-
 type_specifier
   : tINT
   {
     $$ = "int";
+  }
+  | tFLOAT
+  {
+    $$ = "float";
   }
   | tCHAR
   {

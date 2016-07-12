@@ -18,6 +18,7 @@ enum NodeKind {
   NODE_FUNC_SPEC,
   NODE_RETURN,
   NODE_INTEGER,
+  NODE_FLOAT,
   NODE_STRING,
   NODE_IDENTIFIER,
   NODE_COMPOUND_STMT,
@@ -102,6 +103,8 @@ typedef struct Node {
     };
     // NODE_INTEGER
     long ival;
+    // NODE_FLOAT
+    double fval;
     // NODE_BINOP, NODE_UNARY, NODE_COMMA
     struct {
       int op;

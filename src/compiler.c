@@ -20,6 +20,13 @@ compile_int(Node *node)
 }
 
 LLVMValueRef
+compile_float(Node *node)
+{
+  assert_node(node, NODE_FLOAT);
+  return LLVMConstReal(LLVMFloatType(), node->fval);
+}
+
+LLVMValueRef
 compile_string(Node *node)
 {
   assert_node(node, NODE_STRING);
@@ -54,6 +61,8 @@ compile_type(Node *node)
 
   if (!strcmp(node->id, "int")) {
     return LLVMInt32Type();
+  } else if (!strcmp(node->id, "float")) {
+    return LLVMFloatType();
   } else if (!strcmp(node->id, "char")) {
     return LLVMInt8Type();
   } else if (!strcmp(node->id, "void")) {
@@ -247,6 +256,8 @@ compile_exp(Node *node)
       return compile_binop(node);
     case NODE_INTEGER:
       return compile_int(node);
+    case NODE_FLOAT:
+      return compile_float(node);
     case NODE_STRING:
       return compile_string(node);
     case NODE_IDENTIFIER:

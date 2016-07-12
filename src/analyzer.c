@@ -100,6 +100,12 @@ analyze_int(Node *node)
 }
 
 void
+analyze_float(Node *node)
+{
+  assert_node(node, NODE_FLOAT);
+}
+
+void
 analyze_string(Node *node)
 {
   assert_node(node, NODE_STRING);
@@ -158,6 +164,8 @@ analyze_exp(Node *node)
       return analyze_binop(node);
     case NODE_INTEGER:
       return analyze_int(node);
+    case NODE_FLOAT:
+      return analyze_float(node);
     case NODE_STRING:
       return analyze_string(node);
     case NODE_IDENTIFIER:
