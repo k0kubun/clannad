@@ -1,6 +1,6 @@
 CC=clang
 CLND=./clannad
-CFLAGS=-Werror `llvm-config --cflags` -I./src
+CFLAGS=-Werror `llvm-config --cflags` -I./src -DCLANG_VERSION="\"`clang --version | head -n1 | cut -d' ' -f3`\""
 LD=clang++
 LDFLAGS=`llvm-config --cxxflags --ldflags --libs core executionengine jit interpreter analysis native bitwriter --system-libs`
 OBJS=src/analyzer.o src/assembler.o src/compiler.o src/debug.o src/dict.o src/lex.yy.o \
@@ -24,7 +24,7 @@ self: clannad
 	done
 
 run: clannad
-	$(CLND) input.c && gcc input.o && ./a.out
+	$(CLND) input.c && cc input.o && ./a.out
 
 ast: clannad
 	$(CLND) -fdump-ast input.c
@@ -52,7 +52,7 @@ test: clannad $(TESTS)
 	@echo
 
 test/%.bin: test/%.o test/test_helper.o
-	gcc $< test/test_helper.o -o $@
+	cc $< test/test_helper.o -o $@
 
 test/%.o: test/%.c clannad
 	$(CLND) $<

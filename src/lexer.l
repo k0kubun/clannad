@@ -211,8 +211,10 @@ init_search_paths()
 {
   std_search_paths = create_vector();
   vector_push(std_search_paths, "/usr/include/linux");
-  vector_push(std_search_paths, "/usr/include");
   vector_push(std_search_paths, "/usr/local/include");
+  vector_push(std_search_paths, "/usr/lib/clang/" CLANG_VERSION "/include");
+  vector_push(std_search_paths, "/usr/local/lib/clang/" CLANG_VERSION "/include");
+  vector_push(std_search_paths, "/usr/include");
 }
 
 void
