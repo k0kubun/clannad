@@ -135,6 +135,14 @@ void test_nested_ifdef() {
   expect_int(0, n);
 }
 
+void test_if_arithmetic() {
+  int n = 0;
+# if (1 + 2) / 3 >= 1
+  n++;
+# endif
+  expect_int(1, n);
+}
+
 int main() {
   test_define_replacement();
   test_empty_define();
@@ -149,5 +157,6 @@ int main() {
   test_elif();
   test_defined_var();
   test_nested_ifdef();
+  test_if_arithmetic();
   return 0;
 }

@@ -425,10 +425,22 @@ pp_eval(Node *node)
       }
     case NODE_BINOP:
       switch (node->op) {
+        case '+':
+          return pp_eval(node->lhs) + pp_eval(node->rhs);
+        case '-':
+          return pp_eval(node->lhs) - pp_eval(node->rhs);
+        case '*':
+          return pp_eval(node->lhs) * pp_eval(node->rhs);
+        case '/':
+          return pp_eval(node->lhs) / pp_eval(node->rhs);
         case '>':
           return pp_eval(node->lhs) > pp_eval(node->rhs);
         case '<':
           return pp_eval(node->lhs) < pp_eval(node->rhs);
+        case GE_OP:
+          return pp_eval(node->lhs) >= pp_eval(node->rhs);
+        case LE_OP:
+          return pp_eval(node->lhs) <= pp_eval(node->rhs);
         case AND_OP:
           return pp_eval(node->lhs) && pp_eval(node->rhs);
         case OR_OP:
