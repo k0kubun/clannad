@@ -1,3 +1,6 @@
+#ifndef TEST_HELPER
+#define TEST_HELPER
+
 int printf(char *, int, int);
 void exit(int);
 
@@ -13,3 +16,5 @@ void expect_int(int a, int b) {
     exit(1);
   }
 }
+
+#endif

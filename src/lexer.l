@@ -7,6 +7,7 @@
 #include "parser.tab.h"
 
 char* read_string_literal(char *str);
+bool is_defined(char *identifier);
 bool push_file(char *filename, bool std);
 bool push_string(char *str);
 bool pop_file();
@@ -24,12 +25,15 @@ static Dict *define_rules = NULL;
 static char* compile_dir  = NULL;
 static char* compile_file = NULL;
 static char* define_from  = NULL;
+static int open_if_count  = 0;
 %}
 
 %x COMMENT
 %x DEFINE_FROM
 %x DEFINE_TO
 %x INCLUDE
+%x IFNDEF
+%x IGNORED
 
 %%
 
@@ -46,7 +50,6 @@ static char* define_from  = NULL;
   // ignore
 }
 
-
 ^"#"[ \t]*define[ \t]* {
   BEGIN(DEFINE_FROM);
 }
@@ -54,10 +57,35 @@ static char* define_from  = NULL;
   define_from = strdup(yytext);
   BEGIN(DEFINE_TO);
 }
-<DEFINE_TO>[^\n]* {
+<DEFINE_TO>[^\n]*$ {
   if (!define_rules) define_rules = create_dict();
   dict_set(define_rules, define_from, strdup(yytext));
   BEGIN(INITIAL);
+}
+
+^"#"[ \t]*ifndef[ \t]+ {
+  BEGIN(IFNDEF);
+}
+<IFNDEF>[a-zA-Z_][a-zA-Z0-9_]* {
+  open_if_count++;
+  if (is_defined(yytext)) {
+    BEGIN(IGNORED);
+  } else {
+    BEGIN(INITIAL);
+  }
+}
+<IGNORED>^"#"[ \t]*endif[ \t]* {
+  open_if_count--;
+  if (open_if_count == 0) {
+    BEGIN(INITIAL);
+  }
+}
+<IGNORED>. {
+  // ignore
+}
+
+^"#"[ \t]*endif[ \t]* {
+  open_if_count--;
 }
 
 ^"#"[ \t]*include[ \t]* {
@@ -71,13 +99,13 @@ static char* define_from  = NULL;
       std = true;
       if (c != '>') {
         fprintf(stderr, "error: missing terminating > character\n");
-        yyterminate();
+        exit(1);
       }
       break;
     case '"':
       if (c != '"') {
         fprintf(stderr, "error: missing terminating \" character\n");
-        yyterminate();
+        exit(1);
       }
       break;
   }
@@ -95,6 +123,10 @@ static char* define_from  = NULL;
 }
 <<EOF>> {
   if (!pop_file()) {
+    if (open_if_count > 0) {
+      fprintf(stderr, "error: unterminated #if, #ifdef or #ifndef.\n");
+      exit(1);
+    }
     yyterminate();
   }
 }
@@ -272,6 +304,12 @@ try_include(char *filename, bool std)
     if (file) break;
   }
   return file;
+}
+
+bool
+is_defined(char *identifier)
+{
+  return define_rules && dict_get(define_rules, identifier);
 }
 
 void
