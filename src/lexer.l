@@ -90,7 +90,7 @@ static char* pp_exp       = NULL;
   BEGIN(INITIAL);
 }
 
-^"#"[ \t]*ifdef[ \t]+ {
+<INITIAL,IGNORED>^"#"[ \t]*ifdef[ \t]+ {
   push_state();
   BEGIN(IFDEF);
 }
@@ -137,7 +137,7 @@ static char* pp_exp       = NULL;
   }
 }
 
-^"#"[ \t]*ifndef[ \t]+ {
+<INITIAL,IGNORED>^"#"[ \t]*ifndef[ \t]+ {
   push_state();
   BEGIN(IFNDEF);
 }
@@ -153,7 +153,7 @@ static char* pp_exp       = NULL;
 <INITIAL,IGNORED>^"#"[ \t]*elif[ \t]+ {
   if (state_stack == NULL) {
     fprintf(stderr, "error: #endif without #if\n");
-    exit(1);
+    yyterminate();
   }
   pp_exp = malloc(sizeof(char *));
   pp_exp[0] = '\0';
@@ -190,7 +190,7 @@ static char* pp_exp       = NULL;
 <INITIAL,IGNORED>^"#"[ \t]*endif[ \t]* {
   if (state_stack == NULL) {
     fprintf(stderr, "error: #endif without #if\n");
-    exit(1);
+    yyterminate();
   }
   BEGIN(state_stack->state);
   state_stack = state_stack->parent;

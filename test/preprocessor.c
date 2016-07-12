@@ -117,6 +117,24 @@ void test_defined_var() {
   expect_int(1, n);
 }
 
+void test_nested_ifdef() {
+  int n = 0;
+# ifdef undefined_val
+  n += 1;
+#   ifdef undefined_val
+  n += 2;
+#   endif
+# endif
+
+# ifndef defined_val
+  n += 1;
+#   ifndef defined_val
+  n += 2;
+#   endif
+# endif
+  expect_int(0, n);
+}
+
 int main() {
   test_define_replacement();
   test_empty_define();
@@ -130,5 +148,6 @@ int main() {
   test_multiline_if();
   test_elif();
   test_defined_var();
+  test_nested_ifdef();
   return 0;
 }
