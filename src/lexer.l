@@ -111,8 +111,7 @@ static char* define_from  = NULL;
   Node *ast;
   if (pp_parse_exp(&ast, strdup(yytext))) {
     fprintf(stderr, "Preprocessor parse error!\n");
-    exit(1);
-    return 1;
+    yyterminate();
   }
   BEGIN(INITIAL);
 }
