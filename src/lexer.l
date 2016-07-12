@@ -33,6 +33,7 @@ static int open_if_count  = 0;
 %x DEFINE_FROM
 %x DEFINE_TO
 %x INCLUDE
+%x IFDEF
 %x IFNDEF
 %x IGNORED
 %x LINE_NUM
@@ -66,6 +67,18 @@ static int open_if_count  = 0;
   BEGIN(INITIAL);
 }
 
+^"#"[ \t]*ifdef[ \t]+ {
+  BEGIN(IFDEF);
+}
+<IFDEF>[a-zA-Z_][a-zA-Z0-9_]* {
+  open_if_count++;
+  if (is_defined(yytext)) {
+    BEGIN(INITIAL);
+  } else {
+    BEGIN(IGNORED);
+  }
+}
+
 ^"#"[ \t]*ifndef[ \t]+ {
   BEGIN(IFNDEF);
 }
@@ -77,6 +90,7 @@ static int open_if_count  = 0;
     BEGIN(INITIAL);
   }
 }
+
 <IGNORED>^"#"[ \t]*endif[ \t]* {
   open_if_count--;
   if (open_if_count == 0) {
@@ -159,12 +173,12 @@ static int open_if_count  = 0;
 }
 <LINE_FILE>. {
   fprintf(stderr, "error: unexpected character after #line\n");
-  exit(1);
+  yyterminate();
 }
 
 ^"#"[ \t]*[a-z]+ {
   fprintf(stderr, "error: unexpected preprocessor: %s\n", yytext);
-  exit(1);
+  yyterminate();
 }
 
 "int"      return tINT;
