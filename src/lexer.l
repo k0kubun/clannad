@@ -333,7 +333,19 @@ WS  [ \t\v\n\f]
   }
 }
 
-[1-9][0-9]* {
+{HP}{H}+{IS}? {
+  yylval.ival = atoi(yytext);
+  return tI_CONSTANT;
+}
+{NZ}{D}*{IS}? {
+  yylval.ival = atoi(yytext);
+  return tI_CONSTANT;
+}
+"0"{O}*{IS}? {
+  yylval.ival = atoi(yytext);
+  return tI_CONSTANT;
+}
+{CP}?"'"([^'\\\n]|{ES})+"'" {
   yylval.ival = atoi(yytext);
   return tI_CONSTANT;
 }

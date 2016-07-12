@@ -110,8 +110,20 @@ WS  [ \t\v\n\f]
   }
 }
 
-[1-9][0-9]* {
-  pplval.ival = atoi(pptext);
+{HP}{H}+{IS}? {
+  pplval.ival = atoi(yytext);
+  return tI_CONSTANT;
+}
+{NZ}{D}*{IS}? {
+  pplval.ival = atoi(yytext);
+  return tI_CONSTANT;
+}
+"0"{O}*{IS}? {
+  pplval.ival = atoi(yytext);
+  return tI_CONSTANT;
+}
+{CP}?"'"([^'\\\n]|{ES})+"'" {
+  pplval.ival = atoi(yytext);
   return tI_CONSTANT;
 }
 
