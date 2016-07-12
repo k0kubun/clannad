@@ -70,11 +70,12 @@ void test_cond_op() {
   expect_int(3, 0 ? 2 : 3);
 }
 
-void test() {
+int main() {
   test_equal();
   test_gt();
   test_lt();
   test_ge();
   test_le();
   test_cond_op();
+  return 0;
 }

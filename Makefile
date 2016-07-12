@@ -6,7 +6,7 @@ LDFLAGS=`llvm-config --cxxflags --ldflags --libs core executionengine jit interp
 OBJS=src/analyzer.o src/assembler.o src/compiler.o src/debug.o src/dict.o src/lex.yy.o \
      src/main.o src/optimizer.o src/parser.tab.o src/vector.o
 SRCS := $(patsubst %.o,%.c,$(OBJS))
-TESTS := $(patsubst %.c,%.bin,$(filter-out test/test_helper.c,$(wildcard test/*.c)))
+TESTS := $(patsubst %.c,%.bin,$(wildcard test/*.c))
 TESTOBJS := $(patsubst %.c,%.o,$(wildcard test/*.c))
 .PHONY: all run clean test self
 .SECONDARY: $(TESTOBJS)
@@ -51,8 +51,8 @@ test: clannad $(TESTS)
 	@echo All tests have been passed!
 	@echo
 
-test/%.bin: test/%.o test/test_helper.o
-	cc $< test/test_helper.o -o $@
+test/%.bin: test/%.o
+	cc $< -o $@
 
 test/%.o: test/%.c clannad
 	$(CLND) $<

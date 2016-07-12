@@ -19,8 +19,9 @@ void test_char() {
   char ch = 'a';
 }
 
-void test() {
+int main() {
   test_newline();
   test_multibyte_string();
   test_char();
+  return 0;
 }

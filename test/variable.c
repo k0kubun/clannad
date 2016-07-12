@@ -32,9 +32,10 @@ void test_volatile_variable() {
   expect_int(4, a);
 }
 
-void test() {
+int main() {
   test_variable();
   test_multiple_declarations();
   test_initialized_variable();
   test_const_variable();
+  return 0;
 }

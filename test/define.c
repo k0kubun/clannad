@@ -6,6 +6,7 @@ void test_define_replacement() {
   expect_int(3, foo);
 }
 
-void test() {
+int main() {
   test_define_replacement();
+  return 0;
 }

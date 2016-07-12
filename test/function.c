@@ -34,9 +34,10 @@ void test_void_arg(void) {
   pass();
 }
 
-void test() {
+int main() {
   test_return();
   test_void_return();
   test_funcall();
   test_void_arg();
+  return 0;
 }

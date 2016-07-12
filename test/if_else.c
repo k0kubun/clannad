@@ -74,9 +74,10 @@ void test_comma() {
   expect_int(3, a);
 }
 
-void test() {
+int main() {
   test_dangling_else();
   test_if_without_block();
   test_if_with_block();
   test_comma();
+  return 0;
 }

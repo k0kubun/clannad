@@ -24,7 +24,8 @@ void test_c99_comment() {
 
 // int test() { exit(1); }
 
-void test() {
+int main() {
   test_c89_comment();
   test_c99_comment();
+  return 0;
 }

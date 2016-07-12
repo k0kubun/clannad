@@ -22,8 +22,9 @@ void test_variable_outside_comp_stmt() {
   }
 }
 
-void test() {
+int main() {
   test_empty_comp_stmt();
   test_variable_redefinition();
   test_variable_outside_comp_stmt();
+  return 0;
 }

@@ -54,7 +54,7 @@ void test_right_assign() {
   expect_int(2, n);
 }
 
-void test() {
+int main() {
   test_bit_and();
   test_bit_or();
   test_bit_xor();
@@ -64,4 +64,5 @@ void test() {
   test_left_assign();
   test_right_shift();
   test_right_assign();
+  return 0;
 }

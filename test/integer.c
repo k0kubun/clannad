@@ -78,7 +78,7 @@ void test_arithmetic_compound_assign() {
   expect_int(1, a);
 }
 
-void test() {
+int main() {
   test_arithmetic();
   test_not();
   test_factorial();
@@ -87,4 +87,5 @@ void test() {
   test_unary_plus();
   test_unary_minus();
   test_arithmetic_compound_assign();
+  return 0;
 }

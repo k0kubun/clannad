@@ -5,6 +5,7 @@ void test_sizeof() {
   expect_int(1, sizeof(char));
 }
 
-void test() {
+int main() {
   test_sizeof();
+  return 0;
 }
