@@ -150,13 +150,16 @@ void init_search_paths();
 void set_compile_path(char *filename);
 char* get_reading_file();
 
+// optimizer.c
+void optimize(LLVMModuleRef mod);
+
+// preprocessor.y
+int pp_parse_exp(Node **astptr, char *exp);
+
 // vector.c
 Vector* create_vector();
 Vector* vector_push(Vector *vec, void *ptr);
 void* vector_get(Vector *vec, int index);
 void* vector_last(Vector *vec);
-
-// optimizer.c
-void optimize(LLVMModuleRef mod);
 
 #endif

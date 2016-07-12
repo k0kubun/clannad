@@ -1,11 +1,14 @@
 %{
+// preprocessor.y is a parser that provides `pp_parse_exp` function,
+// which is used by lexer.l to parse `#if`'s parameter.
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "clannad.h"
 int pplex(void);
 int pperror(char const *str);
-static Node *parse_result2;
+static Node *ppresult;
 
 void set_type(Vector *nodes, Node *type);
 Node* create_decl_node(Node *spec, Node *init);
@@ -110,7 +113,7 @@ Node* create_decl_node(Node *spec, Node *init);
 program
   : translation_unit
   {
-    parse_result2 = create_node(&(Node){ NODE_ROOT, .children = $1 });
+    ppresult = create_node(&(Node){ NODE_ROOT, .children = $1 });
   }
   ;
 
@@ -652,34 +655,23 @@ int
 pperror(char const *str)
 {
   extern char *pptext;
-  extern int ppget_lineno(void);
-  fprintf(stderr, "%s:%d: parse error near '%s': %s\n", get_reading_file(), ppget_lineno(), pptext, str);
+  fprintf(stderr, "Preprocessor parse error near '%s': %s\n", pptext, str);
   return 0;
 }
 
-FILE*
-open_file2(char *filename)
-{
-  if (!strcmp(filename, "-"))
-    return stdin;
-
-  FILE *file = fopen(filename, "r");
-  if (!file) {
-    fprintf(stderr, "Failed to open: '%s'\n", filename);
-    exit(1);
-  }
-  return file;
-}
-
 int
-parse_file2(Node **astptr, char *filename)
+pp_parse_exp(Node **astptr, char *exp)
 {
   extern int ppparse(void);
   extern FILE *ppin;
 
-  ppin = open_file2(filename);
+  ppin = fmemopen(exp, strlen(exp), "r");
+  if (!ppin) {
+    fprintf(stderr, "Failed to fmemopen: '%s'\n", exp);
+    return 1;
+  }
   int ret = ppparse();
-  *astptr = parse_result2;
+  *astptr = ppresult;
 
   fclose(ppin);
   return ret;

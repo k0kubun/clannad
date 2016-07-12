@@ -1,4 +1,7 @@
 %{
+// preprocessor.l is a lexer for `pp_parse_exp` function,
+// which is used by lexer.l to parse `#if`'s parameter.
+
 #include <stdio.h>
 #include <stdbool.h>
 #include <string.h>

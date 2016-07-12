@@ -41,6 +41,7 @@ static char* define_from  = NULL;
 %x DEFINE_TO
 %x UNDEF
 %x INCLUDE
+%x IF
 %x IFDEF
 %x IFNDEF
 %x IGNORED
@@ -97,6 +98,23 @@ static char* define_from  = NULL;
   } else {
     BEGIN(IGNORED);
   }
+}
+
+^"#"[ \t]*if[ \t]+ {
+  struct state_node *new_node = malloc(sizeof(struct state_node));
+  new_node->state  = YYSTATE;
+  new_node->parent = state_stack;
+  state_stack = new_node;
+  BEGIN(IF);
+}
+<IF>[^\n]+ {
+  Node *ast;
+  if (pp_parse_exp(&ast, strdup(yytext))) {
+    fprintf(stderr, "Preprocessor parse error!\n");
+    exit(1);
+    return 1;
+  }
+  BEGIN(INITIAL);
 }
 
 ^"#"[ \t]*ifndef[ \t]+ {
