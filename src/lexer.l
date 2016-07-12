@@ -338,6 +338,10 @@ pp_eval(Node *node)
       }
     case NODE_BINOP:
       switch (node->op) {
+        case '>':
+          return pp_eval(node->lhs) > pp_eval(node->rhs);
+        case '<':
+          return pp_eval(node->lhs) < pp_eval(node->rhs);
         case AND_OP:
           return pp_eval(node->lhs) && pp_eval(node->rhs);
         case OR_OP:
@@ -347,6 +351,8 @@ pp_eval(Node *node)
           yyterminate();
       }
       break;
+    case NODE_INTEGER:
+      return node->ival;
     default:
       fprintf(stderr, "Unexpected node in pp_eval: %s\n", kind_label(node->kind));
       yyterminate();
