@@ -13,20 +13,27 @@ bool push_file(char *filename, bool std);
 bool push_string(char *str);
 bool pop_file();
 
+// Linked list to keep YY_BUFFER_STATE during `yy_switch_to_buffer` calls.
 struct buffer_node {
   struct buffer_node *parent;
   YY_BUFFER_STATE buf;
   char *filename;
   FILE *file;
 };
-
 static struct buffer_node *buffer_stack = NULL;
+
+// Linked list to keep state number (`yy_start`) to use after `#endif` token.
+struct state_node {
+  struct state_node *parent;
+  int state;
+};
+static struct state_node *state_stack = NULL;
+
 static Vector *std_search_paths = NULL;
 static Dict *define_rules = NULL;
 static char* compile_dir  = NULL;
 static char* compile_file = NULL;
 static char* define_from  = NULL;
-static int open_if_count  = 0;
 %}
 
 %x COMMENT
@@ -78,10 +85,13 @@ static int open_if_count  = 0;
 }
 
 ^"#"[ \t]*ifdef[ \t]+ {
+  struct state_node *new_node = malloc(sizeof(struct state_node));
+  new_node->state  = YYSTATE;
+  new_node->parent = state_stack;
+  state_stack = new_node;
   BEGIN(IFDEF);
 }
 <IFDEF>[a-zA-Z_][a-zA-Z0-9_]* {
-  open_if_count++;
   if (is_defined(yytext)) {
     BEGIN(INITIAL);
   } else {
@@ -90,10 +100,13 @@ static int open_if_count  = 0;
 }
 
 ^"#"[ \t]*ifndef[ \t]+ {
+  struct state_node *new_node = malloc(sizeof(struct state_node));
+  new_node->state  = YYSTATE;
+  new_node->parent = state_stack;
+  state_stack = new_node;
   BEGIN(IFNDEF);
 }
 <IFNDEF>[a-zA-Z_][a-zA-Z0-9_]* {
-  open_if_count++;
   if (is_defined(yytext)) {
     BEGIN(IGNORED);
   } else {
@@ -101,21 +114,27 @@ static int open_if_count  = 0;
   }
 }
 
-<IGNORED>^"#"[ \t]*endif[ \t]* {
-  open_if_count--;
-  if (open_if_count == 0) {
-    BEGIN(INITIAL);
+^"#"[ \t]*endif[ \t]* {
+  if (state_stack == NULL) {
+    fprintf(stderr, "error: #endif without #if\n");
+    exit(1);
   }
+  BEGIN(state_stack->state);
+  state_stack = state_stack->parent;
+}
+<IGNORED>^"#"[ \t]*endif[ \t]* {
+  if (state_stack == NULL) {
+    fprintf(stderr, "error: #endif without #if\n");
+    exit(1);
+  }
+  BEGIN(state_stack->state);
+  state_stack = state_stack->parent;
 }
 <IGNORED>"\n" {
   yylineno++;
 }
 <IGNORED>. {
   // ignore
-}
-
-^"#"[ \t]*endif[ \t]* {
-  open_if_count--;
 }
 
 ^"#"[ \t]*include[ \t]* {
@@ -129,13 +148,13 @@ static int open_if_count  = 0;
       std = true;
       if (c != '>') {
         fprintf(stderr, "error: missing terminating > character\n");
-        exit(1);
+        yyterminate();
       }
       break;
     case '"':
       if (c != '"') {
         fprintf(stderr, "error: missing terminating \" character\n");
-        exit(1);
+        yyterminate();
       }
       break;
   }
@@ -153,7 +172,7 @@ static int open_if_count  = 0;
 }
 <<EOF>> {
   if (!pop_file()) {
-    if (open_if_count > 0) {
+    if (state_stack) {
       fprintf(stderr, "error: unterminated #if, #ifdef or #ifndef.\n");
       exit(1);
     }

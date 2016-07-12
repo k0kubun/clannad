@@ -12,7 +12,7 @@ void test_empty_define() {
 }
 
 void test_ifndef_guard() {
-#  include "test_helper.h"
+# include "test_helper.h"
 }
 
 #define ifdef_test
@@ -38,11 +38,25 @@ void test_undef() {
   expect_int(5, n);
 }
 
+# define defined_val
+void test_nested_ifdef() {
+  int n = 0;
+# ifdef defined_val
+  n += 1;
+#   ifdef undefined_val
+  n += 2;
+#   endif
+  n += 4;
+# endif
+  expect_int(5, n);
+}
+
 int main() {
   test_define_replacement();
   test_empty_define();
   test_ifndef_guard();
   test_ifdef();
   test_undef();
+  test_nested_ifdef();
   return 0;
 }
