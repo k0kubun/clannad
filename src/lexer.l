@@ -135,6 +135,10 @@ static int open_if_count  = 0;
   }
 }
 
+^"#"[ \t]*[a-z]+ {
+  fprintf(stderr, "error: unsupported preprocessor: %s\n", yytext);
+  exit(1);
+}
 
 "int"      return tINT;
 "char"     return tCHAR;
