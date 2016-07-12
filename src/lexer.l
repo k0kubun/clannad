@@ -35,6 +35,7 @@ static Dict *define_rules = NULL;
 static char* compile_dir  = NULL;
 static char* compile_file = NULL;
 static char* define_from  = NULL;
+static char* pp_exp       = NULL;
 %}
 
 %x COMMENT
@@ -106,19 +107,30 @@ static char* define_from  = NULL;
   new_node->state  = YYSTATE;
   new_node->parent = state_stack;
   state_stack = new_node;
+  pp_exp = malloc(sizeof(char *));
+  pp_exp[0] = '\0';
   BEGIN(IF);
 }
 <IF>[^\n]+ {
-  Node *ast;
-  if (pp_parse_exp(&ast, strdup(yytext))) {
-    fprintf(stderr, "Preprocessor parse error!\n");
-    yyterminate();
-  }
+  pp_exp = realloc(pp_exp, (strlen(pp_exp) + strlen(yytext)) * sizeof(char *));
+  strcat(pp_exp, yytext);
 
-  if (pp_eval(ast)) {
-    BEGIN(INITIAL);
+  int len = strlen(pp_exp);
+  if (pp_exp[len-1] == '\\') {
+    pp_exp[len-1] = '\0';
+    BEGIN(IF);
   } else {
-    BEGIN(IGNORED);
+    Node *ast;
+    if (pp_parse_exp(&ast, pp_exp)) {
+      fprintf(stderr, "Preprocessor failed to parse '%s'!\n", pp_exp);
+      yyterminate();
+    }
+
+    if (pp_eval(ast)) {
+      BEGIN(INITIAL);
+    } else {
+      BEGIN(IGNORED);
+    }
   }
 }
 

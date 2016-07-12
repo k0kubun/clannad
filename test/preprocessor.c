@@ -83,6 +83,15 @@ void test_if_expression() {
   expect_int(1, n);
 }
 
+void test_multiline_if() {
+  int n = 0;
+# if (defined(defined_val) && \
+    !defined undefined_val)
+  n = 1;
+# endif
+  expect_int(1, n);
+}
+
 int main() {
   test_define_replacement();
   test_empty_define();
@@ -93,5 +102,6 @@ int main() {
   test_nested_if_without_parenthesis();
   test_nested_if_with_parenthesis();
   test_if_expression();
+  test_multiline_if();
   return 0;
 }
