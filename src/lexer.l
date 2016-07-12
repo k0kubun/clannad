@@ -13,6 +13,7 @@ bool is_defined(char *identifier);
 bool push_file(char *filename, bool std);
 bool push_string(char *str);
 bool pop_file();
+void push_state();
 
 // Linked list to keep YY_BUFFER_STATE during `yy_switch_to_buffer` calls.
 struct buffer_node {
@@ -27,6 +28,7 @@ static struct buffer_node *buffer_stack = NULL;
 struct state_node {
   struct state_node *parent;
   int state;
+  bool had_true;
 };
 static struct state_node *state_stack = NULL;
 
@@ -88,14 +90,12 @@ static char* pp_exp       = NULL;
 }
 
 ^"#"[ \t]*ifdef[ \t]+ {
-  struct state_node *new_node = malloc(sizeof(struct state_node));
-  new_node->state  = YYSTATE;
-  new_node->parent = state_stack;
-  state_stack = new_node;
+  push_state();
   BEGIN(IFDEF);
 }
 <IFDEF>[a-zA-Z_][a-zA-Z0-9_]* {
   if (is_defined(yytext)) {
+    state_stack->had_true = true;
     BEGIN(INITIAL);
   } else {
     BEGIN(IGNORED);
@@ -103,10 +103,7 @@ static char* pp_exp       = NULL;
 }
 
 ^"#"[ \t]*if[ \t]+ {
-  struct state_node *new_node = malloc(sizeof(struct state_node));
-  new_node->state  = YYSTATE;
-  new_node->parent = state_stack;
-  state_stack = new_node;
+  push_state();
   pp_exp = malloc(sizeof(char *));
   pp_exp[0] = '\0';
   BEGIN(IF);
@@ -131,6 +128,7 @@ static char* pp_exp       = NULL;
     }
 
     if (pp_eval(ast)) {
+      state_stack->had_true = true;
       BEGIN(INITIAL);
     } else {
       BEGIN(IGNORED);
@@ -139,16 +137,14 @@ static char* pp_exp       = NULL;
 }
 
 ^"#"[ \t]*ifndef[ \t]+ {
-  struct state_node *new_node = malloc(sizeof(struct state_node));
-  new_node->state  = YYSTATE;
-  new_node->parent = state_stack;
-  state_stack = new_node;
+  push_state();
   BEGIN(IFNDEF);
 }
 <IFNDEF>[a-zA-Z_][a-zA-Z0-9_]* {
   if (is_defined(yytext)) {
     BEGIN(IGNORED);
   } else {
+    state_stack->had_true = true;
     BEGIN(INITIAL);
   }
 }
@@ -520,4 +516,14 @@ pop_file()
 
   buffer_stack = buffer_stack->parent;
   return true;
+}
+
+void
+push_state()
+{
+  struct state_node *new_node = malloc(sizeof(struct state_node));
+  new_node->state  = YYSTATE;
+  new_node->parent = state_stack;
+  new_node->had_true = false;
+  state_stack = new_node;
 }
