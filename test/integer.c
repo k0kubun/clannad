@@ -78,6 +78,16 @@ void test_arithmetic_compound_assign() {
   expect_int(1, a);
 }
 
+void test_anti_associativity() {
+  int n = (2 + 3) * (3 - 1) / 5;
+  expect_int(2, n);
+}
+
+void test_comma_operator() {
+  int n = (2, 3);
+  expect_int(3, n);
+}
+
 int main() {
   test_arithmetic();
   test_not();
@@ -87,5 +97,7 @@ int main() {
   test_unary_plus();
   test_unary_minus();
   test_arithmetic_compound_assign();
+  test_anti_associativity();
+  test_comma_operator();
   return 0;
 }
