@@ -2,6 +2,7 @@
 #define CLANNAD_H
 
 #include <stdio.h>
+#include <stdbool.h>
 #include <llvm-c/Core.h>
 
 enum NodeKind {
@@ -142,6 +143,7 @@ LLVMModuleRef compile(Node *ast);
 Dict* create_dict();
 void* dict_get(Dict *dict, char *key);
 void dict_set(Dict *dict, char *key, void *value);
+bool dict_delete(Dict *dict, char *key);
 
 // lexer.l
 void init_search_paths();

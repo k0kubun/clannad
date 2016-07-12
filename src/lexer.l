@@ -32,6 +32,7 @@ static int open_if_count  = 0;
 %x COMMENT
 %x DEFINE_FROM
 %x DEFINE_TO
+%x UNDEF
 %x INCLUDE
 %x IFDEF
 %x IFNDEF
@@ -64,6 +65,15 @@ static int open_if_count  = 0;
 <DEFINE_TO>[^\n]*$ {
   if (!define_rules) define_rules = create_dict();
   dict_set(define_rules, define_from, strdup(yytext));
+  BEGIN(INITIAL);
+}
+
+^"#"[ \t]*undef[ \t]* {
+  BEGIN(UNDEF);
+}
+<UNDEF>[a-zA-Z_][a-zA-Z0-9_]* {
+  if (!define_rules) define_rules = create_dict();
+  dict_delete(define_rules, yytext);
   BEGIN(INITIAL);
 }
 

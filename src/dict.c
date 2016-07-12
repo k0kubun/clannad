@@ -25,7 +25,7 @@ dict_index(Dict *dict, char *key)
 {
   for (int i = 0; i < dict->entries->length; i++) {
     DictEntry *entry = vector_get(dict->entries, i);
-    if (strcmp(entry->key, key) == 0) return i;
+    if (entry->key && strcmp(entry->key, key) == 0) return i;
   }
   return ENTRY_NOT_FOUND;
 }
@@ -59,5 +59,18 @@ dict_set(Dict *dict, char *key, void *value)
     DictEntry *entry = vector_get(dict->entries, i);
     entry->data = value;
     dict->entries->data[i] = entry;
+  }
+}
+
+bool
+dict_delete(Dict *dict, char *key)
+{
+  int i = dict_index(dict, key);
+  if (i != ENTRY_NOT_FOUND) {
+    DictEntry *entry = vector_get(dict->entries, i);
+    entry->key = NULL;
+    return true;
+  } else {
+    return false;
   }
 }
