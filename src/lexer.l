@@ -24,7 +24,7 @@ static char* compile_dir = NULL;
 static char* compile_file = NULL;
 %}
 
-%s COMMENT
+%x COMMENT
 %x INCLUDE_FILE
 
 %%
@@ -32,11 +32,14 @@ static char* compile_file = NULL;
 <INITIAL>{
   "/*" BEGIN(COMMENT);
 }
-<COMMENT>{
-  "*/"    BEGIN(INITIAL);
-  [^*\n]+ // eat comment in chunks
-  "*"     // eat the lone star
-  \n      yylineno++;
+<COMMENT>"*/" {
+  BEGIN(INITIAL);
+}
+<COMMENT>"\n" {
+  yylineno++;
+}
+<COMMENT>. {
+  // ignore
 }
 
 ^"#"[ \t]*include[ \t]* {
