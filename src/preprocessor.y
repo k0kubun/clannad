@@ -376,6 +376,10 @@ primary_expression
   }
   | constant
   | string
+  | '(' expression ')'
+  {
+    $$ = $2;
+  }
   ;
 
 constant

@@ -77,7 +77,7 @@ void test_nested_if_with_parenthesis() {
 
 void test_if_expression() {
   int n = 0;
-# if defined defined_val && !defined undefined_val
+# if (defined(defined_val) && !defined undefined_val)
   n = 1;
 # endif
   expect_int(1, n);
