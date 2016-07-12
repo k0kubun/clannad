@@ -1,6 +1,6 @@
-#define foo 3
+#include "test_helper.h"
 
-void expect_int(int, int);
+#define foo 3
 
 void test_define_replacement() {
   expect_int(3, foo);

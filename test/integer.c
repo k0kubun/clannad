@@ -1,4 +1,4 @@
-void expect_int(int, int);
+#include "test_helper.h"
 
 void test_arithmetic() {
   expect_int(3, 1 + 2);

@@ -1,4 +1,4 @@
-void expect_int(int a, int b);
+#include "test_helper.h"
 
 void test_variable() {
   int n;

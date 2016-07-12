@@ -1,4 +1,4 @@
-void expect_int(int, int);
+#include "test_helper.h"
 
 void test_bit_and() {
   expect_int(1, 3 & 1);

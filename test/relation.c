@@ -1,4 +1,4 @@
-void expect_int(int, int);
+#include "test_helper.h"
 
 void test_equal() {
   int n = 1;

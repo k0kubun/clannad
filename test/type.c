@@ -1,4 +1,4 @@
-void expect_int(int, int);
+#include "test_helper.h"
 
 void test_sizeof() {
   expect_int(4, sizeof(int));

@@ -1,4 +1,4 @@
-void pass();
+#include "test_helper.h"
 
 void test_newline() {
   "Hello world\n";

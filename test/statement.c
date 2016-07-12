@@ -1,5 +1,4 @@
-void expect_int(int, int);
-void pass();
+#include "test_helper.h"
 
 void test_empty_comp_stmt() {
   {}

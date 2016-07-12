@@ -1,4 +1,4 @@
-void expect_int(int, int);
+#include "test_helper.h"
 
 int deep_else(int flag1, int flag2) {
   int n = 0;

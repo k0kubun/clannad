@@ -1,5 +1,4 @@
-void expect_int(int a, int b);
-void pass();
+#include "test_helper.h"
 
 int ret_func() { return 3; }
 int var_ret_func() {
