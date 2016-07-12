@@ -135,6 +135,17 @@ void test_nested_ifdef() {
   expect_int(0, n);
 }
 
+void test_nested_if() {
+  int n = 0;
+# if defined undefined_val
+  n += 1;
+#   if (undefined_val - 0) >= 500
+  n += 2;
+#   endif
+# endif
+  expect_int(0, n);
+}
+
 void test_if_arithmetic() {
   int n = 0;
 # if (1 + 2) / 3 >= 1
@@ -157,6 +168,7 @@ int main() {
   test_elif();
   test_defined_var();
   test_nested_ifdef();
+  test_nested_if();
   test_if_arithmetic();
   return 0;
 }

@@ -118,7 +118,7 @@ WS  [ \t\v\n\f]
   }
 }
 
-^"#"[ \t]*if[ \t]+ {
+<INITIAL,IGNORED>^"#"[ \t]*if[ \t]+ {
   push_state();
   pp_exp = malloc(sizeof(char *));
   pp_exp[0] = '\0';
