@@ -36,8 +36,6 @@ char* read_string_literal(char *str);
 "else"     return tELSE;
 "return"   return tRETURN;
 "sizeof"   return tSIZEOF;
-"const"    return tCONST;
-"volatile" return tVOLATILE;
 "++"       return tINC_OP;
 "--"       return tDEC_OP;
 "=="       return tEQ_OP;
