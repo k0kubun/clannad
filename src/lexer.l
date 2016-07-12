@@ -7,6 +7,7 @@
 #include "parser.tab.h"
 
 char* read_string_literal(char *str);
+void set_reading_file(char *filename);
 bool is_defined(char *identifier);
 bool push_file(char *filename, bool std);
 bool push_string(char *str);
@@ -34,6 +35,8 @@ static int open_if_count  = 0;
 %x INCLUDE
 %x IFNDEF
 %x IGNORED
+%x LINE_NUM
+%x LINE_FILE
 
 %%
 
@@ -81,7 +84,6 @@ static int open_if_count  = 0;
   }
 }
 <IGNORED>"\n" {
-  // ignore
   yylineno++;
 }
 <IGNORED>. {
@@ -135,8 +137,33 @@ static int open_if_count  = 0;
   }
 }
 
+^"#"[ \t]*line[ \t]+ {
+  BEGIN(LINE_NUM);
+}
+<LINE_NUM>[1-9][0-9]* {
+  yylineno = atoi(yytext);
+  BEGIN(LINE_FILE);
+}
+<LINE_FILE>[ \t]+\"[^\"]+\" {
+  char *filename = strdup(yytext);
+  filename[strlen(filename)-1] = '\0';
+
+  int i;
+  for (i = 0; filename[i++] != '"';);
+  set_reading_file(filename + i);
+
+  BEGIN(INITIAL);
+}
+<LINE_FILE>[ \t]*"\n" {
+  BEGIN(INITIAL);
+}
+<LINE_FILE>. {
+  fprintf(stderr, "error: unexpected character after #line\n");
+  exit(1);
+}
+
 ^"#"[ \t]*[a-z]+ {
-  fprintf(stderr, "error: unsupported preprocessor: %s\n", yytext);
+  fprintf(stderr, "error: unexpected preprocessor: %s\n", yytext);
   exit(1);
 }
 
@@ -282,6 +309,16 @@ set_compile_path(char* filename)
 {
   compile_file = filename;
   compile_dir  = dirname(strdup(filename));
+}
+
+void
+set_reading_file(char *filename)
+{
+  if (buffer_stack) {
+    buffer_stack->filename = filename;
+  } else {
+    compile_file = filename;
+  }
 }
 
 char*

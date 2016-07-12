@@ -2,7 +2,7 @@
 ## C89/C90
 ANSI X3.159-1989, ISO/IEC 9899:1990
 
-#### 46 / 111 (41.4%)
+#### 47 / 111 (42.3%)
 
 - 2 environment
   - 2.1 conceptual models
@@ -142,7 +142,7 @@ ANSI X3.159-1989, ISO/IEC 9899:1990
          - [ ] 3.8.3.3 The ## operator
          - [ ] 3.8.3.4 Rescanning and further replacement
          - [ ] 3.8.3.5 Scope of macro definitions
-     - [ ] 3.8.4 Line control
+     - [x] 3.8.4 Line control
      - [ ] 3.8.5 Error directive
      - [ ] 3.8.6 Pragma directive
      - [ ] 3.8.7 Null directive
