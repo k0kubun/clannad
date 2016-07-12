@@ -1,4 +1,5 @@
 #include "test_helper.h"
+#include "test_helper.h"
 
 /* comment */
 void test_c89_comment() {

@@ -80,6 +80,10 @@ static int open_if_count  = 0;
     BEGIN(INITIAL);
   }
 }
+<IGNORED>"\n" {
+  // ignore
+  yylineno++;
+}
 <IGNORED>. {
   // ignore
 }
