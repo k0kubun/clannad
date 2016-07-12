@@ -5,6 +5,7 @@ clannad
 *.out
 *.bc
 lex.yy.c
+lex.pp.c
 *.output
 *.tab.c
 *.tab.h
