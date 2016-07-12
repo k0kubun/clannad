@@ -111,6 +111,10 @@ static char* pp_exp       = NULL;
   pp_exp[0] = '\0';
   BEGIN(IF);
 }
+<IF>"\n" {
+  // FIXME: this should raise error in some cases
+  yylineno++;
+}
 <IF>[^\n]+ {
   pp_exp = realloc(pp_exp, (strlen(pp_exp) + strlen(yytext)) * sizeof(char *));
   strcat(pp_exp, yytext);
@@ -330,20 +334,22 @@ pp_eval(Node *node)
           return !pp_eval(node->val);
         default:
           fprintf(stderr, "Unexpected unary operation in pp_eval: %c (%d)\n", node->op, node->op);
-          exit(1);
+          yyterminate();
       }
     case NODE_BINOP:
       switch (node->op) {
         case AND_OP:
           return pp_eval(node->lhs) && pp_eval(node->rhs);
+        case OR_OP:
+          return pp_eval(node->lhs) || pp_eval(node->rhs);
         default:
           fprintf(stderr, "Unexpected binary operation in pp_eval: %c (%d)\n", node->op, node->op);
-          exit(1);
+          yyterminate();
       }
       break;
     default:
       fprintf(stderr, "Unexpected node in pp_eval: %s\n", kind_label(node->kind));
-      exit(1);
+      yyterminate();
   }
 }
 
