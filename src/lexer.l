@@ -6,9 +6,9 @@
 #include "clannad.h"
 #include "parser.tab.h"
 
-char* copy_string(char *str);
 char* read_string_literal(char *str);
 bool push_file(char *filename, bool std);
+bool push_string(char *str);
 bool pop_file();
 
 struct buffer_node {
@@ -20,12 +20,16 @@ struct buffer_node {
 
 static struct buffer_node *buffer_stack = NULL;
 static Vector *std_search_paths = NULL;
-static char* compile_dir = NULL;
+static Dict *define_rules = NULL;
+static char* compile_dir  = NULL;
 static char* compile_file = NULL;
+static char* define_from  = NULL;
 %}
 
 %x COMMENT
-%x INCLUDE_FILE
+%x DEFINE_FROM
+%x DEFINE_TO
+%x INCLUDE
 
 %%
 
@@ -42,10 +46,24 @@ static char* compile_file = NULL;
   // ignore
 }
 
-^"#"[ \t]*include[ \t]* {
-  BEGIN(INCLUDE_FILE);
+
+^"#"[ \t]*define[ \t]* {
+  BEGIN(DEFINE_FROM);
 }
-<INCLUDE_FILE>[\"<][^ \t\n\">]+ {
+<DEFINE_FROM>[a-zA-Z_][a-zA-Z0-9_]* {
+  define_from = strdup(yytext);
+  BEGIN(DEFINE_TO);
+}
+<DEFINE_TO>[^\n]* {
+  if (!define_rules) define_rules = create_dict();
+  dict_set(define_rules, define_from, strdup(yytext));
+  BEGIN(INITIAL);
+}
+
+^"#"[ \t]*include[ \t]* {
+  BEGIN(INCLUDE);
+}
+<INCLUDE>[\"<][^ \t\n\">]+ {
   bool std = false;
   int c = input();
   switch (yytext[0]) {
@@ -71,7 +89,7 @@ static char* compile_file = NULL;
 
   BEGIN(INITIAL);
 }
-<INCLUDE_FILE>.|\n {
+<INCLUDE>.|\n {
   fprintf(stderr, "Bad #include is found.\n");
   yyterminate();
 }
@@ -113,8 +131,15 @@ static char* compile_file = NULL;
 "|="       return tOR_ASSIGN;
 
 [a-zA-Z_][a-zA-Z0-9_]* {
-  yylval.id = copy_string(yytext);
-  return tIDENTIFIER;
+  char *macro;
+  if (define_rules && (macro = dict_get(define_rules, yytext))) {
+    if (!push_string(macro)) {
+      yyterminate();
+    }
+  } else {
+    yylval.id = strdup(yytext);
+    return tIDENTIFIER;
+  }
 }
 
 [1-9][0-9]* {
@@ -160,14 +185,6 @@ int
 yywrap()
 {
   return 1;
-}
-
-char*
-copy_string(char *str)
-{
-  char *ret = (char *)malloc(sizeof(char) * (strlen(str) + 1));
-  strcpy(ret, str);
-  return ret;
 }
 
 char
@@ -257,6 +274,21 @@ try_include(char *filename, bool std)
   return file;
 }
 
+void
+push_fp(FILE *fp, int size, char *filename)
+{
+  struct buffer_node *new_node = malloc(sizeof(struct buffer_node));
+  *new_node = (struct buffer_node){
+    .file     = fp,
+    .filename = filename,
+    .parent   = buffer_stack,
+    .buf      = YY_CURRENT_BUFFER,
+  };
+  buffer_stack = new_node;
+
+  yy_switch_to_buffer(yy_create_buffer(fp, size));
+}
+
 bool
 push_file(char *filename, bool std)
 {
@@ -266,16 +298,20 @@ push_file(char *filename, bool std)
     return false;
   }
 
-  struct buffer_node *new_node = malloc(sizeof(struct buffer_node));
-  *new_node = (struct buffer_node){
-    .file     = file,
-    .filename = filename,
-    .parent   = buffer_stack,
-    .buf      = YY_CURRENT_BUFFER,
-  };
-  buffer_stack = new_node;
+  push_fp(file, YY_BUF_SIZE, filename);
+  return true;
+}
 
-  yy_switch_to_buffer(yy_create_buffer(file, YY_BUF_SIZE));
+bool
+push_string(char *str)
+{
+  FILE *str_stream = fmemopen(str, strlen(str), "r");
+  if (!str_stream) {
+    fprintf(stderr, "Failed to fmemopen: '%s'\n", str);
+    return false;
+  }
+
+  push_fp(str_stream, strlen(str), "(define)");
   return true;
 }
 
