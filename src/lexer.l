@@ -307,7 +307,7 @@ static char* pp_exp       = NULL;
 
 [a-zA-Z_][a-zA-Z0-9_]* {
   char *macro;
-  if (define_rules && (macro = dict_get(define_rules, yytext))) {
+  if ((macro = find_macro(yytext))) {
     if (strlen(macro) > 0 && !push_string(macro)) {
       yyterminate();
     }
@@ -387,6 +387,10 @@ pp_eval(Node *node)
       break;
     case NODE_INTEGER:
       return node->ival;
+    case NODE_IDENTIFIER:
+      // This should be replaced by macro if defined. Thus this flow must be unexpected.
+      fprintf(stderr, "Undefined identifier referenced in preprocessor: '%s'\n", node->id);
+      yyterminate();
     default:
       fprintf(stderr, "Unexpected node in pp_eval: %s\n", kind_label(node->kind));
       yyterminate();
@@ -564,4 +568,11 @@ push_state()
   new_node->parent = state_stack;
   new_node->had_true = false;
   state_stack = new_node;
+}
+
+char*
+find_macro(char *key)
+{
+  if (!define_rules) return NULL;
+  return dict_get(define_rules, key);
 }

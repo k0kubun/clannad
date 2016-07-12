@@ -9,7 +9,18 @@
 #include "clannad.h"
 #include "preprocessor.tab.h"
 
+// Linked list to keep YY_BUFFER_STATE during `yy_switch_to_buffer` calls.
+struct pp_buffer_node {
+  struct pp_buffer_node *parent;
+  YY_BUFFER_STATE buf;
+  FILE *file;
+};
+static struct pp_buffer_node *pp_buffer_stack = NULL;
+
 char* read_string_literal(char *str);
+static bool defined_mode = false;
+bool pp_push_string(char *str);
+bool pp_pop_string();
 %}
 
 %x COMMENT
@@ -35,7 +46,6 @@ char* read_string_literal(char *str);
 "if"       return tIF;
 "else"     return tELSE;
 "return"   return tRETURN;
-"defined"  return tDEFINED;
 "sizeof"   return tSIZEOF;
 "++"       return tINC_OP;
 "--"       return tDEC_OP;
@@ -58,9 +68,31 @@ char* read_string_literal(char *str);
 "^="       return tXOR_ASSIGN;
 "|="       return tOR_ASSIGN;
 
+"defined" {
+  defined_mode = true;
+  return tDEFINED;
+}
+
 [a-zA-Z_][a-zA-Z0-9_]* {
-  pplval.id = strdup(pptext);
-  return tIDENTIFIER;
+  if (defined_mode) {
+    defined_mode = false;
+    pplval.id = strdup(pptext);
+    return tIDENTIFIER;
+  } else {
+    char *macro = find_macro(yytext);
+    if (!macro) {
+      pplval.id = strdup(pptext);
+      return tIDENTIFIER;
+    }
+    if (strlen(macro) > 0 && !pp_push_string(macro)) {
+      yyterminate();
+    }
+  }
+}
+<<EOF>> {
+  if (!pp_pop_string()) {
+    yyterminate();
+  }
 }
 
 [1-9][0-9]* {
@@ -106,4 +138,37 @@ int
 ppwrap()
 {
   return 1;
+}
+
+bool
+pp_push_string(char *str)
+{
+  FILE *str_stream = fmemopen(str, strlen(str), "r");
+  if (!str_stream) {
+    fprintf(stderr, "Failed to fmemopen: '%s'\n", str);
+    return false;
+  }
+
+  struct pp_buffer_node *new_node = malloc(sizeof(struct pp_buffer_node));
+  *new_node = (struct pp_buffer_node){
+    .file   = str_stream,
+    .parent = pp_buffer_stack,
+    .buf    = YY_CURRENT_BUFFER,
+  };
+  pp_buffer_stack = new_node;
+
+  pp_switch_to_buffer(pp_create_buffer(str_stream, strlen(str)));
+  return true;
+}
+
+bool
+pp_pop_string()
+{
+  if (pp_buffer_stack == NULL) return false;
+
+  fclose(pp_buffer_stack->file);
+  yy_switch_to_buffer(pp_buffer_stack->buf);
+
+  pp_buffer_stack = pp_buffer_stack->parent;
+  return true;
 }

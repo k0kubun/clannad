@@ -105,6 +105,18 @@ void test_elif() {
   expect_int(2, n);
 }
 
+void test_defined_var() {
+  int n = 0;
+# define A 1
+# if defined A && A
+  n += 1;
+# endif
+# if defined undefined_val && undefined_val
+  n += 2;
+# endif
+  expect_int(1, n);
+}
+
 int main() {
   test_define_replacement();
   test_empty_define();
@@ -117,5 +129,6 @@ int main() {
   test_if_expression();
   test_multiline_if();
   test_elif();
+  test_defined_var();
   return 0;
 }

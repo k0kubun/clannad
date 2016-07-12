@@ -150,6 +150,7 @@ bool dict_delete(Dict *dict, char *key);
 void init_search_paths();
 void set_compile_path(char *filename);
 char* get_reading_file();
+char* find_macro(char *key);
 
 // optimizer.c
 void optimize(LLVMModuleRef mod);
