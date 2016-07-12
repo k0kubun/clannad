@@ -22,6 +22,21 @@ static bool defined_mode = false;
 bool pp_push_string(char *str);
 bool pp_pop_string();
 %}
+O   [0-7]
+D   [0-9]
+NZ  [1-9]
+L   [a-zA-Z_]
+A   [a-zA-Z_0-9]
+H   [a-fA-F0-9]
+HP  (0[xX])
+E   ([Ee][+-]?{D}+)
+P   ([Pp][+-]?{D}+)
+FS  (f|F|l|L)
+IS  (((u|U)(l|L|ll|LL)?)|((l|L|ll|LL)(u|U)?))
+CP  (u|U|L)
+SP  (u8|u|U|L)
+ES  (\\(['"\?\\abfnrtv]|[0-7]{1,3}|x[a-fA-F0-9]+))
+WS  [ \t\v\n\f]
 
 %x COMMENT
 
@@ -97,20 +112,45 @@ bool pp_pop_string();
 
 [1-9][0-9]* {
   pplval.ival = atoi(pptext);
-  return tINTEGER;
+  return tI_CONSTANT;
+}
+
+{D}+{E}{FS}? {
+  pplval.fval = atof(yytext);
+  return tF_CONSTANT;
+}
+{D}*"."{D}+{E}?{FS}? {
+  pplval.fval = atof(yytext);
+  return tF_CONSTANT;
+}
+{D}+"."{E}?{FS}? {
+  pplval.fval = atof(yytext);
+  return tF_CONSTANT;
+}
+{HP}{H}+{P}{FS}? {
+  pplval.fval = atof(yytext);
+  return tF_CONSTANT;
+}
+{HP}{H}*"."{H}+{P}{FS}? {
+  pplval.fval = atof(yytext);
+  return tF_CONSTANT;
+}
+{HP}{H}+"."{P}{FS}? {
+  pplval.fval = atof(yytext);
+  return tF_CONSTANT;
 }
 
 (u|U|L)?'[^']' {
   // FIXME: u|U|L is not considered, `+` is removed and {ES} is not lexed
   char* str = read_string_literal(pptext);
   pplval.ival = str[0];
-  return tINTEGER;
+  return tI_CONSTANT;
 }
 
 0 {
   // TODO: support all octal digits
   pplval.ival = 0;
-  return tINTEGER;
+  return tI_CONSTANT;
 }
 
 \"([^"]|\\\")*\" {

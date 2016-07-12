@@ -19,6 +19,7 @@ Node* create_decl_node(Node *spec, Node *init);
   Node *node;
   char *id;
   long ival;
+  double fval;
   Vector *list;
   char ch;
 }
@@ -29,7 +30,8 @@ Node* create_decl_node(Node *spec, Node *init);
 %token <id>   tIF
 %token <id>   tELSE
 %token <id>   tRETURN
-%token <ival> tINTEGER
+%token <ival> tI_CONSTANT
+%token <fval> tF_CONSTANT
 %token <id>   tIDENTIFIER
 %token <id>   tSTRING_LITERAL
 %token <id>   tDEFINED
@@ -394,9 +396,13 @@ string
   ;
 
 integer_constant
-  : tINTEGER
+  : tI_CONSTANT
   {
     $$ = create_node(&(Node){ NODE_INTEGER, .ival = $1 });
+  }
+  | tF_CONSTANT
+  {
+    $$ = create_node(&(Node){ NODE_INTEGER, .fval = $1 });
   }
   ;
 
