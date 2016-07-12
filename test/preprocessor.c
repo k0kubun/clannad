@@ -92,6 +92,19 @@ void test_multiline_if() {
   expect_int(1, n);
 }
 
+void test_elif() {
+  int n = 0;
+# if defined defined_val
+# elif defined defined_val
+  n += 1;
+# endif
+# if defined undefined_val
+# elif defined defined_val
+  n += 2;
+# endif
+  expect_int(2, n);
+}
+
 int main() {
   test_define_replacement();
   test_empty_define();
@@ -103,5 +116,6 @@ int main() {
   test_nested_if_with_parenthesis();
   test_if_expression();
   test_multiline_if();
+  test_elif();
   return 0;
 }

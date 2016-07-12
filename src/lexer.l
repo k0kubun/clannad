@@ -48,6 +48,7 @@ static char* pp_exp       = NULL;
 %x IF
 %x IFDEF
 %x IFNDEF
+%x ELIF
 %x IGNORED
 %x LINE_NUM
 %x LINE_FILE
@@ -146,6 +147,43 @@ static char* pp_exp       = NULL;
   } else {
     state_stack->had_true = true;
     BEGIN(INITIAL);
+  }
+}
+
+<INITIAL,IGNORED>^"#"[ \t]*elif[ \t]+ {
+  if (state_stack == NULL) {
+    fprintf(stderr, "error: #endif without #if\n");
+    exit(1);
+  }
+  pp_exp = malloc(sizeof(char *));
+  pp_exp[0] = '\0';
+  BEGIN(ELIF);
+}
+<ELIF>"\n" {
+  // FIXME: this should raise error in some cases
+  yylineno++;
+}
+<ELIF>[^\n]+ {
+  pp_exp = realloc(pp_exp, (strlen(pp_exp) + strlen(yytext)) * sizeof(char *));
+  strcat(pp_exp, yytext);
+
+  int len = strlen(pp_exp);
+  if (pp_exp[len-1] == '\\') {
+    pp_exp[len-1] = '\0';
+    BEGIN(ELIF);
+  } else {
+    Node *ast;
+    if (pp_parse_exp(&ast, pp_exp)) {
+      fprintf(stderr, "Preprocessor failed to parse '%s'!\n", pp_exp);
+      yyterminate();
+    }
+
+    if (!state_stack->had_true && pp_eval(ast)) {
+      state_stack->had_true = true;
+      BEGIN(INITIAL);
+    } else {
+      BEGIN(IGNORED);
+    }
   }
 }
 
