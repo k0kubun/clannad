@@ -38,6 +38,7 @@ static char* compile_dir  = NULL;
 static char* compile_file = NULL;
 static char* define_from  = NULL;
 static char* pp_exp       = NULL;
+bool is_ignored(struct state_node *node);
 %}
 O   [0-7]
 D   [0-9]
@@ -143,7 +144,7 @@ WS  [ \t\v\n\f]
       yyterminate();
     }
 
-    if (pp_eval(ast)) {
+    if (!is_ignored(state_stack) && pp_eval(ast)) {
       state_stack->had_true = true;
       BEGIN(INITIAL);
     } else {
@@ -193,7 +194,7 @@ WS  [ \t\v\n\f]
       yyterminate();
     }
 
-    if (!state_stack->had_true && pp_eval(ast)) {
+    if (!state_stack->had_true && !is_ignored(state_stack) && pp_eval(ast)) {
       state_stack->had_true = true;
       BEGIN(INITIAL);
     } else {
@@ -640,4 +641,12 @@ find_macro(char *key)
 {
   if (!define_rules) return NULL;
   return dict_get(define_rules, key);
+}
+
+bool
+is_ignored(struct state_node *node)
+{
+  if (YYSTATE == IGNORED) return true;
+  if (!node) return false;
+  return node->state == IGNORED || is_ignored(node->parent);
 }
