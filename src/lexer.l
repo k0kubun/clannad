@@ -114,15 +114,7 @@ static char* define_from  = NULL;
   }
 }
 
-^"#"[ \t]*endif[ \t]* {
-  if (state_stack == NULL) {
-    fprintf(stderr, "error: #endif without #if\n");
-    exit(1);
-  }
-  BEGIN(state_stack->state);
-  state_stack = state_stack->parent;
-}
-<IGNORED>^"#"[ \t]*endif[ \t]* {
+<INITIAL,IGNORED>^"#"[ \t]*endif[ \t]* {
   if (state_stack == NULL) {
     fprintf(stderr, "error: #endif without #if\n");
     exit(1);
