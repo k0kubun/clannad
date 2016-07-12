@@ -169,7 +169,7 @@ static int open_if_count  = 0;
 [a-zA-Z_][a-zA-Z0-9_]* {
   char *macro;
   if (define_rules && (macro = dict_get(define_rules, yytext))) {
-    if (!push_string(macro)) {
+    if (strlen(macro) > 0 && !push_string(macro)) {
       yyterminate();
     }
   } else {
