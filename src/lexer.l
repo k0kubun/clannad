@@ -171,35 +171,20 @@ WS  [ \t\v\n\f]
     fprintf(stderr, "error: #endif without #if\n");
     yyterminate();
   }
-  pp_exp = malloc(sizeof(char *));
-  pp_exp[0] = '\0';
   BEGIN(ELIF);
 }
-<ELIF>"\n" {
-  // FIXME: this should raise error in some cases
-  yylineno++;
-}
 <ELIF>[^\n]+ {
-  pp_exp = realloc(pp_exp, (strlen(pp_exp) + strlen(yytext)) * sizeof(char *));
-  strcat(pp_exp, yytext);
+  Node *ast;
+  if (pp_parse_exp(&ast, yytext)) {
+    fprintf(stderr, "Preprocessor failed to parse '%s'!\n", yytext);
+    yyterminate();
+  }
 
-  int len = strlen(pp_exp);
-  if (pp_exp[len-1] == '\\') {
-    pp_exp[len-1] = '\0';
-    BEGIN(ELIF);
+  if (!state_stack->had_true && !is_ignored(state_stack) && pp_eval(ast)) {
+    state_stack->had_true = true;
+    BEGIN(INITIAL);
   } else {
-    Node *ast;
-    if (pp_parse_exp(&ast, pp_exp)) {
-      fprintf(stderr, "Preprocessor failed to parse '%s'!\n", pp_exp);
-      yyterminate();
-    }
-
-    if (!state_stack->had_true && !is_ignored(state_stack) && pp_eval(ast)) {
-      state_stack->had_true = true;
-      BEGIN(INITIAL);
-    } else {
-      BEGIN(IGNORED);
-    }
+    BEGIN(IGNORED);
   }
 }
 

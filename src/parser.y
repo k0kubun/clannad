@@ -710,6 +710,42 @@ open_file(char *filename)
   return file;
 }
 
+char*
+read_file(char *filename)
+{
+  FILE *fp = open_file(filename);
+  fseek(fp, 0L, SEEK_END);
+  long size = ftell(fp);
+  rewind(fp);
+
+  char *ret = malloc(size * sizeof(char));
+  fread(ret, sizeof(char), size, fp);
+  fclose(fp);
+
+  return ret;
+}
+
+char*
+drop_backslash_newline(char *str)
+{
+  // FIXME: This function should keep line numbers...
+  char *ret = malloc((strlen(str)+1) * sizeof(char));
+  char prev1 = '\0', prev2 = '\0';
+  int i, j;
+  for (i = 0, j = 0; i < strlen(str); i++, j++) {
+    if (str[i] == '\n' && prev1 == '\\' && prev2 != '\\') {
+      j -= 2;
+    } else {
+      ret[j] = str[i];
+    }
+    prev2 = prev1;
+    prev1 = str[i];
+  }
+  free(str);
+  ret[j] = '\0';
+  return ret;
+}
+
 int
 parse_file(Node **astptr, char *filename)
 {
@@ -719,10 +755,17 @@ parse_file(Node **astptr, char *filename)
   init_search_paths();
   set_compile_path(filename);
 
-  yyin = open_file(filename);
+  char *str = drop_backslash_newline(read_file(filename));
+  yyin = fmemopen(str, strlen(str), "r");
+  if (!yyin) {
+    fprintf(stderr, "Failed to fmemopen: '%s'\n", str);
+    return 1;
+  }
+
   int ret = yyparse();
   *astptr = parse_result;
 
   fclose(yyin);
+  free(str);
   return ret;
 }
