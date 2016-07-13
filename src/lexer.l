@@ -87,7 +87,7 @@ WS  [ \t\v\n\f]
 ^"#"[ \t]*define[ \t]* {
   BEGIN(DEFINE_FROM);
 }
-<DEFINE_FROM>[a-zA-Z_][a-zA-Z0-9_]* {
+<DEFINE_FROM>{L}{A}* {
   define_from = strdup(yytext);
   BEGIN(DEFINE_TO);
 }
@@ -100,7 +100,7 @@ WS  [ \t\v\n\f]
 ^"#"[ \t]*undef[ \t]* {
   BEGIN(UNDEF);
 }
-<UNDEF>[a-zA-Z_][a-zA-Z0-9_]* {
+<UNDEF>{L}{A}* {
   if (!define_rules) define_rules = create_dict();
   dict_delete(define_rules, yytext);
   BEGIN(INITIAL);
@@ -110,7 +110,7 @@ WS  [ \t\v\n\f]
   push_state();
   BEGIN(IFDEF);
 }
-<IFDEF>[a-zA-Z_][a-zA-Z0-9_]* {
+<IFDEF>{L}{A}* {
   if (is_defined(yytext)) {
     state_stack->had_true = true;
     BEGIN(INITIAL);
@@ -157,7 +157,7 @@ WS  [ \t\v\n\f]
   push_state();
   BEGIN(IFNDEF);
 }
-<IFNDEF>[a-zA-Z_][a-zA-Z0-9_]* {
+<IFNDEF>{L}{A}* {
   if (is_defined(yytext)) {
     BEGIN(IGNORED);
   } else {
@@ -322,7 +322,7 @@ WS  [ \t\v\n\f]
 "^="       return tXOR_ASSIGN;
 "|="       return tOR_ASSIGN;
 
-[a-zA-Z_][a-zA-Z0-9_]* {
+{L}{A}* {
   char *macro;
   if ((macro = find_macro(yytext))) {
     if (strlen(macro) > 0 && !push_string(macro)) {
@@ -380,12 +380,6 @@ WS  [ \t\v\n\f]
   // FIXME: u|U|L is not considered, `+` is removed and {ES} is not lexed
   char* str = read_string_literal(yytext);
   yylval.ival = str[0];
-  return tI_CONSTANT;
-}
-
-0 {
-  // TODO: support all octal digits
-  yylval.ival = 0;
   return tI_CONSTANT;
 }
 

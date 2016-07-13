@@ -88,7 +88,7 @@ WS  [ \t\v\n\f]
   return tDEFINED;
 }
 
-[a-zA-Z_][a-zA-Z0-9_]* {
+{L}{A}* {
   if (defined_mode) {
     defined_mode = false;
     pplval.id = strdup(pptext);
@@ -156,12 +156,6 @@ WS  [ \t\v\n\f]
   // FIXME: u|U|L is not considered, `+` is removed and {ES} is not lexed
   char* str = read_string_literal(pptext);
   pplval.ival = str[0];
-  return tI_CONSTANT;
-}
-
-0 {
-  // TODO: support all octal digits
-  pplval.ival = 0;
   return tI_CONSTANT;
 }
 
