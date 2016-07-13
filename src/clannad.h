@@ -149,6 +149,10 @@ void* dict_get(Dict *dict, char *key);
 void dict_set(Dict *dict, char *key, void *value);
 bool dict_delete(Dict *dict, char *key);
 
+// file.c
+char* read_file(char *filename);
+char* drop_backslash_newline(char *str);
+
 // lexer.l
 void init_search_paths();
 void set_compile_path(char *filename);
