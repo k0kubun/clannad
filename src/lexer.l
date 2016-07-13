@@ -480,6 +480,7 @@ init_search_paths()
   vector_push(std_search_paths, "/usr/local/include");
   vector_push(std_search_paths, "/usr/lib/clang/" CLANG_VERSION "/include");
   vector_push(std_search_paths, "/usr/local/lib/clang/" CLANG_VERSION "/include");
+  vector_push(std_search_paths, "/usr/include/x86_64-linux-gnu");
   vector_push(std_search_paths, "/usr/include");
 }
 
