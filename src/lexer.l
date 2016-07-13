@@ -37,7 +37,6 @@ static Dict *define_rules = NULL;
 static char* compile_dir  = NULL;
 static char* compile_file = NULL;
 static char* define_from  = NULL;
-static char* pp_exp       = NULL;
 bool is_ignored(struct state_node *node);
 %}
 O   [0-7]
@@ -121,35 +120,20 @@ WS  [ \t\v\n\f]
 
 <INITIAL,IGNORED>^"#"[ \t]*if[ \t]+ {
   push_state();
-  pp_exp = malloc(sizeof(char *));
-  pp_exp[0] = '\0';
   BEGIN(IF);
 }
-<IF>"\n" {
-  // FIXME: this should raise error in some cases
-  yylineno++;
-}
 <IF>[^\n]+ {
-  pp_exp = realloc(pp_exp, (strlen(pp_exp) + strlen(yytext)) * sizeof(char *));
-  strcat(pp_exp, yytext);
+  Node *ast;
+  if (pp_parse_exp(&ast, yytext)) {
+    fprintf(stderr, "Preprocessor failed to parse '%s'!\n", yytext);
+    yyterminate();
+  }
 
-  int len = strlen(pp_exp);
-  if (pp_exp[len-1] == '\\') {
-    pp_exp[len-1] = '\0';
-    BEGIN(IF);
+  if (!is_ignored(state_stack) && pp_eval(ast)) {
+    state_stack->had_true = true;
+    BEGIN(INITIAL);
   } else {
-    Node *ast;
-    if (pp_parse_exp(&ast, pp_exp)) {
-      fprintf(stderr, "Preprocessor failed to parse '%s'!\n", pp_exp);
-      yyterminate();
-    }
-
-    if (!is_ignored(state_stack) && pp_eval(ast)) {
-      state_stack->had_true = true;
-      BEGIN(INITIAL);
-    } else {
-      BEGIN(IGNORED);
-    }
+    BEGIN(IGNORED);
   }
 }
 
