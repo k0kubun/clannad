@@ -23,10 +23,11 @@ read_fp(FILE *fp)
   long size = ftell(fp);
   rewind(fp);
 
-  char *ret = malloc(size * sizeof(char));
+  char *ret = malloc((size + 1) * sizeof(char));
   fread(ret, sizeof(char), size, fp);
   fclose(fp);
 
+  ret[size] = '\0';
   return ret;
 }
 
