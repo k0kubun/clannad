@@ -705,17 +705,13 @@ parse_file(Node **astptr, char *filename)
   init_search_paths();
   set_compile_path(filename);
 
-  char *str = drop_backslash_newline(read_file(filename));
-  yyin = fmemopen(str, strlen(str), "r");
-  if (!yyin) {
-    fprintf(stderr, "Failed to fmemopen: '%s'\n", str);
-    return 1;
-  }
+  FILE *fp = open_file(filename);
+  yyin = drop_backslash_newline(fp);
 
   int ret = yyparse();
   *astptr = parse_result;
 
-  fclose(yyin);
-  free(str);
+  //fclose(yyin);
+  //free(str);
   return ret;
 }

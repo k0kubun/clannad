@@ -576,6 +576,7 @@ push_file(char *filename, bool std)
     return false;
   }
 
+  file = drop_backslash_newline(file);
   push_fp(file, YY_BUF_SIZE, filename);
   return true;
 }

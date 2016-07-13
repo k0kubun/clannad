@@ -17,9 +17,8 @@ open_file(char *filename)
 }
 
 char*
-read_file(char *filename)
+read_fp(FILE *fp)
 {
-  FILE *fp = open_file(filename);
   fseek(fp, 0L, SEEK_END);
   long size = ftell(fp);
   rewind(fp);
@@ -32,7 +31,7 @@ read_file(char *filename)
 }
 
 char*
-drop_backslash_newline(char *str)
+scan_backslash_newline(char *str)
 {
   // FIXME: This function should keep line numbers...
   char *ret = malloc((strlen(str)+1) * sizeof(char));
@@ -49,5 +48,17 @@ drop_backslash_newline(char *str)
   }
   free(str);
   ret[j] = '\0';
+  return ret;
+}
+
+FILE*
+drop_backslash_newline(FILE *fp)
+{
+  char *str = scan_backslash_newline(read_fp(fp));
+  FILE *ret = fmemopen(str, strlen(str), "r");
+  if (!ret) {
+    fprintf(stderr, "Failed to fmemopen: '%s'\n", str);
+    exit(1);
+  }
   return ret;
 }
