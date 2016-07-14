@@ -36,7 +36,7 @@ static Vector *std_search_paths = NULL;
 static Dict *define_rules = NULL;
 static char* compile_dir  = NULL;
 static char* compile_file = NULL;
-static char* define_from  = NULL;
+static char* prev_yytext  = NULL;
 bool is_ignored(struct state_node *node);
 %}
 O   [0-7]
@@ -56,8 +56,8 @@ ES  (\\(['"\?\\abfnrtv]|[0-7]{1,3}|x[a-fA-F0-9]+))
 WS  [ \t\v\n\f]
 
 %x COMMENT
-%x DEFINE_FROM
-%x DEFINE_TO
+%x DEFINE_KEY
+%x DEFINE_VAR
 %x UNDEF
 %x INCLUDE
 %x IF
@@ -84,15 +84,15 @@ WS  [ \t\v\n\f]
 }
 
 ^"#"[ \t]*define[ \t]* {
-  BEGIN(DEFINE_FROM);
+  BEGIN(DEFINE_KEY);
 }
-<DEFINE_FROM>{L}{A}* {
-  define_from = strdup(yytext);
-  BEGIN(DEFINE_TO);
+<DEFINE_KEY>{L}{A}* {
+  prev_yytext = strdup(yytext);
+  BEGIN(DEFINE_VAR);
 }
-<DEFINE_TO>[^\n]*$ {
+<DEFINE_VAR>[^\n]*$ {
   if (!define_rules) define_rules = create_dict();
-  dict_set(define_rules, define_from, strdup(yytext));
+  dict_set(define_rules, prev_yytext, strdup(yytext));
   BEGIN(INITIAL);
 }
 
