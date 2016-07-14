@@ -94,12 +94,12 @@ WS  [ \t\v\n\f]
     pplval.id = strdup(pptext);
     return tIDENTIFIER;
   } else {
-    char *macro = find_macro(yytext);
+    Macro *macro = find_macro(yytext);
     if (!macro) {
       pplval.id = strdup(pptext);
       return tIDENTIFIER;
     }
-    if (strlen(macro) > 0 && !pp_push_string(macro)) {
+    if (strlen(macro->value) > 0 && !pp_push_string(macro->value)) {
       yyterminate();
     }
   }

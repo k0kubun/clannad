@@ -33,7 +33,7 @@ struct state_node {
 static struct state_node *state_stack = NULL;
 
 static Vector *std_search_paths = NULL;
-static Dict *define_rules = NULL;
+static Dict *macros = NULL;
 static char* compile_dir  = NULL;
 static char* compile_file = NULL;
 static char* prev_yytext  = NULL;
@@ -96,13 +96,18 @@ WS  [ \t\v\n\f]
   BEGIN(DEFINE_VAR);
 }
 <DEFINE_VAR>[^\n]*$ {
-  if (!define_rules) define_rules = create_dict();
-  dict_set(define_rules, prev_yytext, strdup(yytext));
+  if (!macros) macros = create_dict();
+  Macro *macro = malloc(sizeof(Macro));
+  *macro = (Macro){ .value = strdup(yytext), .is_function = false, .params = NULL };
+  dict_set(macros, prev_yytext, macro);
   BEGIN(INITIAL);
 }
 <DEFINE_FUNC>[^\n]*$ {
-  if (!define_rules) define_rules = create_dict();
-  dict_set(define_rules, prev_yytext, strdup(yytext));
+  if (!macros) macros = create_dict();
+  Macro *macro = malloc(sizeof(Macro));
+  Vector *params = create_vector();
+  *macro = (Macro){ .value = strdup(yytext), .is_function = true, .params = params };
+  dict_set(macros, prev_yytext, macro);
   BEGIN(INITIAL);
 }
 
@@ -110,8 +115,8 @@ WS  [ \t\v\n\f]
   BEGIN(UNDEF);
 }
 <UNDEF>{L}{A}* {
-  if (!define_rules) define_rules = create_dict();
-  dict_delete(define_rules, yytext);
+  if (!macros) macros = create_dict();
+  dict_delete(macros, yytext);
   BEGIN(INITIAL);
 }
 
@@ -302,9 +307,9 @@ WS  [ \t\v\n\f]
 "|="       return tOR_ASSIGN;
 
 {L}{A}* {
-  char *macro;
+  Macro *macro;
   if ((macro = find_macro(yytext))) {
-    if (strlen(macro) > 0 && !push_string(macro)) {
+    if (strlen(macro->value) > 0 && !push_string(macro->value)) {
       yyterminate();
     }
   } else {
@@ -544,7 +549,7 @@ try_include(char *filename, bool std)
 bool
 is_defined(char *identifier)
 {
-  return define_rules && dict_get(define_rules, identifier);
+  return macros && dict_get(macros, identifier);
 }
 
 void
@@ -611,11 +616,11 @@ push_state()
   state_stack = new_node;
 }
 
-char*
+Macro*
 find_macro(char *key)
 {
-  if (!define_rules) return NULL;
-  return dict_get(define_rules, key);
+  if (!macros) return NULL;
+  return dict_get(macros, key);
 }
 
 bool

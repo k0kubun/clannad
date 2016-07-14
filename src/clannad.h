@@ -71,6 +71,12 @@ typedef struct Dict {
   struct Dict *parent;
 } Dict;
 
+typedef struct Macro {
+  char *value;
+  bool is_function;
+  Vector *params;
+} Macro;
+
 typedef struct Node {
   enum NodeKind kind;
   LLVMValueRef ref;
@@ -157,7 +163,7 @@ FILE* drop_backslash_newline(FILE *fp);
 void init_search_paths();
 void set_compile_path(char *filename);
 char* get_reading_file();
-char* find_macro(char *key);
+Macro* find_macro(char *key);
 
 // optimizer.c
 void optimize(LLVMModuleRef mod);
