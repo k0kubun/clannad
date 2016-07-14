@@ -58,6 +58,7 @@ WS  [ \t\v\n\f]
 %x COMMENT
 %x DEFINE_KEY
 %x DEFINE_VAR
+%x DEFINE_FUNC
 %x UNDEF
 %x INCLUDE
 %x IF
@@ -86,11 +87,20 @@ WS  [ \t\v\n\f]
 ^"#"[ \t]*define[ \t]* {
   BEGIN(DEFINE_KEY);
 }
+<DEFINE_KEY>{L}{A}*\((({WS}*{L}{A}*{WS}*,)*{WS}*{L}{A}*{WS}*)?\) {
+  prev_yytext = strdup(yytext);
+  BEGIN(DEFINE_FUNC);
+}
 <DEFINE_KEY>{L}{A}* {
   prev_yytext = strdup(yytext);
   BEGIN(DEFINE_VAR);
 }
 <DEFINE_VAR>[^\n]*$ {
+  if (!define_rules) define_rules = create_dict();
+  dict_set(define_rules, prev_yytext, strdup(yytext));
+  BEGIN(INITIAL);
+}
+<DEFINE_FUNC>[^\n]*$ {
   if (!define_rules) define_rules = create_dict();
   dict_set(define_rules, prev_yytext, strdup(yytext));
   BEGIN(INITIAL);
