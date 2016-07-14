@@ -6,15 +6,6 @@
 #include "clannad.h"
 #include "parser.tab.h"
 
-char* read_string_literal(char *str);
-void set_reading_file(char *filename);
-bool pp_eval(Node *node);
-bool is_defined(char *identifier);
-bool push_file(char *filename, bool std);
-bool push_string(char *str);
-bool pop_file();
-void push_state();
-
 // Linked list to keep YY_BUFFER_STATE during `yy_switch_to_buffer` calls.
 struct buffer_node {
   struct buffer_node *parent;
@@ -37,7 +28,17 @@ static Dict *macros = NULL;
 static char* compile_dir  = NULL;
 static char* compile_file = NULL;
 static char* prev_yytext  = NULL;
+
+char* read_string_literal(char *str);
+void set_reading_file(char *filename);
+bool pp_eval(Node *node);
+bool is_defined(char *identifier);
+bool push_file(char *filename, bool std);
+bool push_string(char *str);
+bool pop_file();
+void push_state();
 bool is_ignored(struct state_node *node);
+Macro *create_func_macro(char *key, char *value);
 %}
 O   [0-7]
 D   [0-9]
@@ -85,6 +86,7 @@ WS  [ \t\v\n\f]
 }
 
 ^"#"[ \t]*define[ \t]* {
+  if (!macros) macros = create_dict();
   BEGIN(DEFINE_KEY);
 }
 <DEFINE_KEY>{L}{A}*\((({WS}*{L}{A}*{WS}*,)*{WS}*{L}{A}*{WS}*)?\) {
@@ -96,17 +98,16 @@ WS  [ \t\v\n\f]
   BEGIN(DEFINE_VAR);
 }
 <DEFINE_VAR>[^\n]*$ {
-  if (!macros) macros = create_dict();
   Macro *macro = malloc(sizeof(Macro));
   *macro = (Macro){ .value = strdup(yytext), .is_function = false, .params = NULL };
   dict_set(macros, prev_yytext, macro);
   BEGIN(INITIAL);
 }
 <DEFINE_FUNC>[^\n]*$ {
-  if (!macros) macros = create_dict();
-  Macro *macro = malloc(sizeof(Macro));
-  Vector *params = create_vector();
-  *macro = (Macro){ .value = strdup(yytext), .is_function = true, .params = params };
+  char *lparen = strchr(prev_yytext, '(');
+  prev_yytext[strlen(prev_yytext)-1] = '\0';
+  *lparen = '\0';
+  Macro *macro = create_func_macro(lparen + 1, strdup(yytext));
   dict_set(macros, prev_yytext, macro);
   BEGIN(INITIAL);
 }
@@ -629,4 +630,41 @@ is_ignored(struct state_node *node)
   if (YYSTATE == IGNORED) return true;
   if (!node) return false;
   return node->state == IGNORED || is_ignored(node->parent);
+}
+
+char*
+strip_string(char *str)
+{
+  char c;
+  while (c = str[0], c == ' ' || c == '\t')
+    str += 1;
+  while (c = str[strlen(str)-1], c == ' ' || c == '\t')
+    str[strlen(str)-1] = '\0';
+  return str;
+}
+
+Vector*
+parse_params(char *str)
+{
+  Vector *ret = create_vector();
+  str = strip_string(str);
+  if (strlen(str) == 0) return ret;
+
+  char *comma;
+  while ((comma = strchr(str, ','))) {
+    *comma = '\0';
+    vector_push(ret, strip_string(str));
+    str = comma + 1;
+  }
+  vector_push(ret, strip_string(str));
+  return ret;
+}
+
+Macro*
+create_func_macro(char *params_str, char *value)
+{
+  Macro *macro = malloc(sizeof(Macro));
+  Vector *params = parse_params(params_str);
+  *macro = (Macro){ .value = strdup(yytext), .is_function = true, .params = params };
+  return macro;
 }
