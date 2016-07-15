@@ -2,7 +2,7 @@
 ## C89/C90
 ANSI X3.159-1989, ISO/IEC 9899:1990
 
-#### 51 / 111 (45.9%)
+#### 52 / 111 (46.8%)
 
 - 2 environment
   - 2.1 conceptual models
@@ -137,7 +137,7 @@ ANSI X3.159-1989, ISO/IEC 9899:1990
      - [x] 3.8.1 Conditional inclusion
      - [x] 3.8.2 Source file inclusion
      - [x] 3.8.3 Macro replacement
-         - [ ] 3.8.3.1 Argument substitution
+         - [x] 3.8.3.1 Argument substitution
          - [ ] 3.8.3.2 The # operator
          - [ ] 3.8.3.3 The ## operator
          - [ ] 3.8.3.4 Rescanning and further replacement

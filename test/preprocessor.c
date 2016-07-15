@@ -154,6 +154,12 @@ void test_if_arithmetic() {
   expect_int(1, n);
 }
 
+#define FUNC(a, b) a) * (b
+void test_func_macro() {
+  int a = (1 + FUNC(1,2) + 3);
+  expect_int(10, a);
+}
+
 int main() {
   test_define_replacement();
   test_empty_define();
@@ -170,5 +176,6 @@ int main() {
   test_nested_ifdef();
   test_nested_if();
   test_if_arithmetic();
+  test_func_macro();
   return 0;
 }

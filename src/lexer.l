@@ -12,6 +12,7 @@ struct buffer_node {
   YY_BUFFER_STATE buf;
   char *filename;
   FILE *file;
+  Dict *macros;
 };
 static struct buffer_node *buffer_stack = NULL;
 
@@ -39,6 +40,10 @@ bool pop_file();
 void push_state();
 bool is_ignored(struct state_node *node);
 Macro *create_func_macro(char *key, char *value);
+int peek_token();
+Vector* read_macro_args();
+Dict* build_macro_subst(Macro *macro, Vector *args);
+void check_macros();
 %}
 O   [0-7]
 D   [0-9]
@@ -116,7 +121,7 @@ WS  [ \t\v\n\f]
   BEGIN(UNDEF);
 }
 <UNDEF>{L}{A}* {
-  if (!macros) macros = create_dict();
+  check_macros();
   dict_delete(macros, yytext);
   BEGIN(INITIAL);
 }
@@ -309,9 +314,24 @@ WS  [ \t\v\n\f]
 
 {L}{A}* {
   Macro *macro;
-  if ((macro = find_macro(yytext))) {
-    if (strlen(macro->value) > 0 && !push_string(macro->value)) {
-      yyterminate();
+  if ((macro = find_macro(yytext)) && (!macro->is_function || peek_token() == '(')) {
+    if (macro->is_function) {
+      Vector *args = read_macro_args();
+      if (macro->params->length != args->length) {
+        fprintf(stderr, "Macro argument count mismatch!\n");
+        yyterminate();
+      }
+      if (strlen(macro->value) > 0 && !push_string(macro->value)) {
+        yyterminate();
+      } else {
+        Dict *subst = build_macro_subst(macro, args);
+        subst->parent = macros;
+        macros = subst;
+      }
+    } else {
+      if (strlen(macro->value) > 0 && !push_string(macro->value)) {
+        yyterminate();
+      }
     }
   } else {
     yylval.id = strdup(yytext);
@@ -556,12 +576,15 @@ is_defined(char *identifier)
 void
 push_fp(FILE *fp, int size, char *filename)
 {
+  check_macros();
+
   struct buffer_node *new_node = malloc(sizeof(struct buffer_node));
   *new_node = (struct buffer_node){
     .file     = fp,
     .filename = filename,
     .parent   = buffer_stack,
     .buf      = YY_CURRENT_BUFFER,
+    .macros   = macros,
   };
   buffer_stack = new_node;
 
@@ -603,6 +626,7 @@ pop_file()
   fclose(buffer_stack->file);
   yy_switch_to_buffer(buffer_stack->buf);
 
+  macros = buffer_stack->macros;
   buffer_stack = buffer_stack->parent;
   return true;
 }
@@ -667,4 +691,74 @@ create_func_macro(char *params_str, char *value)
   Vector *params = parse_params(params_str);
   *macro = (Macro){ .value = strdup(yytext), .is_function = true, .params = params };
   return macro;
+}
+
+int
+peek_token()
+{
+  int ret = yylex();
+  for (int i = strlen(yytext) - 1; 0 <= i; i--) {
+    unput(yytext[i]);
+  }
+  return ret;
+}
+
+Vector*
+read_macro_args()
+{
+  Vector *ret = create_vector();
+  char *buf = malloc(sizeof(char));
+  buf[0] = '\0';
+
+  int depth = 0, token;
+  for (;;) {
+    switch ((token = yylex())) {
+      case ',':
+        if (depth == 1) {
+          vector_push(ret, buf);
+          buf = malloc(sizeof(char));
+          buf[0] = '\0';
+          continue;
+        }
+        break;
+      case '(':
+        depth++;
+        if (depth == 1) continue;
+        break;
+      case ')':
+        depth--;
+        if (depth == 0) {
+          if (strlen(buf) > 0) vector_push(ret, buf);
+          return ret;
+        }
+        break;
+    }
+
+    buf = realloc(buf, (strlen(buf) + strlen(yytext)) * sizeof(char));
+    strcat(buf, yytext);
+  }
+  return ret;
+}
+
+Dict*
+build_macro_subst(Macro *macro, Vector *args)
+{
+  Dict *ret = create_dict();
+  for (int i = 0; i < args->length; i++) {
+    char *key = vector_get(macro->params, i);
+    char *value = vector_get(args, i);
+    Macro *m = malloc(sizeof(Macro));
+    *m = (Macro){ .value = value, .is_function = false, .params = NULL };
+    dict_set(ret, key, m);
+  }
+  return ret;
+}
+
+void
+check_macros()
+{
+  if (!macros) {
+    macros = create_dict();
+    macros->parent = NULL;
+  }
 }
