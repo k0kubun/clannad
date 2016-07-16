@@ -282,6 +282,12 @@ WS  [ \t\v\n\f]
   yyterminate();
 }
 
+^"#"[ \t]error[^\n]* {
+  fprintf(stderr, "%s\n", yytext);
+  fprintf(stderr, "error generated.\n");
+  yyterminate();
+}
+
 ^"#"[ \t]*[a-z]+ {
   fprintf(stderr, "error: unexpected preprocessor: %s\n", yytext);
   yyterminate();
