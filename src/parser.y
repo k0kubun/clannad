@@ -53,6 +53,8 @@ create_decl_node(Node *spec, Node *init)
 %token <id>   tFLOAT
 %token <id>   tDOUBLE
 %token <id>   tVOID
+%token <id>   tSTRUCT
+%token <id>   tUNION
 %token <id>   tIF
 %token <id>   tELSE
 %token <id>   tRETURN
@@ -136,6 +138,12 @@ create_decl_node(Node *spec, Node *init)
 %type <node> constant
 %type <node> string
 %type <id>   type_specifier
+%type <node> struct_or_union_specifier
+%type <id>   struct_or_union
+%type <list> struct_declaration_list
+%type <node> struct_declaration
+%type <list> struct_declarator_list
+%type <node> struct_declarator
 
 %start program
 
@@ -744,7 +752,62 @@ type_specifier
   {
     $$ = "unsigned";
   }
+  | struct_or_union_specifier
+  {
+    $$ = "struct";
+  }
   | tTYPEDEF_NAME
+  ;
+
+struct_or_union_specifier
+  : struct_or_union '{' struct_declaration_list '}'
+  {
+    $$ = create_node(&(Node){ NODE_STRUCT });
+  }
+  | struct_or_union tIDENTIFIER '{' struct_declaration_list '}'
+  {
+    $$ = create_node(&(Node){ NODE_STRUCT });
+  }
+  | struct_or_union tIDENTIFIER
+  {
+    $$ = create_node(&(Node){ NODE_STRUCT });
+  }
+  ;
+
+struct_or_union
+  : tSTRUCT
+  | tUNION
+  ;
+
+struct_declaration_list
+  : struct_declaration
+  {
+    $$ = vector_push(create_vector(), $1);
+  }
+  | struct_declaration_list struct_declaration
+  {
+    $$ = vector_push($1, $2);
+  }
+  ;
+
+struct_declaration
+  : specifier_qualifier_list ';'
+  | specifier_qualifier_list struct_declarator_list ';'
+  ;
+
+struct_declarator_list
+  : struct_declarator
+  {
+    $$ = vector_push(create_vector(), $1);
+  }
+  | struct_declarator_list ',' struct_declarator
+  {
+    $$ = vector_push($1, $3);
+  }
+  ;
+
+struct_declarator
+  : declaration
   ;
 
 %%
