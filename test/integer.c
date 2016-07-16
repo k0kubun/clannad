@@ -88,6 +88,18 @@ void test_comma_operator() {
   expect_int(3, n);
 }
 
+void test_integer_types() {
+  unsigned n;
+  n = 3;
+  expect_int(3, n);
+
+  short unsigned m = 2;
+  expect_int(2, m);
+
+  long l = 1;
+  expect_int(1, l);
+}
+
 int main() {
   test_arithmetic();
   test_not();
@@ -99,5 +111,6 @@ int main() {
   test_arithmetic_compound_assign();
   test_anti_associativity();
   test_comma_operator();
+  test_integer_types();
   return 0;
 }

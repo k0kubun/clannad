@@ -59,7 +59,14 @@ compile_type(Node *node)
 {
   assert_node(node, NODE_TYPE);
 
+  // FIXME: support types properly
   if (!strcmp(node->id, "int")) {
+    return LLVMInt32Type();
+  } else if (!strcmp(node->id, "short")) {
+    return LLVMInt32Type();
+  } else if (!strcmp(node->id, "long")) {
+    return LLVMInt32Type();
+  } else if (!strcmp(node->id, "unsigned")) {
     return LLVMInt32Type();
   } else if (!strcmp(node->id, "float")) {
     return LLVMFloatType();

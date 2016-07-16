@@ -44,9 +44,14 @@ create_decl_node(Node *spec, Node *init)
   char ch;
 }
 
-%token <id>   tINT
-%token <id>   tFLOAT
 %token <id>   tCHAR
+%token <id>   tSHORT
+%token <id>   tINT
+%token <id>   tLONG
+%token <id>   tSIGNED
+%token <id>   tUNSIGNED
+%token <id>   tFLOAT
+%token <id>   tDOUBLE
 %token <id>   tVOID
 %token <id>   tIF
 %token <id>   tELSE
@@ -218,6 +223,15 @@ declaration_specifiers
         exit(1);
     }
     $$ = $2;
+  }
+  | type_specifier declaration_specifiers
+  {
+    // FIXME: support multiple types properly
+    if (has_typedef($1)) {
+      $$ = dict_get(typedefs, $1);
+    } else {
+      $$ = create_node(&(Node){ NODE_TYPE, .id = $1, .flags = 0 });
+    }
   }
   | type_specifier
   {
@@ -694,21 +708,41 @@ string
   ;
 
 type_specifier
-  : tINT
+  : tVOID
   {
-    $$ = "int";
-  }
-  | tFLOAT
-  {
-    $$ = "float";
+    $$ = "void";
   }
   | tCHAR
   {
     $$ = "char";
   }
-  | tVOID
+  | tSHORT
   {
-    $$ = "void";
+    $$ = "short";
+  }
+  | tINT
+  {
+    $$ = "int";
+  }
+  | tLONG
+  {
+    $$ = "long";
+  }
+  | tFLOAT
+  {
+    $$ = "float";
+  }
+  | tDOUBLE
+  {
+    $$ = "double";
+  }
+  | tSIGNED
+  {
+    $$ = "signed";
+  }
+  | tUNSIGNED
+  {
+    $$ = "unsigned";
   }
   | tTYPEDEF_NAME
   ;

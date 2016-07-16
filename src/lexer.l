@@ -297,9 +297,14 @@ WS  [ \t\v\n\f]
   // ignore
 }
 
-"int"      return tINT;
-"float"    return tFLOAT;
 "char"     return tCHAR;
+"short"    return tSHORT;
+"int"      return tINT;
+"long"     return tLONG;
+"signed"   return tSIGNED;
+"unsigned" return tUNSIGNED;
+"float"    return tFLOAT;
+"double"   return tDOUBLE;
 "void"     return tVOID;
 "if"       return tIF;
 "else"     return tELSE;
