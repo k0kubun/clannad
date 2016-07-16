@@ -278,7 +278,8 @@ pp_read_macro_args()
         break;
     }
 
-    buf = realloc(buf, (strlen(buf) + strlen(pptext) + 1) * sizeof(char));
+    buf = realloc(buf, (strlen(buf) + strlen(pptext) + 2) * sizeof(char));
+    strcat(buf, " ");
     strcat(buf, pptext);
   }
   return ret;

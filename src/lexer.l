@@ -840,7 +840,8 @@ read_define()
   for (;;) {
     if (yylex() == tNEWLINE) break;
 
-    buf = realloc(buf, (strlen(buf) + strlen(yytext) + 1) * sizeof(char));
+    buf = realloc(buf, (strlen(buf) + strlen(yytext) + 2) * sizeof(char));
+    strcat(buf, " ");
     strcat(buf, yytext);
   }
   reading_define = false;

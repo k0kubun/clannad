@@ -226,6 +226,13 @@ void test_define_with_comment() {
   expect_int(6, define_with_comment2(2, 3));
 }
 
+void test_define_continuous_tokens() {
+# define UINT unsigned int
+  UINT a;
+  a = 3;
+  expect_int(3, a);
+}
+
 int main() {
   test_define_replacement();
   test_empty_define();
@@ -250,5 +257,6 @@ int main() {
   test_null_directive();
   test_ternary_op();
   test_define_with_comment();
+  test_define_continuous_tokens();
   return 0;
 }
