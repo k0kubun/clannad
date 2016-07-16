@@ -43,6 +43,7 @@ Macro *create_func_macro(char *key, char *value);
 int peek_token();
 Vector* read_macro_args();
 void check_macros();
+void define_macro(char *key, char *value);
 %}
 O   [0-7]
 D   [0-9]
@@ -90,7 +91,7 @@ WS  [ \t\v\n\f]
 }
 
 ^"#"[ \t]*define[ \t]* {
-  if (!macros) macros = create_dict();
+  check_macros();
   BEGIN(DEFINE_KEY);
 }
 <DEFINE_KEY>{L}{A}*\((({WS}*{L}{A}*{WS}*,)*{WS}*{L}{A}*{WS}*)?\) {
@@ -102,9 +103,7 @@ WS  [ \t\v\n\f]
   BEGIN(DEFINE_VAR);
 }
 <DEFINE_VAR>[^\n]*$ {
-  Macro *macro = malloc(sizeof(Macro));
-  *macro = (Macro){ .value = strdup(yytext), .is_function = false, .params = NULL };
-  dict_set(macros, prev_yytext, macro);
+  define_macro(prev_yytext, strdup(yytext));
   BEGIN(INITIAL);
 }
 <DEFINE_FUNC>[^\n]*$ {
@@ -654,7 +653,7 @@ push_state()
 Macro*
 find_macro(char *key)
 {
-  if (!macros) return NULL;
+  check_macros();
   return dict_get(macros, key);
 }
 
@@ -765,11 +764,23 @@ build_macro_subst(Macro *macro, Vector *args)
 }
 
 void
+define_macro(char *key, char *value)
+{
+  Macro *macro = malloc(sizeof(Macro));
+  *macro = (Macro){ .value = value, .is_function = false, .params = NULL };
+  dict_set(macros, key, macro);
+}
+
+void
 check_macros()
 {
   if (!macros) {
     macros = create_dict();
     macros->parent = NULL;
+
+    // predefined macros
+    define_macro("__GNUC__", "4");
+    define_macro("__STDC__", "1");
   }
 }
 
