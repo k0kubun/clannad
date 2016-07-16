@@ -164,6 +164,8 @@ void init_search_paths();
 void set_compile_path(char *filename);
 char* get_reading_file();
 Macro* find_macro(char *key);
+Dict* build_macro_subst(Macro *macro, Vector *args);
+void push_macros(Dict *new_macros);
 
 // optimizer.c
 void optimize(LLVMModuleRef mod);

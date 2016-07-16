@@ -160,6 +160,18 @@ void test_func_macro() {
   expect_int(10, a);
 }
 
+#define GT1(a) a > 1
+void test_func_macro_in_pp() {
+  int n = 0;
+# if GT1(2)
+  n += 1;
+# endif
+# if GT1(1)
+  n += 2;
+# endif
+  expect_int(1, n);
+}
+
 int main() {
   test_define_replacement();
   test_empty_define();
@@ -177,5 +189,6 @@ int main() {
   test_nested_if();
   test_if_arithmetic();
   test_func_macro();
+  test_func_macro_in_pp();
   return 0;
 }

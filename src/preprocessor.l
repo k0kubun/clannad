@@ -21,6 +21,8 @@ char* read_string_literal(char *str);
 static bool defined_mode = false;
 bool pp_push_string(char *str);
 bool pp_pop_string();
+int pp_peek_token();
+Vector* pp_read_macro_args();
 %}
 O   [0-7]
 D   [0-9]
@@ -94,13 +96,26 @@ WS  [ \t\v\n\f]
     pplval.id = strdup(pptext);
     return tIDENTIFIER;
   } else {
-    Macro *macro = find_macro(yytext);
-    if (!macro) {
+    Macro *macro;
+    if ((macro = find_macro(pptext)) && (!macro->is_function || pp_peek_token() == '(')) {
+      if (macro->is_function) {
+        Vector *args = pp_read_macro_args();
+        if (macro->params->length != args->length) {
+          fprintf(stderr, "Macro argument count mismatch!\n");
+          yyterminate();
+        }
+        if (strlen(macro->value) > 0 && !pp_push_string(macro->value)) {
+          yyterminate();
+        } else {
+          Dict *subst = build_macro_subst(macro, args);
+          push_macros(subst);
+        }
+      } else {
+        if (strlen(macro->value) > 0 && !pp_push_string(macro->value)) yyterminate();
+      }
+    } else {
       pplval.id = strdup(pptext);
       return tIDENTIFIER;
-    }
-    if (strlen(macro->value) > 0 && !pp_push_string(macro->value)) {
-      yyterminate();
     }
   }
 }
@@ -111,44 +126,44 @@ WS  [ \t\v\n\f]
 }
 
 {HP}{H}+{IS}? {
-  pplval.ival = atoi(yytext);
+  pplval.ival = atoi(pptext);
   return tI_CONSTANT;
 }
 {NZ}{D}*{IS}? {
-  pplval.ival = atoi(yytext);
+  pplval.ival = atoi(pptext);
   return tI_CONSTANT;
 }
 "0"{O}*{IS}? {
-  pplval.ival = atoi(yytext);
+  pplval.ival = atoi(pptext);
   return tI_CONSTANT;
 }
 {CP}?"'"([^'\\\n]|{ES})+"'" {
-  pplval.ival = atoi(yytext);
+  pplval.ival = atoi(pptext);
   return tI_CONSTANT;
 }
 
 {D}+{E}{FS}? {
-  pplval.fval = atof(yytext);
+  pplval.fval = atof(pptext);
   return tF_CONSTANT;
 }
 {D}*"."{D}+{E}?{FS}? {
-  pplval.fval = atof(yytext);
+  pplval.fval = atof(pptext);
   return tF_CONSTANT;
 }
 {D}+"."{E}?{FS}? {
-  pplval.fval = atof(yytext);
+  pplval.fval = atof(pptext);
   return tF_CONSTANT;
 }
 {HP}{H}+{P}{FS}? {
-  pplval.fval = atof(yytext);
+  pplval.fval = atof(pptext);
   return tF_CONSTANT;
 }
 {HP}{H}*"."{H}+{P}{FS}? {
-  pplval.fval = atof(yytext);
+  pplval.fval = atof(pptext);
   return tF_CONSTANT;
 }
 {HP}{H}+"."{P}{FS}? {
-  pplval.fval = atof(yytext);
+  pplval.fval = atof(pptext);
   return tF_CONSTANT;
 }
 
@@ -217,4 +232,51 @@ pp_pop_string()
 
   pp_buffer_stack = pp_buffer_stack->parent;
   return true;
+}
+
+int
+pp_peek_token()
+{
+  int ret = pplex();
+  for (int i = strlen(pptext) - 1; 0 <= i; i--) {
+    unput(pptext[i]);
+  }
+  return ret;
+}
+
+Vector*
+pp_read_macro_args()
+{
+  Vector *ret = create_vector();
+  char *buf = malloc(sizeof(char));
+  buf[0] = '\0';
+
+  int depth = 0, token;
+  for (;;) {
+    switch ((token = pplex())) {
+      case ',':
+        if (depth == 1) {
+          vector_push(ret, buf);
+          buf = malloc(sizeof(char));
+          buf[0] = '\0';
+          continue;
+        }
+        break;
+      case '(':
+        depth++;
+        if (depth == 1) continue;
+        break;
+      case ')':
+        depth--;
+        if (depth == 0) {
+          if (strlen(buf) > 0) vector_push(ret, buf);
+          return ret;
+        }
+        break;
+    }
+
+    buf = realloc(buf, (strlen(buf) + strlen(pptext)) * sizeof(char));
+    strcat(buf, pptext);
+  }
+  return ret;
 }

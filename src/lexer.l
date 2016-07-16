@@ -32,7 +32,7 @@ static char* prev_yytext  = NULL;
 
 char* read_string_literal(char *str);
 void set_reading_file(char *filename);
-bool pp_eval(Node *node);
+int pp_eval(Node *node);
 bool is_defined(char *identifier);
 bool push_file(char *filename, bool std);
 bool push_string(char *str);
@@ -42,7 +42,6 @@ bool is_ignored(struct state_node *node);
 Macro *create_func_macro(char *key, char *value);
 int peek_token();
 Vector* read_macro_args();
-Dict* build_macro_subst(Macro *macro, Vector *args);
 void check_macros();
 %}
 O   [0-7]
@@ -325,13 +324,10 @@ WS  [ \t\v\n\f]
         yyterminate();
       } else {
         Dict *subst = build_macro_subst(macro, args);
-        subst->parent = macros;
-        macros = subst;
+        push_macros(subst);
       }
     } else {
-      if (strlen(macro->value) > 0 && !push_string(macro->value)) {
-        yyterminate();
-      }
+      if (strlen(macro->value) > 0 && !push_string(macro->value)) yyterminate();
     }
   } else {
     yylval.id = strdup(yytext);
@@ -409,7 +405,7 @@ WS  [ \t\v\n\f]
 %%
 
 // Eval `#if`'s parameter
-bool
+int
 pp_eval(Node *node)
 {
   switch (node->kind) {
@@ -761,4 +757,12 @@ check_macros()
     macros = create_dict();
     macros->parent = NULL;
   }
+}
+
+void
+push_macros(Dict *new_macros)
+{
+  check_macros();
+  new_macros->parent = macros;
+  macros = new_macros;
 }
