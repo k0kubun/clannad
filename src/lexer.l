@@ -469,6 +469,8 @@ pp_eval(Node *node)
           yyterminate();
       }
       break;
+    case NODE_TERNARY:
+      return pp_eval(node->cond) ? pp_eval(node->if_stmt) : pp_eval(node->else_stmt);
     case NODE_INTEGER:
       return node->ival;
     case NODE_IDENTIFIER:
