@@ -28,6 +28,7 @@ enum NodeKind {
   NODE_DECLN,
   NODE_TERNARY,
   NODE_COMMA,
+  NODE_TYPEDEF,
   NODE_DEFINED, // preprocessor only
 };
 
@@ -60,6 +61,7 @@ enum MultiCharsOp {
 // NODE_TYPE's flags
 static const int TYPE_CONST    = 1;
 static const int TYPE_VOLATILE = 2;
+static const int TYPE_TYPEDEF  = 4;
 
 typedef struct {
   void **data;
@@ -109,7 +111,7 @@ typedef struct Node {
       char *id;
       union {
         struct Node *ref_node; // NODE_IDENTIFIER only
-        int flags; // NODE_TYPE only
+        long flags; // NODE_TYPE only
       };
     };
     // NODE_INTEGER
@@ -143,17 +145,13 @@ void assert_node(Node *node, enum NodeKind kind);
 // assembler.c
 void assemble(LLVMModuleRef mod, char *outfile);
 
+// compiler.c
+LLVMModuleRef compile(Node *ast);
+
 // debug.c
 void dump_ast(Node *ast);
 char* kind_label(enum NodeKind kind);
 void dump_macros();
-
-// parser.y
-Node* create_node(Node *temp);
-int parse_file(Node **astptr, char *filename);
-
-// compiler.c
-LLVMModuleRef compile(Node *ast);
 
 // dict.c
 Dict* create_dict();
@@ -178,6 +176,11 @@ Dict* check_macros();
 
 // optimizer.c
 void optimize(LLVMModuleRef mod);
+
+// parser.y
+Node* create_node(Node *temp);
+int parse_file(Node **astptr, char *filename);
+bool has_typedef(char *name);
 
 // preprocessor.y
 int pp_parse_exp(Node **astptr, char *exp);

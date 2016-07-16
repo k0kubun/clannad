@@ -6,6 +6,8 @@
 int yylex(void);
 int yyerror(char const *str);
 static Node *parse_result;
+static Dict *typedefs = NULL;
+void handle_typedef(Node *type, Vector *decls);
 
 void
 set_type(Vector *nodes, Node *type)
@@ -77,10 +79,13 @@ create_decl_node(Node *spec, Node *init)
 %token <id>   tXOR_ASSIGN;
 %token <id>   tOR_ASSIGN;
 %token <id>   tNEWLINE;
+%token <id>   tTYPEDEF;
+%token <id>   tTYPEDEF_NAME;
 
 %type <list> translation_unit
 %type <node> declaration_specifiers
 %type <ival> type_qualifier
+%type <ival> storage_class_specifier
 %type <node> external_declaration
 %type <node> function_definition
 %type <node> declaration
@@ -164,8 +169,14 @@ function_definition
 declaration
   : declaration_specifiers init_declarator_list ';'
   {
-    set_type($2, $1);
-    $$ = create_node(&(Node){ NODE_DECLN, .children = $2 });
+    if ($1->flags & TYPE_TYPEDEF) {
+      handle_typedef($1, $2);
+      Node *node = create_node(&(Node){ NODE_TYPEDEF });
+      $$ = create_node(&(Node){ NODE_DECLN, .children = vector_push(create_vector(), node) });
+    } else {
+      set_type($2, $1);
+      $$ = create_node(&(Node){ NODE_DECLN, .children = $2 });
+    }
   }
   ;
 
@@ -196,9 +207,25 @@ initializer
   ;
 
 declaration_specifiers
-  : type_specifier
+  : storage_class_specifier declaration_specifiers
   {
-    $$ = create_node(&(Node){ NODE_TYPE, .id = $1, .flags = 0 });
+    switch ($1) {
+      case tTYPEDEF:
+        $2->flags |= TYPE_TYPEDEF;
+        break;
+      default:
+        yyerror("unexpected storage_class_specifier");
+        exit(1);
+    }
+    $$ = $2;
+  }
+  | type_specifier
+  {
+    if (has_typedef($1)) {
+      $$ = dict_get(typedefs, $1);
+    } else {
+      $$ = create_node(&(Node){ NODE_TYPE, .id = $1, .flags = 0 });
+    }
   }
   | type_qualifier declaration_specifiers
   {
@@ -214,6 +241,13 @@ declaration_specifiers
         exit(1);
     }
     $$ = $2;
+  }
+  ;
+
+storage_class_specifier
+  : tTYPEDEF
+  {
+    $$ = tTYPEDEF;
   }
   ;
 
@@ -676,6 +710,7 @@ type_specifier
   {
     $$ = "void";
   }
+  | tTYPEDEF_NAME
   ;
 
 %%
@@ -711,7 +746,35 @@ parse_file(Node **astptr, char *filename)
   int ret = yyparse();
   *astptr = parse_result;
 
-  //fclose(yyin);
-  //free(str);
+  fclose(yyin);
   return ret;
+}
+
+void
+handle_typedef(Node *type, Vector *decls)
+{
+  if (!typedefs) typedefs = create_dict();
+  type->flags ^= TYPE_TYPEDEF;
+
+  // FIXME: typedef should have scope
+  for (int i = 0; i < decls->length; i++) {
+    Node *decl = vector_get(decls, i);
+    switch (decl->kind) {
+      case NODE_VAR_DECL:
+        dict_set(typedefs, decl->spec->id, type);
+        break;
+      default:
+        yyerror("unexpected node kind in typedef");
+        exit(1);
+    }
+  }
+}
+
+bool
+has_typedef(char *name)
+{
+  if (!typedefs) typedefs = create_dict();
+
+  Node *node = dict_get(typedefs, name);
+  return node != NULL;
 }

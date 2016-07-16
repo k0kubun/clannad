@@ -73,6 +73,8 @@ kind_label(enum NodeKind type)
       return "NODE_TERNARY";
     case NODE_COMMA:
       return "NODE_COMMA";
+    case NODE_TYPEDEF:
+      return "NODE_TYPEDEF";
     case NODE_DEFINED:
       return "NODE_DEFINED";
     default:

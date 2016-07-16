@@ -278,6 +278,8 @@ void
 compile_var_decl(Node *node)
 {
   assert_node(node, NODE_VAR_DECL);
+  if (node->type->flags & TYPE_TYPEDEF) return;
+
   node->ref = LLVMBuildAlloca(compiler.builder, compile_type(node->type), node->spec->id);
   if (node->init) {
     LLVMBuildStore(compiler.builder, compile_exp(node->init), node->ref);
@@ -437,6 +439,8 @@ compile_decln(Node *node)
       case NODE_VAR_DECL:
         compile_var_decl(child);
         break;
+      case NODE_TYPEDEF:
+        break; // ignore
       default:
         fprintf(stderr, "Unexpected node kind in analyze_decln: %s\n", kind_label(child->kind));
         exit(1);

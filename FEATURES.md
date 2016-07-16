@@ -2,7 +2,7 @@
 ## C89/C90
 ANSI X3.159-1989, ISO/IEC 9899:1990
 
-#### 54 / 111 (48.6%)
+#### 55 / 111 (49.5%)
 
 - 2 environment
   - 2.1 conceptual models
@@ -18,9 +18,9 @@ ANSI X3.159-1989, ISO/IEC 9899:1990
   - 3.1 lexical elements
      - 3.1.1 keywords
          - [x] int char if else return float
-         - [x] void sizeof const volatile
+         - [x] void sizeof const volatile typedef
          - [ ] break long switch auto
-         - [ ] case enum register typedef
+         - [ ] case enum register
          - [ ] extern union double static
          - [ ] short unsigned do
          - [ ] continue for signed struct
@@ -112,7 +112,7 @@ ANSI X3.159-1989, ISO/IEC 9899:1990
          - [ ] 3.5.4.2 Array declarators
          - [x] 3.5.4.3 Function declarators (including prototypes)
      - [ ] 3.5.5 Type names
-     - [ ] 3.5.6 Type definitions (!!!)
+     - [x] 3.5.6 Type definitions
      - [ ] 3.5.7 Initialization
   - 3.6. statements
      - [ ] 3.6.1 Labeled statements (!!!)

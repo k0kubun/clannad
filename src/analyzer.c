@@ -205,6 +205,7 @@ void
 analyze_var_decl(Node *node)
 {
   assert_node(node, NODE_VAR_DECL);
+  if (node->type->flags & TYPE_TYPEDEF) return;
 
   dict_set(analyzer.scope, node->spec->id, node);
   if (node->init) analyze_exp(node->init);
@@ -332,6 +333,8 @@ analyze_decln(Node *node)
       case NODE_VAR_DECL:
         analyze_var_decl(child);
         break;
+      case NODE_TYPEDEF:
+        break; // ignore
       default:
         fprintf(stderr, "Unexpected node kind in analyze_decln: %s\n", kind_label(child->kind));
         exit(1);

@@ -307,6 +307,7 @@ WS  [ \t\v\n\f]
 "sizeof"   return tSIZEOF;
 "const"    return tCONST;
 "volatile" return tVOLATILE;
+"typedef"  return tTYPEDEF;
 "++"       return tINC_OP;
 "--"       return tDEC_OP;
 "=="       return tEQ_OP;
@@ -346,6 +347,9 @@ WS  [ \t\v\n\f]
     } else {
       if (strlen(macro->value) > 0 && !push_string(macro->value)) yyterminate();
     }
+  } else if (has_typedef(yytext)) {
+    yylval.id = strdup(yytext);
+    return tTYPEDEF_NAME;
   } else {
     yylval.id = strdup(yytext);
     return tIDENTIFIER;
