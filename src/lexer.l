@@ -192,6 +192,20 @@ WS  [ \t\v\n\f]
   }
 }
 
+<INITIAL,IGNORED>^"#"[ \t]*else[ \t]*$ {
+  if (state_stack == NULL) {
+    fprintf(stderr, "error: #else without #if\n");
+    yyterminate();
+  }
+
+  if (state_stack->had_true) {
+    BEGIN(IGNORED);
+  } else {
+    state_stack->had_true = true;
+    BEGIN(INITIAL);
+  }
+}
+
 <INITIAL,IGNORED>^"#"[ \t]*endif[ \t]* {
   if (state_stack == NULL) {
     fprintf(stderr, "error: #endif without #if\n");
@@ -199,12 +213,6 @@ WS  [ \t\v\n\f]
   }
   BEGIN(state_stack->state);
   state_stack = state_stack->parent;
-}
-<IGNORED>"\n" {
-  yylineno++;
-}
-<IGNORED>. {
-  // ignore
 }
 
 ^"#"[ \t]*include[ \t]* {
@@ -278,6 +286,12 @@ WS  [ \t\v\n\f]
 ^"#"[ \t]*[a-z]+ {
   fprintf(stderr, "error: unexpected preprocessor: %s\n", yytext);
   yyterminate();
+}
+<IGNORED>"\n" {
+  yylineno++;
+}
+<IGNORED>. {
+  // ignore
 }
 
 "int"      return tINT;

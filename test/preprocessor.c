@@ -172,6 +172,16 @@ void test_func_macro_in_pp() {
   expect_int(1, n);
 }
 
+void test_else() {
+  int n = 0;
+# if 0
+  n += 1;
+# else
+  n += 2;
+# endif
+  expect_int(2, n);
+}
+
 int main() {
   test_define_replacement();
   test_empty_define();
@@ -190,5 +200,6 @@ int main() {
   test_if_arithmetic();
   test_func_macro();
   test_func_macro_in_pp();
+  test_else();
   return 0;
 }
