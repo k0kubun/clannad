@@ -766,7 +766,7 @@ read_macro_args()
         break;
     }
 
-    buf = realloc(buf, (strlen(buf) + strlen(yytext)) * sizeof(char));
+    buf = realloc(buf, (strlen(buf) + strlen(yytext) + 1) * sizeof(char));
     strcat(buf, yytext);
   }
   return ret;
