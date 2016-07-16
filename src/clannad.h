@@ -71,6 +71,11 @@ typedef struct Dict {
   struct Dict *parent;
 } Dict;
 
+typedef struct {
+  char *key;
+  void *data;
+} DictEntry;
+
 typedef struct Macro {
   char *value;
   bool is_function;
@@ -141,6 +146,7 @@ void assemble(LLVMModuleRef mod, char *outfile);
 // debug.c
 void dump_ast(Node *ast);
 char* kind_label(enum NodeKind kind);
+void dump_macros();
 
 // parser.y
 Node* create_node(Node *temp);
@@ -167,6 +173,7 @@ extern int yyget_lineno(void);
 Macro* find_macro(char *key);
 Dict* build_macro_subst(Macro *macro, Vector *args);
 void push_macros(Dict *new_macros);
+Dict* check_macros();
 
 // optimizer.c
 void optimize(LLVMModuleRef mod);

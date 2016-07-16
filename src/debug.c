@@ -177,3 +177,17 @@ dump_ast(Node *ast)
   dump_node(0, ast);
   exit(1);
 }
+
+void
+dump_macros()
+{
+  int depth = 0;
+  for (Dict *macros = check_macros(); macros; macros = macros->parent, depth++) {
+    for (int i = 0; i < macros->entries->length; i++) {
+      DictEntry *entry = vector_get(macros->entries, i);
+      Macro *macro = entry->data;
+      for (int j = 0; j < depth; j++) printf(" ");
+      printf("'%s' => '%s'\n", entry->key, macro->value);
+    }
+  }
+}

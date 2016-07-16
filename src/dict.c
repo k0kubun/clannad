@@ -6,11 +6,6 @@
 
 const int ENTRY_NOT_FOUND = -1;
 
-typedef struct {
-  char *key;
-  void *data;
-} DictEntry;
-
 Dict*
 create_dict()
 {

@@ -42,7 +42,6 @@ bool is_ignored(struct state_node *node);
 Macro *create_func_macro(char *key, char *value);
 int peek_token();
 Vector* read_macro_args();
-void check_macros();
 void define_macro(char *key, char *value);
 %}
 O   [0-7]
@@ -783,7 +782,7 @@ define_macro(char *key, char *value)
   dict_set(macros, key, macro);
 }
 
-void
+Dict*
 check_macros()
 {
   if (!macros) {
@@ -794,6 +793,7 @@ check_macros()
     define_macro("__GNUC__", "4");
     define_macro("__STDC__", "1");
   }
+  return macros;
 }
 
 void
