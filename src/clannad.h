@@ -173,6 +173,7 @@ extern int yyget_lineno(void);
 Macro* find_macro(char *key);
 Dict* build_macro_subst(Macro *macro, Vector *args);
 void push_macros(Dict *new_macros);
+void set_macros(Dict *new_macros);
 Dict* check_macros();
 
 // optimizer.c

@@ -803,3 +803,9 @@ push_macros(Dict *new_macros)
   new_macros->parent = macros;
   macros = new_macros;
 }
+
+void
+set_macros(Dict *new_macros)
+{
+  macros = new_macros;
+}

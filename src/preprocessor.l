@@ -14,6 +14,7 @@ struct pp_buffer_node {
   struct pp_buffer_node *parent;
   YY_BUFFER_STATE buf;
   FILE *file;
+  Dict *macros;
 };
 static struct pp_buffer_node *pp_buffer_stack = NULL;
 
@@ -215,6 +216,7 @@ pp_push_string(char *str)
     .file   = str_stream,
     .parent = pp_buffer_stack,
     .buf    = YY_CURRENT_BUFFER,
+    .macros = check_macros(),
   };
   pp_buffer_stack = new_node;
 
@@ -230,6 +232,7 @@ pp_pop_string()
   fclose(pp_buffer_stack->file);
   yy_switch_to_buffer(pp_buffer_stack->buf);
 
+  set_macros(pp_buffer_stack->macros);
   pp_buffer_stack = pp_buffer_stack->parent;
   return true;
 }
