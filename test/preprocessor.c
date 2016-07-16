@@ -182,6 +182,16 @@ void test_else() {
   expect_int(2, n);
 }
 
+void test_comment_elif_ignored() {
+  int n = 0;
+# if defined undefined_val
+/*
+# elif undefined_val
+*/
+# endif
+  expect_int(2, n);
+}
+
 int main() {
   test_define_replacement();
   test_empty_define();

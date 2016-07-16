@@ -163,6 +163,7 @@ FILE* drop_backslash_newline(FILE *fp);
 void init_search_paths();
 void set_compile_path(char *filename);
 char* get_reading_file();
+extern int yyget_lineno(void);
 Macro* find_macro(char *key);
 Dict* build_macro_subst(Macro *macro, Vector *args);
 void push_macros(Dict *new_macros);

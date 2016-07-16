@@ -76,8 +76,8 @@ WS  [ \t\v\n\f]
 
 %%
 
-<INITIAL>{
-  "/*" BEGIN(COMMENT);
+<INITIAL,IGNORED>"/*" {
+  BEGIN(COMMENT);
 }
 <COMMENT>"*/" {
   BEGIN(INITIAL);
@@ -464,8 +464,8 @@ pp_eval(Node *node)
       return node->ival;
     case NODE_IDENTIFIER:
       // This should be replaced by macro if defined. Thus this flow must be unexpected.
-      fprintf(stderr, "Undefined identifier referenced in preprocessor: '%s'\n", node->id);
-      yyterminate();
+      fprintf(stderr, "%s:%d: undefined identifier referenced in preprocessor: '%s'\n", get_reading_file(), yyget_lineno(), node->id);
+      exit(1);
     default:
       fprintf(stderr, "Unexpected node in pp_eval: %s\n", kind_label(node->kind));
       yyterminate();

@@ -691,7 +691,6 @@ int
 yyerror(char const *str)
 {
   extern char *yytext;
-  extern int yyget_lineno(void);
   fprintf(stderr, "%s:%d: parse error near '%s': %s\n", get_reading_file(), yyget_lineno(), yytext, str);
   return 0;
 }
