@@ -183,13 +183,19 @@ void test_else() {
 }
 
 void test_comment_elif_ignored() {
-  int n = 0;
 # if defined undefined_val
 /*
 # elif undefined_val
 */
 # endif
-  expect_int(2, n);
+  pass();
+}
+
+void test_else_with_comment() {
+# if 1
+# else /* comment */
+# endif
+  pass();
 }
 
 int main() {
@@ -211,5 +217,7 @@ int main() {
   test_func_macro();
   test_func_macro_in_pp();
   test_else();
+  test_comment_elif_ignored();
+  test_else_with_comment();
   return 0;
 }

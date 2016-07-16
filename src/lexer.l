@@ -192,7 +192,7 @@ WS  [ \t\v\n\f]
   }
 }
 
-<INITIAL,IGNORED>^"#"[ \t]*else[ \t]*$ {
+<INITIAL,IGNORED>^"#"[ \t]*else {
   if (state_stack == NULL) {
     fprintf(stderr, "error: #else without #if\n");
     yyterminate();
