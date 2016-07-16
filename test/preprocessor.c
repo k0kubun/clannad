@@ -203,6 +203,12 @@ void test_predefined_macros() {
   expect_int(1, __STDC__);
 }
 
+void test_null_directive() {
+#
+#
+  pass();
+}
+
 int main() {
   test_define_replacement();
   test_empty_define();
@@ -224,5 +230,6 @@ int main() {
   test_else();
   test_comment_elif_ignored();
   test_else_with_comment();
+  test_null_directive();
   return 0;
 }

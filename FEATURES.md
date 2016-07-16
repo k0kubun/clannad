@@ -2,7 +2,7 @@
 ## C89/C90
 ANSI X3.159-1989, ISO/IEC 9899:1990
 
-#### 53 / 111 (47.7%)
+#### 54 / 111 (48.6%)
 
 - 2 environment
   - 2.1 conceptual models
@@ -145,7 +145,7 @@ ANSI X3.159-1989, ISO/IEC 9899:1990
      - [x] 3.8.4 Line control
      - [x] 3.8.5 Error directive
      - [ ] 3.8.6 Pragma directive
-     - [ ] 3.8.7 Null directive
+     - [x] 3.8.7 Null directive
      - [ ] 3.8.8 Predefined macro names
 
 ## C99

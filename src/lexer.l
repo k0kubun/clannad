@@ -288,6 +288,10 @@ WS  [ \t\v\n\f]
   yyterminate();
 }
 
+^"#"[ \t]*$ {
+  // ignored (null directive)
+}
+
 ^"#"[ \t]*[a-z]+ {
   fprintf(stderr, "error: unexpected preprocessor: %s\n", yytext);
   yyterminate();
