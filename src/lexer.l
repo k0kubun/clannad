@@ -455,14 +455,26 @@ pp_eval(Node *node)
           return pp_eval(node->lhs) > pp_eval(node->rhs);
         case '<':
           return pp_eval(node->lhs) < pp_eval(node->rhs);
+        case '&':
+          return pp_eval(node->lhs) & pp_eval(node->rhs);
+        case '|':
+          return pp_eval(node->lhs) | pp_eval(node->rhs);
+        case '^':
+          return pp_eval(node->lhs) ^ pp_eval(node->rhs);
         case GE_OP:
           return pp_eval(node->lhs) >= pp_eval(node->rhs);
         case LE_OP:
           return pp_eval(node->lhs) <= pp_eval(node->rhs);
+        case EQ_OP:
+          return pp_eval(node->lhs) == pp_eval(node->rhs);
         case AND_OP:
           return pp_eval(node->lhs) && pp_eval(node->rhs);
         case OR_OP:
           return pp_eval(node->lhs) || pp_eval(node->rhs);
+        case LEFT_OP:
+          return pp_eval(node->lhs) << pp_eval(node->rhs);
+        case RIGHT_OP:
+          return pp_eval(node->lhs) >> pp_eval(node->rhs);
         default:
           fprintf(stderr, "Unexpected binary operation in pp_eval: %c (%d)\n", node->op, node->op);
           yyterminate();
