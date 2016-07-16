@@ -217,6 +217,15 @@ void test_ternary_op() {
   expect_int(1, n);
 }
 
+void test_define_with_comment() {
+# define define_with_comment1 1 /* comment
+  comment */
+# define define_with_comment2(a,b) a*b /* comment
+  comment */
+  expect_int(1, define_with_comment1);
+  expect_int(6, define_with_comment2(2, 3));
+}
+
 int main() {
   test_define_replacement();
   test_empty_define();
@@ -240,5 +249,6 @@ int main() {
   test_else_with_comment();
   test_null_directive();
   test_ternary_op();
+  test_define_with_comment();
   return 0;
 }

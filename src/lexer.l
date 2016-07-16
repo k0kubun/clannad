@@ -29,20 +29,22 @@ static Dict *macros = NULL;
 static char* compile_dir  = NULL;
 static char* compile_file = NULL;
 static char* prev_yytext  = NULL;
+static bool reading_define = false;
 
-char* read_string_literal(char *str);
-void set_reading_file(char *filename);
-int pp_eval(Node *node);
+Macro *create_func_macro(char *key, char *value);
+Vector* read_macro_args();
 bool is_defined(char *identifier);
+bool is_ignored(struct state_node *node);
+bool pop_file();
 bool push_file(char *filename, bool std);
 bool push_string(char *str);
-bool pop_file();
-void push_state();
-bool is_ignored(struct state_node *node);
-Macro *create_func_macro(char *key, char *value);
+char* read_define();
+char* read_string_literal(char *str);
 int peek_token();
-Vector* read_macro_args();
+int pp_eval(Node *node);
 void define_macro(char *key, char *value);
+void push_state();
+void set_reading_file(char *filename);
 %}
 O   [0-7]
 D   [0-9]
@@ -61,9 +63,7 @@ ES  (\\(['"\?\\abfnrtv]|[0-7]{1,3}|x[a-fA-F0-9]+))
 WS  [ \t\v\n\f]
 
 %x COMMENT
-%x DEFINE_KEY
-%x DEFINE_VAR
-%x DEFINE_FUNC
+%x DEFINE
 %x UNDEF
 %x INCLUDE
 %x IF
@@ -91,27 +91,22 @@ WS  [ \t\v\n\f]
 
 ^"#"[ \t]*define[ \t]* {
   check_macros();
-  BEGIN(DEFINE_KEY);
+  BEGIN(DEFINE);
 }
-<DEFINE_KEY>{L}{A}*\((({WS}*{L}{A}*{WS}*,)*{WS}*{L}{A}*{WS}*)?\) {
-  prev_yytext = strdup(yytext);
-  BEGIN(DEFINE_FUNC);
-}
-<DEFINE_KEY>{L}{A}* {
-  prev_yytext = strdup(yytext);
-  BEGIN(DEFINE_VAR);
-}
-<DEFINE_VAR>[^\n]*$ {
-  define_macro(prev_yytext, strdup(yytext));
-  BEGIN(INITIAL);
-}
-<DEFINE_FUNC>[^\n]*$ {
-  char *lparen = strchr(prev_yytext, '(');
-  prev_yytext[strlen(prev_yytext)-1] = '\0';
+<DEFINE>{L}{A}*\((({WS}*{L}{A}*{WS}*,)*{WS}*{L}{A}*{WS}*)?\) {
+  char *key = strdup(yytext);
+  key[strlen(key)-1] = '\0'; // strip ')'
+  char *lparen = strchr(key, '(');
   *lparen = '\0';
-  Macro *macro = create_func_macro(lparen + 1, strdup(yytext));
-  dict_set(macros, prev_yytext, macro);
   BEGIN(INITIAL);
+
+  Macro *macro = create_func_macro(lparen + 1, read_define());
+  dict_set(macros, key, macro);
+}
+<DEFINE>{L}{A}* {
+  char *key = strdup(yytext);
+  BEGIN(INITIAL);
+  define_macro(key, read_define());
 }
 
 ^"#"[ \t]*undef[ \t]* {
@@ -335,7 +330,7 @@ WS  [ \t\v\n\f]
 
 {L}{A}* {
   Macro *macro;
-  if ((macro = find_macro(yytext)) && (!macro->is_function || peek_token() == '(')) {
+  if (!reading_define && (macro = find_macro(yytext)) && (!macro->is_function || peek_token() == '(')) {
     if (macro->is_function) {
       Vector *args = read_macro_args();
       if (macro->params->length != args->length) {
@@ -414,6 +409,10 @@ WS  [ \t\v\n\f]
 
 \/\/[^\n]* {
   // ignore
+}
+
+"\n" {
+  if (reading_define) return tNEWLINE;
 }
 
 " "|\t|\r|\n {
@@ -721,7 +720,7 @@ create_func_macro(char *params_str, char *value)
 {
   Macro *macro = malloc(sizeof(Macro));
   Vector *params = parse_params(params_str);
-  *macro = (Macro){ .value = strdup(yytext), .is_function = true, .params = params };
+  *macro = (Macro){ .value = value, .is_function = true, .params = params };
   return macro;
 }
 
@@ -820,4 +819,21 @@ void
 set_macros(Dict *new_macros)
 {
   macros = new_macros;
+}
+
+char*
+read_define()
+{
+  char *buf = malloc(sizeof(char));
+  buf[0] = '\0';
+
+  reading_define = true;
+  for (;;) {
+    if (yylex() == tNEWLINE) break;
+
+    buf = realloc(buf, (strlen(buf) + strlen(yytext) + 1) * sizeof(char));
+    strcat(buf, yytext);
+  }
+  reading_define = false;
+  return buf;
 }

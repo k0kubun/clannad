@@ -76,6 +76,7 @@ create_decl_node(Node *spec, Node *init)
 %token <id>   tAND_ASSIGN;
 %token <id>   tXOR_ASSIGN;
 %token <id>   tOR_ASSIGN;
+%token <id>   tNEWLINE;
 
 %type <list> translation_unit
 %type <node> declaration_specifiers
