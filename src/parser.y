@@ -8,6 +8,8 @@ int yyerror(char const *str);
 static Node *parse_result;
 static Dict *typedefs = NULL;
 void handle_typedef(Node *type, Vector *decls);
+Node* create_type_node(long flag);
+Node* merge_type_nodes(Node *lnode, Node *rnode);
 
 void
 set_type(Vector *nodes, Node *type)
@@ -91,8 +93,8 @@ create_decl_node(Node *spec, Node *init)
 
 %type <list> translation_unit
 %type <node> declaration_specifiers
-%type <ival> type_qualifier
-%type <ival> storage_class_specifier
+%type <node> type_qualifier
+%type <node> storage_class_specifier
 %type <node> external_declaration
 %type <node> function_definition
 %type <node> declaration
@@ -137,7 +139,7 @@ create_decl_node(Node *spec, Node *init)
 %type <node> primary_expression
 %type <node> constant
 %type <node> string
-%type <id>   type_specifier
+%type <node> type_specifier
 %type <node> struct_or_union_specifier
 %type <id>   struct_or_union
 %type <list> struct_declaration_list
@@ -222,65 +224,35 @@ initializer
 declaration_specifiers
   : storage_class_specifier declaration_specifiers
   {
-    switch ($1) {
-      case tTYPEDEF:
-        $2->flags |= TYPE_TYPEDEF;
-        break;
-      default:
-        yyerror("unexpected storage_class_specifier");
-        exit(1);
-    }
-    $$ = $2;
+    $$ = merge_type_nodes($1, $2);
   }
   | type_specifier declaration_specifiers
   {
-    // FIXME: support multiple types properly
-    if (has_typedef($1)) {
-      $$ = dict_get(typedefs, $1);
-    } else {
-      $$ = create_node(&(Node){ NODE_TYPE, .id = $1, .flags = 0 });
-    }
+    $$ = merge_type_nodes($1, $2);
   }
   | type_specifier
-  {
-    if (has_typedef($1)) {
-      $$ = dict_get(typedefs, $1);
-    } else {
-      $$ = create_node(&(Node){ NODE_TYPE, .id = $1, .flags = 0 });
-    }
-  }
   | type_qualifier declaration_specifiers
   {
-    switch ($1) {
-      case tCONST:
-        $2->flags |= TYPE_CONST;
-        break;
-      case tVOLATILE:
-        $2->flags |= TYPE_VOLATILE;
-        break;
-      default:
-        yyerror("unexpected type_qualifier");
-        exit(1);
-    }
-    $$ = $2;
+    $$ = merge_type_nodes($1, $2);
   }
+  | type_qualifier
   ;
 
 storage_class_specifier
   : tTYPEDEF
   {
-    $$ = tTYPEDEF;
+    $$ = create_type_node(TYPE_TYPEDEF);
   }
   ;
 
 type_qualifier
   : tCONST
   {
-    $$ = tCONST;
+    $$ = create_type_node(TYPE_CONST);
   }
   | tVOLATILE
   {
-    $$ = tVOLATILE;
+    $$ = create_type_node(TYPE_VOLATILE);
   }
   ;
 
@@ -525,10 +497,16 @@ type_name
   ;
 
 specifier_qualifier_list
-  : type_specifier
+	: type_specifier specifier_qualifier_list
   {
-    $$ = create_node(&(Node){ NODE_TYPE, .id = $1 });
+    $$ = merge_type_nodes($1, $2);
   }
+  | type_specifier
+	| type_qualifier specifier_qualifier_list
+  {
+    $$ = merge_type_nodes($1, $2);
+  }
+	| type_qualifier
   ;
 
 unary_operator
@@ -718,45 +696,48 @@ string
 type_specifier
   : tVOID
   {
-    $$ = "void";
+    $$ = create_type_node(TYPE_VOID);
   }
   | tCHAR
   {
-    $$ = "char";
+    $$ = create_type_node(TYPE_CHAR);
   }
   | tSHORT
   {
-    $$ = "short";
+    $$ = create_type_node(TYPE_SHORT);
   }
   | tINT
   {
-    $$ = "int";
+    $$ = create_type_node(TYPE_INT);
   }
   | tLONG
   {
-    $$ = "long";
+    $$ = create_type_node(TYPE_LONG);
   }
   | tFLOAT
   {
-    $$ = "float";
+    $$ = create_type_node(TYPE_FLOAT);
   }
   | tDOUBLE
   {
-    $$ = "double";
+    $$ = create_type_node(TYPE_DOUBLE);
   }
   | tSIGNED
   {
-    $$ = "signed";
+    $$ = create_type_node(TYPE_SIGNED);
   }
   | tUNSIGNED
   {
-    $$ = "unsigned";
+    $$ = create_type_node(TYPE_UNSIGNED);
   }
   | struct_or_union_specifier
-  {
-    $$ = "struct";
-  }
   | tTYPEDEF_NAME
+  {
+    if (!has_typedef($1)) {
+      yyerror("typedef token has no typedef");
+    }
+    $$ = dict_get(typedefs, $1);
+  }
   ;
 
 struct_or_union_specifier
@@ -874,4 +855,20 @@ has_typedef(char *name)
 
   Node *node = dict_get(typedefs, name);
   return node != NULL;
+}
+
+Node*
+create_type_node(long flag)
+{
+  return create_node(&(Node){ NODE_TYPE, .flags = flag });
+}
+
+Node*
+merge_type_nodes(Node *lnode, Node *rnode)
+{
+  if (lnode->kind != rnode->kind) {
+    yyerror("Merge type failed!");
+  }
+  lnode->flags |= rnode->flags;
+  return lnode;
 }

@@ -263,7 +263,7 @@ strip_single_void(Node *node)
 
   if (node->params->length == 1) {
     Node *first = vector_get(node->params, 0);
-    if (!strcmp(first->type->id, "void") && !first->spec) {
+    if ((first->type->flags & TYPE_VOID) && !first->spec) {
       // FIXME: free old vector
       node->params = create_vector();
     }
@@ -305,7 +305,7 @@ analyze_func(Node *node)
   }
 
   scope_leave();
-  if (!strcmp(node->type->id, "void")) {
+  if (node->type->flags & TYPE_VOID) {
     autocomplete_return(node->stmts);
   }
 }

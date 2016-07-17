@@ -60,9 +60,20 @@ enum MultiCharsOp {
 };
 
 // NODE_TYPE's flags
-static const int TYPE_CONST    = 1;
-static const int TYPE_VOLATILE = 2;
-static const int TYPE_TYPEDEF  = 4;
+#define TYPE_VOID       (1L<<1)
+#define TYPE_CHAR       (1L<<2)
+#define TYPE_SHORT      (1L<<3)
+#define TYPE_INT        (1L<<4)
+#define TYPE_LONG       (1L<<6)
+#define TYPE_SIGNED     (1L<<7)
+#define TYPE_UNSIGNED   (1L<<8)
+#define TYPE_FLOAT      (1L<<9)
+#define TYPE_DOUBLE     (1L<<10)
+#define TYPE_TYPEDEF    (1L<<11)
+#define TYPE_STRUCT     (1L<<12)
+#define TYPE_UNION      (1L<<13)
+#define TYPE_CONST      (1L<<14)
+#define TYPE_VOLATILE   (1L<<15)
 
 typedef struct {
   void **data;

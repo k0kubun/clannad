@@ -59,23 +59,26 @@ compile_type(Node *node)
 {
   assert_node(node, NODE_TYPE);
 
-  // FIXME: support types properly
-  if (!strcmp(node->id, "int")) {
+  if (node->flags & TYPE_INT) {
     return LLVMInt32Type();
-  } else if (!strcmp(node->id, "short")) {
-    return LLVMInt32Type();
-  } else if (!strcmp(node->id, "long")) {
-    return LLVMInt32Type();
-  } else if (!strcmp(node->id, "unsigned")) {
-    return LLVMInt32Type();
-  } else if (!strcmp(node->id, "float")) {
-    return LLVMFloatType();
-  } else if (!strcmp(node->id, "char")) {
+  } else if (node->flags & TYPE_CHAR) {
     return LLVMInt8Type();
-  } else if (!strcmp(node->id, "void")) {
+  } else if (node->flags & TYPE_SHORT) {
+    return LLVMInt16Type();
+  } else if (node->flags & TYPE_LONG) {
+    return LLVMInt32Type();
+  } else if (node->flags & TYPE_FLOAT) {
+    return LLVMFloatType();
+  } else if (node->flags & TYPE_DOUBLE) {
+    return LLVMFloatType();
+  } else if (node->flags & TYPE_SIGNED) {
+    return LLVMInt32Type();
+  } else if (node->flags & TYPE_UNSIGNED) {
+    return LLVMInt32Type();
+  } else if (node->flags & TYPE_VOID) {
     return LLVMVoidType();
   } else {
-    fprintf(stderr, "Unexpected id in compile_type: %s\n", node->id);
+    fprintf(stderr, "Unexpected type given in compile_type: %ld\n", node->flags);
     exit(1);
   }
 }
