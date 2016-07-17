@@ -546,6 +546,10 @@ postfix_expression
   {
     $$ = create_node(&(Node){ NODE_FUNCALL, .func = $1, .params = $3 });
   }
+  | postfix_expression '.' tIDENTIFIER
+  {
+    $$ = create_node(&(Node){ NODE_FIELD_REF, .struct_node = $1, .id = $3 });
+  }
   | postfix_expression tINC_OP
   {
     $$ = create_node(&(Node){ NODE_UNARY, .val = $1, .op = POST_INC_OP });

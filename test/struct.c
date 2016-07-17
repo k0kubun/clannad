@@ -5,6 +5,9 @@ void test_struct_decl() {
     int a;
     int b;
   } a;
+  a.a = 3;
+  a.b = 4;
+  expect_int(12, a.a * a.b);
 }
 
 int main() {

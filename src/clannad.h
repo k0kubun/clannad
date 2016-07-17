@@ -30,6 +30,7 @@ enum NodeKind {
   NODE_COMMA,
   NODE_TYPEDEF,
   NODE_FIELD,
+  NODE_FIELD_REF,
   NODE_DEFINED, // preprocessor only
 };
 
@@ -126,11 +127,16 @@ typedef struct Node {
         struct Node *field_type; // NODE_FIELD only
       };
     };
-    // NODE_SPEC, NODE_IDENTIFIER, NODE_STRING, NODE_DEFINED
+    // NODE_SPEC, NODE_IDENTIFIER, NODE_STRING, NODE_DEFINED, NODE_FIELD_REF
     struct {
       char *id;
       union {
         struct Node *ref_node; // NODE_IDENTIFIER only
+        struct { // NODE_FIELD_REF only
+          struct Node *struct_node;
+          struct Node *struct_type;
+          long ref_index;
+        };
       };
     };
     // NODE_INTEGER

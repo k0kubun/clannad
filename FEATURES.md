@@ -2,7 +2,7 @@
 ## C89/C90
 ANSI X3.159-1989, ISO/IEC 9899:1990
 
-#### 59 / 106 (55.7%)
+#### 60 / 105 (57.1%)
 
 - 2 environment
   - 2.1 conceptual models
@@ -32,10 +32,9 @@ ANSI X3.159-1989, ISO/IEC 9899:1990
          - [ ] 3.1.2.4 storage durations of objects
          - 3.1.2.5. types
               - object types
-                    - [x] int, char, float, short int, long int
+                    - [x] int, char, float, short int, long int, struct
                     - [x] unsigned int, unsigned short int, unsigned long int
-                    - [ ] struct, enum, array, pointer
-                    - [ ] signed char, unsigned char, double, long double
+                    - [ ] enum, array, pointer, signed char, unsigned char, double, long double
               - function types
                     - [ ] derived functions
               - incomplete types
@@ -96,7 +95,7 @@ ANSI X3.159-1989, ISO/IEC 9899:1990
   - 3.5. declarations
      - [ ] 3.5.1 Storage-class specifiers
      - 3.5.2 Type specifiers
-         - [ ] 3.5.2.1 Structure and union specifiers
+         - [x] 3.5.2.1 Structure and union specifiers
          - [ ] 3.5.2.2 Enumeration specifiers
          - [ ] 3.5.2.3 Tags
      - 3.5.3 Type qualifiers

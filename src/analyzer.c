@@ -74,6 +74,8 @@ analyze_unary(Node *node)
   }
 }
 
+void analyze_field_ref(Node *node);
+
 void
 analyze_binop(Node *node)
 {
@@ -84,11 +86,21 @@ analyze_binop(Node *node)
 
   switch (node->op) {
     case '=':
-      if (node->lhs->ref_node->kind != NODE_VAR_DECL) {
-        fprintf(stderr, "lvalue required as left operand of assignment\n");
-        exit(1);
+      switch (node->lhs->kind) {
+        case NODE_IDENTIFIER:
+          if (node->lhs->ref_node->kind != NODE_VAR_DECL) {
+            fprintf(stderr, "lvalue required as left operand of assignment\n");
+            exit(1);
+          }
+          assert_const(node->lhs->ref_node->type, "assignment", node->lhs->id);
+          break;
+        case NODE_FIELD_REF:
+          // FIXME: something may be required
+          break;
+        default:
+          fprintf(stderr, "unexpected node kind in lvalue of '=': %s\n", kind_label(node->lhs->kind));
+          exit(1);
       }
-      assert_const(node->lhs->ref_node->type, "assignment", node->lhs->id);
       break;
   }
 }
@@ -154,6 +166,39 @@ analyze_comma(Node *node)
   analyze_exp(node->rhs);
 }
 
+long
+find_field_index(Node *struct_type, char *name)
+{
+  assert_node(struct_type, NODE_TYPE);
+
+  long ref_index = 0;
+  for (int i = 0; i < struct_type->fields->length; i++) {
+    Node *field_node = vector_get(struct_type->fields, i);
+    assert_node(field_node, NODE_FIELD);
+    for (int j = 0; j < field_node->fields->length; j++) {
+      Node *field_var = vector_get(field_node->fields, j);
+      assert_node(field_var, NODE_SPEC);
+      if (!strcmp(field_var->id, name)) return ref_index;
+      ref_index++;
+    }
+  }
+  fprintf(stderr, "Undefined field name: '%s'\n", name);
+  exit(1);
+}
+
+void
+analyze_field_ref(Node *node)
+{
+  assert_node(node, NODE_FIELD_REF);
+
+  // FIXME: something may be required
+  analyze_exp(node->struct_node);
+
+  // FIXME: non-variable is not considered
+  Node *struct_type = node->struct_node->ref_node->type;
+  node->ref_index = find_field_index(struct_type, node->id);
+}
+
 void
 analyze_exp(Node *node)
 {
@@ -176,6 +221,8 @@ analyze_exp(Node *node)
       return analyze_ternary(node);
     case NODE_COMMA:
       return analyze_comma(node);
+    case NODE_FIELD_REF:
+      return analyze_field_ref(node);
     default:
       fprintf(stderr, "Unexpected node in analyze_exp: %s\n", kind_label(node->kind));
       exit(1);

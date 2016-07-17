@@ -77,6 +77,8 @@ kind_label(enum NodeKind type)
       return "NODE_TYPEDEF";
     case NODE_FIELD:
       return "NODE_FIELD";
+    case NODE_FIELD_REF:
+      return "NODE_FIELD_REF";
     case NODE_DEFINED:
       return "NODE_DEFINED";
     default:

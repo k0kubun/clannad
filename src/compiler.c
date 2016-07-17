@@ -194,6 +194,21 @@ convert_compound_assign(Node *node)
 }
 
 LLVMValueRef
+compile_assign_dest(Node *node)
+{
+  switch (node->kind) {
+    case NODE_IDENTIFIER:
+      return node->ref_node->ref;
+    case NODE_FIELD_REF:
+      // FIXME: Support non-variable struct_node
+      return LLVMBuildStructGEP(compiler.builder, node->struct_node->ref_node->ref, node->ref_index, "");
+    default:
+      fprintf(stderr, "unexpected node kind in lvalue assign compilation: %s\n", kind_label(node->kind));
+      exit(1);
+  }
+}
+
+LLVMValueRef
 compile_binop(Node *node)
 {
   assert_node(node, NODE_BINOP);
@@ -212,7 +227,7 @@ compile_binop(Node *node)
     case '%':
       return LLVMBuildSRem(compiler.builder, compile_exp(node->lhs), compile_exp(node->rhs), "");
     case '=':
-      return LLVMBuildStore(compiler.builder, compile_exp(node->rhs), node->lhs->ref_node->ref);
+      return LLVMBuildStore(compiler.builder, compile_exp(node->rhs), compile_assign_dest(node->lhs));
     case '<':
       return LLVMBuildICmp(compiler.builder, LLVMIntSLT, compile_exp(node->lhs), compile_exp(node->rhs), "");
     case '>':
@@ -280,6 +295,16 @@ compile_comma(Node *node)
 }
 
 LLVMValueRef
+compile_field_ref(Node *node)
+{
+  assert_node(node, NODE_FIELD_REF);
+
+  // FIXME: Support non-variable struct_node
+  LLVMValueRef ref = LLVMBuildStructGEP(compiler.builder, node->struct_node->ref_node->ref, node->ref_index, "");
+  return LLVMBuildLoad(compiler.builder, ref, "");
+}
+
+LLVMValueRef
 compile_exp(Node *node)
 {
   switch (node->kind) {
@@ -301,6 +326,8 @@ compile_exp(Node *node)
       return compile_ternary(node);
     case NODE_COMMA:
       return compile_comma(node);
+    case NODE_FIELD_REF:
+      return compile_field_ref(node);
     default:
       fprintf(stderr, "Unexpected node in compile_exp: %s\n", kind_label(node->kind));
       exit(1);
