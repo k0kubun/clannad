@@ -341,6 +341,7 @@ compile_var_decl(Node *node)
   if (node->type->flags & TYPE_TYPEDEF) return;
 
   node->ref = LLVMBuildAlloca(compiler.builder, compile_type(node->type), node->spec->id);
+  if (node->type->flags & TYPE_VOLATILE) LLVMSetVolatile(node->ref, true);
   if (node->init) {
     LLVMBuildStore(compiler.builder, compile_exp(node->init), node->ref);
   }
