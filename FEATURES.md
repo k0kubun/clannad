@@ -2,7 +2,7 @@
 ## C89/C90
 ANSI X3.159-1989, ISO/IEC 9899:1990
 
-#### 55 / 111 (49.5%)
+#### 59 / 106 (55.7%)
 
 - 2 environment
   - 2.1 conceptual models
@@ -17,14 +17,14 @@ ANSI X3.159-1989, ISO/IEC 9899:1990
 - 3 language
   - 3.1 lexical elements
      - 3.1.1 keywords
-         - [x] int char if else return float
+         - [x] int char if else return
          - [x] void sizeof const volatile typedef
-         - [ ] break long switch auto
-         - [ ] case enum register
-         - [ ] extern union double static
-         - [ ] short unsigned do
-         - [ ] continue for signed struct
-         - [ ] default goto while
+         - [x] struct long signed unsigned
+         - [x] short union float double
+         - [ ] extern static break auto
+         - [ ] do register register switch
+         - [ ] continue for case enum
+         - [ ] default goto while break
      - 3.1.2 identifiers
          - [x] 3.1.2.1 scopes of identifiers
          - [ ] 3.1.2.2 linkages of identifiers
@@ -32,14 +32,10 @@ ANSI X3.159-1989, ISO/IEC 9899:1990
          - [ ] 3.1.2.4 storage durations of objects
          - 3.1.2.5. types
               - object types
-                    - [x] int, char, float
-                    - [ ] unsigned int, short int, long int, unsigned short int (!!!)
-                    - [ ] signed char, unsigned char, unsigned long int
-                    - [ ] double, long double
-                    - [ ] enum
-                    - [ ] array
-                    - [ ] struct
-                    - [ ] pointer
+                    - [x] int, char, float, short int, long int
+                    - [x] unsigned int, unsigned short int, unsigned long int
+                    - [ ] struct, enum, array, pointer
+                    - [ ] signed char, unsigned char, double, long double
               - function types
                     - [ ] derived functions
               - incomplete types
@@ -61,7 +57,7 @@ ANSI X3.159-1989, ISO/IEC 9899:1990
          - [x] `;` `=` `{` `}` `( )` `,`
          - [ ] `[ ]` `*` `:` `...` `#`
      - [x] 3.1.7 header names
-     - [ ] 3.1.8 preprocessing numbers
+     - [x] 3.1.8 preprocessing numbers
      - [x] 3.1.9 comments
   - 3.2. conversions
      - [ ] 3.2.1 arithmetic operands
@@ -97,7 +93,6 @@ ANSI X3.159-1989, ISO/IEC 9899:1990
   - 3.4. constant expressions
      - [x] an arithmetic constant expression
      - [ ] an address constant
-     - [ ] an address constant for an object type plus or minus an integral constant expression
   - 3.5. declarations
      - [ ] 3.5.1 Storage-class specifiers
      - 3.5.2 Type specifiers

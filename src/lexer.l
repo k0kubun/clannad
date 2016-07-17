@@ -305,6 +305,8 @@ WS  [ \t\v\n\f]
 "unsigned" return tUNSIGNED;
 "float"    return tFLOAT;
 "double"   return tDOUBLE;
+"struct"   return tSTRUCT;
+"union"    return tUNION;
 "void"     return tVOID;
 "if"       return tIF;
 "else"     return tELSE;

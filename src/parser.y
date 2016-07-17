@@ -141,7 +141,7 @@ create_decl_node(Node *spec, Node *init)
 %type <node> string
 %type <node> type_specifier
 %type <node> struct_or_union_specifier
-%type <id>   struct_or_union
+%type <ival> struct_or_union
 %type <list> struct_declaration_list
 %type <node> struct_declaration
 %type <list> struct_declarator_list
@@ -182,7 +182,15 @@ function_definition
   ;
 
 declaration
-  : declaration_specifiers init_declarator_list ';'
+  : declaration_specifiers ';'
+  {
+    if ($1->flags & TYPE_TYPEDEF) {
+      // ignore
+    } else {
+      $$ = create_node(&(Node){ NODE_DECLN, .children = create_vector() });
+    }
+  }
+  | declaration_specifiers init_declarator_list ';'
   {
     if ($1->flags & TYPE_TYPEDEF) {
       handle_typedef($1, $2);
@@ -743,21 +751,27 @@ type_specifier
 struct_or_union_specifier
   : struct_or_union '{' struct_declaration_list '}'
   {
-    $$ = create_node(&(Node){ NODE_STRUCT });
+    $$ = create_node(&(Node){ NODE_TYPE, .flags = $1, .fields = $3 });
   }
   | struct_or_union tIDENTIFIER '{' struct_declaration_list '}'
   {
-    $$ = create_node(&(Node){ NODE_STRUCT });
+    $$ = create_node(&(Node){ NODE_TYPE, .flags = $1, .fields = $4 });
   }
   | struct_or_union tIDENTIFIER
   {
-    $$ = create_node(&(Node){ NODE_STRUCT });
+    $$ = create_node(&(Node){ NODE_TYPE, .flags = $1, .fields = create_vector() });
   }
   ;
 
 struct_or_union
   : tSTRUCT
+  {
+    $$ = TYPE_STRUCT;
+  }
   | tUNION
+  {
+    $$ = TYPE_UNION;
+  }
   ;
 
 struct_declaration_list
@@ -773,7 +787,14 @@ struct_declaration_list
 
 struct_declaration
   : specifier_qualifier_list ';'
+  {
+    // For anounymous union or struct
+    $$ = create_node(&(Node){ NODE_FIELD, .field_type = $1, .fields = create_vector() });
+  }
   | specifier_qualifier_list struct_declarator_list ';'
+  {
+    $$ = create_node(&(Node){ NODE_FIELD, .field_type = $1, .fields = $2 });
+  }
   ;
 
 struct_declarator_list
@@ -788,7 +809,7 @@ struct_declarator_list
   ;
 
 struct_declarator
-  : declaration
+  : declarator
   ;
 
 %%

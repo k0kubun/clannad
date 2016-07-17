@@ -54,6 +54,27 @@ compile_return(Node *node)
   }
 }
 
+LLVMTypeRef compile_type(Node *node);
+
+LLVMTypeRef
+compile_struct_type(Node *node)
+{
+  assert_node(node, NODE_TYPE);
+
+  LLVMTypeRef *types = malloc(sizeof(LLVMTypeRef));
+  int argc = 0;
+  for (int i = 0; i < node->fields->length; i++) {
+    Node *field_node = vector_get(node->fields, i);
+    assert_node(field_node, NODE_FIELD);
+    for (int j = 0; j < field_node->fields->length; j++) {
+      types = realloc(types, (argc + 1) * sizeof(LLVMTypeRef));
+      types[argc] = compile_type(field_node->field_type);
+      argc++;
+    }
+  }
+  return LLVMStructType(types, argc, false);
+}
+
 LLVMTypeRef
 compile_type(Node *node)
 {
@@ -77,6 +98,8 @@ compile_type(Node *node)
     return LLVMInt32Type();
   } else if (node->flags & TYPE_VOID) {
     return LLVMVoidType();
+  } else if (node->flags & TYPE_STRUCT) {
+    return compile_struct_type(node);
   } else {
     fprintf(stderr, "Unexpected type given in compile_type: %ld\n", node->flags);
     exit(1);

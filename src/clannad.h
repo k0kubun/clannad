@@ -29,7 +29,7 @@ enum NodeKind {
   NODE_TERNARY,
   NODE_COMMA,
   NODE_TYPEDEF,
-  NODE_STRUCT,
+  NODE_FIELD,
   NODE_DEFINED, // preprocessor only
 };
 
@@ -118,16 +118,19 @@ typedef struct Node {
         struct Node *stmts; // NODE_FUNC only
       };
     };
-    // NODE_SPEC, NODE_TYPE, NODE_IDENTIFIER, NODE_STRING, NODE_DEFINED, NODE_STRUCT
+    // NODE_TYPE, NODE_FIELD
+    struct {
+      Vector *fields;
+      union {
+        long flags; // NODE_TYPE only
+        struct Node *field_type; // NODE_FIELD only
+      };
+    };
+    // NODE_SPEC, NODE_IDENTIFIER, NODE_STRING, NODE_DEFINED
     struct {
       char *id;
       union {
         struct Node *ref_node; // NODE_IDENTIFIER only
-        long flags; // NODE_TYPE only
-        struct { // NODE_STRUCT
-          Vector *fields;
-          bool is_union;
-        };
       };
     };
     // NODE_INTEGER
