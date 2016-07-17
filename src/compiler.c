@@ -61,6 +61,7 @@ compile_struct_type(Node *node)
 {
   assert_node(node, NODE_TYPE);
 
+  // Cache type if possible
   LLVMTypeRef *types = malloc(sizeof(LLVMTypeRef));
   int argc = 0;
   for (int i = 0; i < node->fields->length; i++) {
@@ -340,11 +341,27 @@ compile_var_decl(Node *node)
   assert_node(node, NODE_VAR_DECL);
   if (node->type->flags & TYPE_TYPEDEF) return;
 
-  node->ref = LLVMBuildAlloca(compiler.builder, compile_type(node->type), node->spec->id);
-  if (node->type->flags & TYPE_VOLATILE) LLVMSetVolatile(node->ref, true);
-  if (node->init) {
-    LLVMBuildStore(compiler.builder, compile_exp(node->init), node->ref);
+  switch (node->spec->kind) {
+    case NODE_SPEC:
+      node->ref = LLVMBuildAlloca(compiler.builder, compile_type(node->type), "");
+      if (node->init) {
+        LLVMBuildStore(compiler.builder, compile_exp(node->init), node->ref);
+      }
+      break;
+    case NODE_ARRAY_SPEC:
+      assert_node(node->spec->lhs, NODE_SPEC);
+      if (node->spec->rhs->kind != NODE_INTEGER) {
+        fprintf(stderr, "variable length array is currently not supported\n");
+        exit(1);
+      }
+      node->ref = LLVMBuildAlloca(compiler.builder, LLVMArrayType(compile_type(node->type), node->spec->rhs->ival), "");
+      break;
+    default:
+      fprintf(stderr, "Unexpected spec kind in compile_var_decl: %s\n", kind_label(node->spec->kind));
+      exit(1);
   }
+
+  if (node->type->flags & TYPE_VOLATILE) LLVMSetVolatile(node->ref, true);
 }
 
 void compile_stmt(Node *node);
@@ -503,7 +520,7 @@ compile_decln(Node *node)
       case NODE_TYPEDEF:
         break; // ignore
       default:
-        fprintf(stderr, "Unexpected node kind in analyze_decln: %s\n", kind_label(child->kind));
+        fprintf(stderr, "Unexpected node kind in compile_decln: %s\n", kind_label(child->kind));
         exit(1);
     }
   }

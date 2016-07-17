@@ -28,6 +28,7 @@ create_decl_node(Node *spec, Node *init)
     case NODE_FUNC_SPEC:
       return create_node(&(Node){ NODE_FUNC_DECL, .type = NULL, .spec = spec, .init = init });
     case NODE_SPEC:
+    case NODE_ARRAY_SPEC:
       return create_node(&(Node){ NODE_VAR_DECL, .type = NULL, .spec = spec, .init = init });
     default:
       yyerror("unexpected decl type in init_declarator");
@@ -284,6 +285,10 @@ direct_declarator
   : tIDENTIFIER
   {
     $$ = create_node(&(Node){ NODE_SPEC, .id = yyval.id });
+  }
+  | direct_declarator '[' assignment_expression ']'
+  {
+    $$ = create_node(&(Node){ NODE_ARRAY_SPEC, .lhs = $1, .rhs = $3 });
   }
   | direct_declarator '(' ')'
   {

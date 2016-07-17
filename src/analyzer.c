@@ -254,7 +254,18 @@ analyze_var_decl(Node *node)
   assert_node(node, NODE_VAR_DECL);
   if (node->type->flags & TYPE_TYPEDEF) return;
 
-  dict_set(analyzer.scope, node->spec->id, node);
+  switch (node->spec->kind) {
+    case NODE_SPEC:
+      dict_set(analyzer.scope, node->spec->id, node);
+      break;
+    case NODE_ARRAY_SPEC:
+      assert_node(node->spec->lhs, NODE_SPEC);
+      dict_set(analyzer.scope, node->spec->lhs->id, node);
+      break;
+    default:
+      fprintf(stderr, "Unexpected spec kind in analyze_var_decl: %s\n", kind_label(node->spec->kind));
+      exit(1);
+  }
   if (node->init) analyze_exp(node->init);
 }
 
