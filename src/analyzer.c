@@ -97,8 +97,11 @@ analyze_binop(Node *node)
         case NODE_FIELD_REF:
           // FIXME: something may be required
           break;
+        case NODE_ARRAY_REF:
+          // FIXME: something may be required
+          break;
         default:
-          fprintf(stderr, "unexpected node kind in lvalue of '=': %s\n", kind_label(node->lhs->kind));
+          fprintf(stderr, "analyze_binop: unexpected node kind in lvalue of '=': %s\n", kind_label(node->lhs->kind));
           exit(1);
       }
       break;
@@ -200,6 +203,15 @@ analyze_field_ref(Node *node)
 }
 
 void
+analyze_array_ref(Node *node)
+{
+  assert_node(node, NODE_ARRAY_REF);
+
+  analyze_exp(node->lhs);
+  analyze_exp(node->rhs);
+}
+
+void
 analyze_exp(Node *node)
 {
   switch (node->kind) {
@@ -223,6 +235,8 @@ analyze_exp(Node *node)
       return analyze_comma(node);
     case NODE_FIELD_REF:
       return analyze_field_ref(node);
+    case NODE_ARRAY_REF:
+      return analyze_array_ref(node);
     default:
       fprintf(stderr, "Unexpected node in analyze_exp: %s\n", kind_label(node->kind));
       exit(1);

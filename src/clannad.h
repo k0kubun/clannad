@@ -32,6 +32,7 @@ enum NodeKind {
   NODE_FIELD,
   NODE_FIELD_REF,
   NODE_ARRAY_SPEC,
+  NODE_ARRAY_REF,
   NODE_DEFINED, // preprocessor only
 };
 
@@ -144,12 +145,12 @@ typedef struct Node {
     long ival;
     // NODE_FLOAT
     double fval;
-    // NODE_BINOP, NODE_UNARY, NODE_COMMA, NODE_ARRAY_SPEC
+    // NODE_BINOP, NODE_UNARY, NODE_COMMA, NODE_ARRAY_SPEC, NODE_ARRAY_REF
     struct {
       int op;
       union {
         struct Node *val; // for NODE_UNARY
-        struct { // for NODE_BINOP, NODE_COMMA, NODE_ARRAY_SPEC
+        struct { // for NODE_BINOP, NODE_COMMA, NODE_ARRAY_SPEC, NODE_ARRAY_REF
           struct Node *lhs;
           struct Node *rhs;
         };

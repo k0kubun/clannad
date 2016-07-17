@@ -203,8 +203,14 @@ compile_assign_dest(Node *node)
     case NODE_FIELD_REF:
       // FIXME: Support non-variable struct_node
       return LLVMBuildStructGEP(compiler.builder, node->struct_node->ref_node->ref, node->ref_index, "");
+    case NODE_ARRAY_REF: {
+      LLVMValueRef indices[2];
+      indices[0] = LLVMConstInt(LLVMInt32Type(), 0, 0); // FIXME: Why is it required?
+      indices[1] = compile_exp(node->rhs); // FIXME: Correct type?
+      return LLVMBuildGEP(compiler.builder, node->lhs->ref_node->ref, indices, 2, "");
+    }
     default:
-      fprintf(stderr, "unexpected node kind in lvalue assign compilation: %s\n", kind_label(node->kind));
+      fprintf(stderr, "compile_assign_dest: unexpected node kind in lvalue: %s\n", kind_label(node->kind));
       exit(1);
   }
 }

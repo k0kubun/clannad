@@ -31,7 +31,8 @@ create_decl_node(Node *spec, Node *init)
     case NODE_ARRAY_SPEC:
       return create_node(&(Node){ NODE_VAR_DECL, .type = NULL, .spec = spec, .init = init });
     default:
-      yyerror("unexpected decl type in init_declarator");
+      yyerror("unexpected decl type in init_declarator:");
+      yyerror(kind_label(spec->kind));
       exit(1);
   }
 }
@@ -543,6 +544,10 @@ unary_operator
 
 postfix_expression
   : primary_expression
+  | postfix_expression '[' expression ']'
+  {
+    $$ = create_node(&(Node){ NODE_ARRAY_REF, .lhs = $1, .rhs = $3 });
+  }
   | postfix_expression '(' ')'
   {
     $$ = create_node(&(Node){ NODE_FUNCALL, .func = $1, .params = create_vector() });

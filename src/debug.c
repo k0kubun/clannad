@@ -83,6 +83,8 @@ kind_label(enum NodeKind type)
       return "NODE_DEFINED";
     case NODE_ARRAY_SPEC:
       return "NODE_ARRAY_SPEC";
+    case NODE_ARRAY_REF:
+      return "NODE_ARRAY_REF";
     default:
       fprintf(stderr, "kind_label is not defined for %d\n", type);
       return "NODE_UNSUPPORTED";
