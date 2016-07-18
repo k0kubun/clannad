@@ -196,6 +196,7 @@ declaration
   | declaration_specifiers init_declarator_list ';'
   {
     if ($1->flags & TYPE_TYPEDEF) {
+      set_type($2, $1);
       handle_typedef($1, $2);
       Node *node = create_node(&(Node){ NODE_TYPEDEF });
       $$ = create_node(&(Node){ NODE_DECLN, .children = vector_push(create_vector(), node) });
@@ -904,6 +905,12 @@ merge_type_nodes(Node *lnode, Node *rnode)
 {
   if (lnode->kind != rnode->kind) {
     yyerror("Merge type failed!");
+  }
+  if (lnode->fields && rnode->fields) {
+    yyerror("Merging struct types!");
+  }
+  if (!lnode->fields && rnode->fields) {
+    lnode->fields = rnode->fields;
   }
   lnode->flags |= rnode->flags;
   return lnode;
