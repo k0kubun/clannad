@@ -612,6 +612,7 @@ try_include(char *filename, bool std)
 bool
 is_defined(char *identifier)
 {
+  check_macros();
   return macros && dict_get(macros, identifier);
 }
 

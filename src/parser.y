@@ -188,7 +188,8 @@ declaration
   : declaration_specifiers ';'
   {
     if ($1->flags & TYPE_TYPEDEF) {
-      // ignore
+      Node *node = create_node(&(Node){ NODE_TYPEDEF });
+      $$ = create_node(&(Node){ NODE_DECLN, .children = vector_push(create_vector(), node) });
     } else {
       $$ = create_node(&(Node){ NODE_DECLN, .children = create_vector() });
     }
