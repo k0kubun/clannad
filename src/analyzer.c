@@ -276,6 +276,16 @@ analyze_var_decl(Node *node)
       assert_node(node->spec->lhs, NODE_SPEC);
       dict_set(analyzer.scope, node->spec->lhs->id, node);
       break;
+    case NODE_PTR:
+      {
+        Node *spec = node->spec;
+        while (spec && spec->kind == NODE_PTR) {
+          spec = spec->param;
+        }
+        assert_node(spec, NODE_SPEC);
+        dict_set(analyzer.scope, spec->id, node);
+      }
+      break;
     default:
       fprintf(stderr, "Unexpected spec kind in analyze_var_decl: %s\n", kind_label(node->spec->kind));
       exit(1);

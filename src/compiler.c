@@ -54,7 +54,7 @@ compile_return(Node *node)
   }
 }
 
-LLVMTypeRef compile_type(Node *node);
+LLVMTypeRef compile_type(Node *type, Node *spec);
 
 LLVMTypeRef
 compile_struct_type(Node *node)
@@ -69,7 +69,7 @@ compile_struct_type(Node *node)
     assert_node(field_node, NODE_FIELD);
     for (int j = 0; j < field_node->fields->length; j++) {
       types = realloc(types, (argc + 1) * sizeof(LLVMTypeRef));
-      types[argc] = compile_type(field_node->field_type);
+      types[argc] = compile_type(field_node->field_type, vector_get(field_node->fields, j));
       argc++;
     }
   }
@@ -77,34 +77,45 @@ compile_struct_type(Node *node)
 }
 
 LLVMTypeRef
-compile_type(Node *node)
+compile_base_type(Node *type)
 {
-  assert_node(node, NODE_TYPE);
+  assert_node(type, NODE_TYPE);
 
-  if (node->flags & TYPE_INT) {
+  if (type->flags & TYPE_INT) {
     return LLVMInt32Type();
-  } else if (node->flags & TYPE_CHAR) {
+  } else if (type->flags & TYPE_CHAR) {
     return LLVMInt8Type();
-  } else if (node->flags & TYPE_SHORT) {
+  } else if (type->flags & TYPE_SHORT) {
     return LLVMInt16Type();
-  } else if (node->flags & TYPE_LONG) {
+  } else if (type->flags & TYPE_LONG) {
     return LLVMInt32Type();
-  } else if (node->flags & TYPE_FLOAT) {
+  } else if (type->flags & TYPE_FLOAT) {
     return LLVMFloatType();
-  } else if (node->flags & TYPE_DOUBLE) {
+  } else if (type->flags & TYPE_DOUBLE) {
     return LLVMFloatType();
-  } else if (node->flags & TYPE_SIGNED) {
+  } else if (type->flags & TYPE_SIGNED) {
     return LLVMInt32Type();
-  } else if (node->flags & TYPE_UNSIGNED) {
+  } else if (type->flags & TYPE_UNSIGNED) {
     return LLVMInt32Type();
-  } else if (node->flags & TYPE_VOID) {
+  } else if (type->flags & TYPE_VOID) {
     return LLVMVoidType();
-  } else if (node->flags & TYPE_STRUCT) {
-    return compile_struct_type(node);
+  } else if (type->flags & TYPE_STRUCT) {
+    return compile_struct_type(type);
   } else {
-    fprintf(stderr, "Unexpected type given in compile_type: %ld\n", node->flags);
+    fprintf(stderr, "Unexpected type given in compile_base_type: %ld\n", type->flags);
     exit(1);
   }
+}
+
+LLVMTypeRef
+compile_type(Node *type, Node *spec)
+{
+  LLVMTypeRef ret = compile_base_type(type);
+  while (spec && spec->kind == NODE_PTR) {
+    ret = LLVMPointerType(ret, false);
+    spec = spec->param;
+  }
+  return ret;
 }
 
 LLVMValueRef
@@ -113,7 +124,7 @@ compile_unary(Node *node)
   assert_node(node, NODE_UNARY);
 
   if (node->op == SIZEOF)
-    return LLVMConstIntCast(LLVMSizeOf(compile_type(node->val)), LLVMInt32Type(), 0);
+    return LLVMConstIntCast(LLVMSizeOf(compile_type(node->val, NULL)), LLVMInt32Type(), 0);
 
   LLVMValueRef var, result = compile_exp(node->val);
   switch ((int)node->op) {
@@ -364,10 +375,14 @@ compile_var_decl(Node *node)
 
   switch (node->spec->kind) {
     case NODE_SPEC:
-      node->ref = LLVMBuildAlloca(compiler.builder, compile_type(node->type), "");
+      node->ref = LLVMBuildAlloca(compiler.builder, compile_type(node->type, node->spec), "");
       if (node->init) {
         LLVMBuildStore(compiler.builder, compile_exp(node->init), node->ref);
       }
+      break;
+    case NODE_PTR:
+      node->ref = LLVMBuildAlloca(compiler.builder, compile_type(node->type, node->spec), "");
+      // FIXME: implement initializer
       break;
     case NODE_ARRAY_SPEC:
       assert_node(node->spec->lhs, NODE_SPEC);
@@ -375,7 +390,9 @@ compile_var_decl(Node *node)
         fprintf(stderr, "variable length array is currently not supported\n");
         exit(1);
       }
-      node->ref = LLVMBuildAlloca(compiler.builder, LLVMArrayType(compile_type(node->type), node->spec->rhs->ival), "");
+      // FIXME: Consider pointer array
+      node->ref = LLVMBuildAlloca(compiler.builder, LLVMArrayType(compile_type(node->type, NULL), node->spec->rhs->ival), "");
+      // FIXME: implement initializer
       break;
     default:
       fprintf(stderr, "Unexpected spec kind in compile_var_decl: %s\n", kind_label(node->spec->kind));
@@ -467,12 +484,7 @@ LLVMTypeRef
 compile_param_decl(Node *node)
 {
   assert_node(node, NODE_PARAM_DECL);
-
-  if (node->spec && node->spec->kind == NODE_PTR) {
-    return LLVMPointerType(compile_type(node->type), false);
-  } else {
-    return compile_type(node->type);
-  }
+  return compile_type(node->type, node->spec);
 }
 
 void
@@ -486,7 +498,7 @@ compile_func(Node *node)
     param_types[i] = compile_param_decl((Node *)vector_get(node->spec->params, i));
   }
   compiler.func = LLVMAddFunction(compiler.mod, func_name(node->spec),
-      LLVMFunctionType(compile_type(node->type), param_types, node->spec->params->length, false));
+      LLVMFunctionType(compile_type(node->type, NULL), param_types, node->spec->params->length, false));
 
   // build block instructions
   LLVMBasicBlockRef block = LLVMAppendBasicBlock(compiler.func, "entry");
@@ -498,7 +510,7 @@ compile_func(Node *node)
   LLVMGetParams(compiler.func, param_refs);
   for (int i = 0; i < node->spec->params->length; i++) {
     Node *param = vector_get(node->spec->params, i);
-    param->ref = LLVMBuildAlloca(compiler.builder, compile_type(param->type), param->spec->id);
+    param->ref = LLVMBuildAlloca(compiler.builder, compile_type(param->type, param->spec), param->spec->id);
     LLVMBuildStore(compiler.builder, param_refs[i], param->ref);
   }
 
@@ -521,7 +533,7 @@ compile_func_decl(Node *node)
   }
 
   LLVMAddFunction(compiler.mod, func_name(node->spec),
-      LLVMFunctionType(compile_type(node->type), params, node->spec->params->length, false));
+      LLVMFunctionType(compile_type(node->type, NULL), params, node->spec->params->length, false));
 }
 
 void
