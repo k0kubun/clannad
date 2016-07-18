@@ -1,4 +1,4 @@
-# Clannad
+# Clannad [![Build Status](https://travis-ci.org/k0kubun/clannad.svg?branch=master)](https://travis-ci.org/k0kubun/clannad)
 
 Clannad is a C language compiler built as LLVM frontend.
 
