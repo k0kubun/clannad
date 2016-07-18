@@ -1,0 +1,10 @@
+sudo: required
+language: c
+services:
+  - docker
+
+before_install:
+  - docker build -t clannad .
+
+script:
+  - docker run clannad make test
