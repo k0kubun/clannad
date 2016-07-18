@@ -198,11 +198,6 @@ void test_else_with_comment() {
   pass();
 }
 
-void test_predefined_macros() {
-  expect_int(4, __GNUC__);
-  expect_int(1, __STDC__);
-}
-
 void test_null_directive() {
 #
 #

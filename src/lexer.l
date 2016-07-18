@@ -818,6 +818,7 @@ check_macros()
     define_macro("__GNUC__", "4");
     define_macro("__STDC__", "1");
     define_macro("__STDC_VERSION__", "201112L");
+    define_macro("__" BUILD_ARCH "__", "");
   }
   return macros;
 }

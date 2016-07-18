@@ -1,6 +1,6 @@
 CC=clang
 CLND=./clannad
-CFLAGS=-Werror `llvm-config --cflags` -I./src -DCLANG_VERSION="\"`clang --version | head -n1 | cut -d' ' -f3`\""
+CFLAGS=-Werror `llvm-config --cflags` -I./src -DCLANG_VERSION="\"`clang --version | head -n1 | cut -d' ' -f3`\"" -DBUILD_ARCH="\"`uname -m`\""
 LD=clang++
 LDFLAGS=`llvm-config --cxxflags --ldflags --libs core executionengine jit interpreter analysis native bitwriter --system-libs`
 OBJS=src/analyzer.o src/assembler.o src/compiler.o src/debug.o src/dict.o src/file.o src/lex.pp.o \
