@@ -8,3 +8,6 @@ before_install:
 
 script:
   - docker run clannad make test
+  - docker run clannad make self
+allow_failures:
+  - docker run clannad make self
