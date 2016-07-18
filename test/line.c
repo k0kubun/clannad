@@ -1,9 +1,13 @@
+#include "test_helper.h"
+
 void test_line_num() {
-# line 2
+# line 4
+  pass();
 }
 
 void test_line_file() {
-# line 6 "test/line.c"
+# line 9 "test/line.c"
+  pass();
 }
 
 int main() {
