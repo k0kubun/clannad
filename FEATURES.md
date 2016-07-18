@@ -109,18 +109,18 @@ ANSI X3.159-1989, ISO/IEC 9899:1990
      - [x] 3.5.6 Type definitions
      - [ ] 3.5.7 Initialization
   - 3.6. statements
-     - [ ] 3.6.1 Labeled statements (!!!)
+     - [ ] 3.6.1 Labeled statements
      - [x] 3.6.2 Compound statement, or block
      - [x] 3.6.3 Expression and null statements
      - 3.6.4 Selection statements
          - [x] 3.6.4.1 The if statement
-         - [ ] 3.6.4.2 The switch statement (!!!)
+         - [ ] 3.6.4.2 The switch statement
      - 3.6.5 Iteration statements
-         - [ ] 3.6.5.1 The while statement (!!!)
+         - [ ] 3.6.5.1 The while statement
          - [ ] 3.6.5.2 The do statement
          - [ ] 3.6.5.3 The for statement
      - 3.6.6 Jump statements
-         - [ ] 3.6.6.1 The goto statement (!!!)
+         - [ ] 3.6.6.1 The goto statement
          - [ ] 3.6.6.2 The continue statement
          - [ ] 3.6.6.3 The break statement
          - [x] 3.6.6.4 The return statement
