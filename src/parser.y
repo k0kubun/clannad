@@ -284,14 +284,22 @@ type_qualifier
 declarator
   : pointer direct_declarator
   {
-    $1->param = $2;
+    {
+      Node *ptr = $1;
+      while (ptr->param) ptr = ptr->param;
+      ptr->param = $2;
+    }
     $$ = $1;
   }
   | direct_declarator
   ;
 
 pointer
-  : '*'
+  : '*' pointer
+  {
+    $$ = create_node(&(Node){ NODE_PTR, .param = $2 });
+  }
+  | '*'
   {
     $$ = create_node(&(Node){ NODE_PTR, .param = NULL });
   }
