@@ -814,6 +814,7 @@ check_macros()
     // predefined macros
     define_macro("__GNUC__", "4");
     define_macro("__STDC__", "1");
+    define_macro("__STDC_VERSION__", "201112L");
   }
   return macros;
 }
