@@ -865,10 +865,29 @@ parse_file(Node **astptr, char *filename)
   return ret;
 }
 
+Node*
+builtin_va_list_type()
+{
+  Node *field_type = create_type_node(TYPE_CHAR);
+  Node *field_spec = create_node(&(Node){ NODE_PTR, .param = create_node(&(Node){ NODE_SPEC, .id = "arg" }) });
+  Node *field_node = create_node(&(Node){ NODE_FIELD, .field_type = field_type, .fields = vector_push(create_vector(), field_spec) });
+  return create_node(&(Node){ NODE_TYPE, .flags = TYPE_STRUCT, .fields = vector_push(create_vector(), field_node) });
+}
+
+void
+init_typedefs()
+{
+  if (!typedefs) {
+    typedefs = create_dict();
+
+    dict_set(typedefs, "__builtin_va_list", builtin_va_list_type());
+  }
+}
+
 void
 handle_typedef(Node *type, Vector *decls)
 {
-  if (!typedefs) typedefs = create_dict();
+  init_typedefs();
   type->flags ^= TYPE_TYPEDEF;
 
   // FIXME: typedef should have scope
@@ -888,7 +907,7 @@ handle_typedef(Node *type, Vector *decls)
 bool
 has_typedef(char *name)
 {
-  if (!typedefs) typedefs = create_dict();
+  init_typedefs();
 
   Node *node = dict_get(typedefs, name);
   return node != NULL;
