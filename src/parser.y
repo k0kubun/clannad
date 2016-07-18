@@ -29,6 +29,7 @@ create_decl_node(Node *spec, Node *init)
       return create_node(&(Node){ NODE_FUNC_DECL, .type = NULL, .spec = spec, .init = init });
     case NODE_SPEC:
     case NODE_ARRAY_SPEC:
+    case NODE_PTR:
       return create_node(&(Node){ NODE_VAR_DECL, .type = NULL, .spec = spec, .init = init });
     default:
       yyerror("unexpected decl type in init_declarator:");

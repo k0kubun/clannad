@@ -7,7 +7,13 @@ void test_typedef() {
   expect_int(1, a);
 }
 
+void test_voidptr_typedef() {
+  typedef void* voidptr;
+  pass();
+}
+
 int main() {
   test_typedef();
+  test_voidptr_typedef();
   return 0;
 }
