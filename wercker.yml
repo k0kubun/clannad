@@ -1,4 +1,4 @@
-box: k0kubun/llvm35
+box: k0kubun/llvm35-fb
 build:
   steps:
     - script:
