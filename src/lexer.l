@@ -278,8 +278,8 @@ WS  [ \t\v\n\f]
 
 ^"#"[ \t]error[^\n]* {
   fprintf(stderr, "%s\n", yytext);
-  fprintf(stderr, "error generated.\n");
-  yyterminate();
+  fprintf(stderr, "%s:%d: error generated.\n", get_reading_file(), yyget_lineno());
+  exit(1);
 }
 
 ^"#"[ \t]*$ {

@@ -927,7 +927,8 @@ merge_type_nodes(Node *lnode, Node *rnode)
     yyerror("Merge type failed!");
   }
   if (lnode->fields && rnode->fields) {
-    yyerror("Merging struct types!");
+    yyerror("Redefinition of struct!");
+    exit(1);
   }
   if (!lnode->fields && rnode->fields) {
     lnode->fields = rnode->fields;
