@@ -77,10 +77,12 @@ WS  [ \t\v\n\f]
 %%
 
 <INITIAL,IGNORED>"/*" {
+  push_state();
   BEGIN(COMMENT);
 }
 <COMMENT>"*/" {
-  BEGIN(INITIAL);
+  BEGIN(state_stack->state);
+  state_stack = state_stack->parent;
 }
 <COMMENT>"\n" {
   yylineno++;
