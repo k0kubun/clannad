@@ -208,6 +208,11 @@ dump_node(int indent, Node *node)
       dump_node(indent + 1, node->if_stmt);
       if (node->else_stmt) dump_node(indent + 1, node->else_stmt);
       break;
+    case NODE_ARRAY_SPEC:
+      indented_puts(indent, kind_label(node->kind));
+      dump_node(indent + 1, node->lhs);
+      dump_node(indent + 1, node->rhs);
+      break;
     default:
       indented_puts(indent, kind_label(node->kind));
       break;
