@@ -2,7 +2,7 @@
 ## C89/C90
 ANSI X3.159-1989, ISO/IEC 9899:1990
 
-#### 60 / 105 (57.1%)
+#### 62 / 105 (57.1%)
 
 - 2 environment
   - 2.1 conceptual models
@@ -32,9 +32,9 @@ ANSI X3.159-1989, ISO/IEC 9899:1990
          - [ ] 3.1.2.4 storage durations of objects
          - 3.1.2.5. types
               - object types
-                    - [x] int, char, float, short int, long int, struct
+                    - [x] int, char, float, short int, long int, struct, array
                     - [x] unsigned int, unsigned short int, unsigned long int
-                    - [ ] enum, array, pointer, signed char, unsigned char, double, long double
+                    - [ ] enum, pointer, signed char, unsigned char, double, long double
               - function types
                     - [ ] derived functions
               - incomplete types
@@ -48,13 +48,13 @@ ANSI X3.159-1989, ISO/IEC 9899:1990
          - [x] 3.1.3.4 character constants
      - [x] 3.1.4 string literals
      - 3.1.5 operators
-         - [x] `++` `--` `*` `+` `-` `/` `%` `==` `!=` `sizeof`, `<<`, `>>`
-         - [x] `<` `>` `<=` `>=` `!` `=` `&&` `||`, `&`, `|` `^` `~`, `( )`
+         - [x] `++` `--` `*` `+` `-` `/` `%` `==` `!=` `sizeof`, `<<`, `>>`, `.` `#`
+         - [x] `<` `>` `<=` `>=` `!` `=` `&&` `||`, `&`, `|` `^` `~`, `( )`, `[ ]`
          - [x] `<<=` `>>=` `+=` `-=` `*=` `/=` `%=` `&=` `^=` `|=` `?` `:`, `,`
-         - [ ] `[ ]` `.` `->` `#` `##`
+         - [ ] `->` `##`
      - 3.1.6 punctuators
-         - [x] `;` `=` `{` `}` `( )` `,`
-         - [ ] `[ ]` `*` `:` `...` `#`
+         - [x] `;` `=` `{` `}` `( )` `,` `[ ]` `#`
+         - [ ] `*` `:` `...`
      - [x] 3.1.7 header names
      - [x] 3.1.8 preprocessing numbers
      - [x] 3.1.9 comments
@@ -64,7 +64,7 @@ ANSI X3.159-1989, ISO/IEC 9899:1990
   - 3.3. expressions
      - [ ] 3.3.1 Primary expressions
      - 3.3.2 Postfix operators
-         - [ ] 3.3.2.1 Array subscripting
+         - [x] 3.3.2.1 Array subscripting
          - [x] 3.3.2.2 Function calls
          - [ ] 3.3.2.3 Structure and union members
          - [x] 3.3.2.4 Postfix increment and decrement operators
@@ -103,7 +103,7 @@ ANSI X3.159-1989, ISO/IEC 9899:1990
          - [x] volatile
      - 3.5.4 Declarators
          - [ ] 3.5.4.1 Pointer declarators
-         - [ ] 3.5.4.2 Array declarators
+         - [x] 3.5.4.2 Array declarators
          - [x] 3.5.4.3 Function declarators (including prototypes)
      - [ ] 3.5.5 Type names
      - [x] 3.5.6 Type definitions

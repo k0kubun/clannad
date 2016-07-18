@@ -312,6 +312,19 @@ compile_field_ref(Node *node)
 }
 
 LLVMValueRef
+compile_array_ref(Node *node)
+{
+  assert_node(node, NODE_ARRAY_REF);
+
+  // FIXME: Support non-variable array
+  LLVMValueRef indices[2];
+  indices[0] = LLVMConstInt(LLVMInt32Type(), 0, 0); // FIXME: Why is it required?
+  indices[1] = compile_exp(node->rhs); // FIXME: Correct type?
+  LLVMValueRef ref = LLVMBuildGEP(compiler.builder, node->lhs->ref_node->ref, indices, 2, "");
+  return LLVMBuildLoad(compiler.builder, ref, "");
+}
+
+LLVMValueRef
 compile_exp(Node *node)
 {
   switch (node->kind) {
@@ -335,6 +348,8 @@ compile_exp(Node *node)
       return compile_comma(node);
     case NODE_FIELD_REF:
       return compile_field_ref(node);
+    case NODE_ARRAY_REF:
+      return compile_array_ref(node);
     default:
       fprintf(stderr, "Unexpected node in compile_exp: %s\n", kind_label(node->kind));
       exit(1);
