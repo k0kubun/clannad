@@ -77,6 +77,8 @@ enum MultiCharsOp {
 #define TYPE_UNION      (1L<<13)
 #define TYPE_CONST      (1L<<14)
 #define TYPE_VOLATILE   (1L<<15)
+#define TYPE_EXTERN     (1L<<16)
+#define TYPE_STATIC     (1L<<17)
 
 typedef struct {
   void **data;

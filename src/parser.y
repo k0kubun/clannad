@@ -93,6 +93,8 @@ create_decl_node(Node *spec, Node *init)
 %token <id>   tNEWLINE;
 %token <id>   tTYPEDEF;
 %token <id>   tTYPEDEF_NAME;
+%token <id>   tSTATIC;
+%token <id>   tEXTERN;
 
 %type <list> translation_unit
 %type <node> declaration_specifiers
@@ -255,6 +257,16 @@ storage_class_specifier
   : tTYPEDEF
   {
     $$ = create_type_node(TYPE_TYPEDEF);
+  }
+  | tEXTERN
+  {
+    // FIXME: handle extern in somewhere
+    $$ = create_type_node(TYPE_EXTERN);
+  }
+  | tSTATIC
+  {
+    // FIXME: handle static in somewhere
+    $$ = create_type_node(TYPE_STATIC);
   }
   ;
 

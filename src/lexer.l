@@ -319,6 +319,8 @@ WS  [ \t\v\n\f]
 "const"    return tCONST;
 "volatile" return tVOLATILE;
 "typedef"  return tTYPEDEF;
+"extern"   return tEXTERN;
+"static"   return tSTATIC;
 "++"       return tINC_OP;
 "--"       return tDEC_OP;
 "=="       return tEQ_OP;

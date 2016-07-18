@@ -20,8 +20,8 @@ ANSI X3.159-1989, ISO/IEC 9899:1990
          - [x] int char if else return
          - [x] void sizeof const volatile typedef
          - [x] struct long signed unsigned
-         - [x] short union float double
-         - [ ] extern static break auto
+         - [x] short union float double extern static
+         - [ ] break auto
          - [ ] do register register switch
          - [ ] continue for case enum
          - [ ] default goto while break
