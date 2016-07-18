@@ -228,6 +228,16 @@ void test_define_continuous_tokens() {
   expect_int(3, a);
 }
 
+void test_error() {
+#if 0
+# if 0
+# else
+#  error
+# endif
+#endif
+  pass();
+}
+
 int main() {
   test_define_replacement();
   test_empty_define();
@@ -253,5 +263,6 @@ int main() {
   test_ternary_op();
   test_define_with_comment();
   test_define_continuous_tokens();
+  test_error();
   return 0;
 }

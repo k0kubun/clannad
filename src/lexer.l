@@ -278,10 +278,12 @@ WS  [ \t\v\n\f]
   yyterminate();
 }
 
-^"#"[ \t]error[^\n]* {
-  fprintf(stderr, "%s\n", yytext);
-  fprintf(stderr, "%s:%d: error generated.\n", get_reading_file(), yyget_lineno());
-  exit(1);
+<INITIAL,IGNORED>^"#"[ \t]*error[^\n]* {
+  if (!is_ignored(state_stack)) {
+    fprintf(stderr, "%s\n", yytext);
+    fprintf(stderr, "%s:%d: error generated.\n", get_reading_file(), yyget_lineno());
+    exit(1);
+  }
 }
 
 ^"#"[ \t]*$ {
