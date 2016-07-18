@@ -896,7 +896,7 @@ has_typedef(char *name)
 Node*
 create_type_node(long flag)
 {
-  return create_node(&(Node){ NODE_TYPE, .flags = flag });
+  return create_node(&(Node){ NODE_TYPE, .flags = flag, .fields = NULL });
 }
 
 Node*

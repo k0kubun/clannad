@@ -111,6 +111,29 @@ dump_nodes(int indent, int argc, ...)
 }
 
 void
+print_types(Node *node)
+{
+  assert_node(node, NODE_TYPE);
+
+  printf(" (");
+  if (node->flags & TYPE_VOID    ) printf(" TYPE_VOID");
+  if (node->flags & TYPE_CHAR    ) printf(" TYPE_CHAR");
+  if (node->flags & TYPE_SHORT   ) printf(" TYPE_SHORT");
+  if (node->flags & TYPE_INT     ) printf(" TYPE_INT");
+  if (node->flags & TYPE_LONG    ) printf(" TYPE_LONG");
+  if (node->flags & TYPE_SIGNED  ) printf(" TYPE_SIGNED");
+  if (node->flags & TYPE_UNSIGNED) printf(" TYPE_UNSIGNED");
+  if (node->flags & TYPE_FLOAT   ) printf(" TYPE_FLOAT");
+  if (node->flags & TYPE_DOUBLE  ) printf(" TYPE_DOUBLE");
+  if (node->flags & TYPE_TYPEDEF ) printf(" TYPE_TYPEDEF");
+  if (node->flags & TYPE_STRUCT  ) printf(" TYPE_STRUCT");
+  if (node->flags & TYPE_UNION   ) printf(" TYPE_UNION");
+  if (node->flags & TYPE_CONST   ) printf(" TYPE_CONST");
+  if (node->flags & TYPE_VOLATILE) printf(" TYPE_VOLATILE");
+  printf(" )");
+}
+
+void
 dump_node(int indent, Node *node)
 {
   switch (node->kind) {
@@ -145,9 +168,19 @@ dump_node(int indent, Node *node)
       dump_node(indent + 1, node->func);
       dump_vector(indent + 1, node->params);
       break;
+    case NODE_TYPE:
+      indented_printf(indent, "%s", kind_label(node->kind));
+      print_types(node);
+      printf("\n");
+      if (node->fields) dump_vector(indent + 1, node->fields);
+      break;
+    case NODE_FIELD:
+      indented_printf(indent, "%s\n", kind_label(node->kind));
+      dump_node(indent + 1, node->field_type);
+      dump_vector(indent + 1, node->fields);
+      break;
     case NODE_IDENTIFIER:
     case NODE_SPEC:
-    case NODE_TYPE:
     case NODE_STRING:
     case NODE_DEFINED:
       indented_printf(indent, "%s id=%s\n", kind_label(node->kind), node->id);
@@ -156,7 +189,7 @@ dump_node(int indent, Node *node)
       indented_printf(indent, "%s ival=%d\n", kind_label(node->kind), node->ival);
       break;
     case NODE_BINOP:
-      indented_printf(indent, "%s %c\n", kind_label(node->kind), node->op);
+      indented_printf(indent, "%s '%c'\n", kind_label(node->kind), node->op);
       dump_node(indent + 1, node->lhs);
       dump_node(indent + 1, node->rhs);
       break;
