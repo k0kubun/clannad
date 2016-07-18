@@ -2,12 +2,13 @@ sudo: required
 language: c
 services:
   - docker
-
 before_install:
   - docker build -t clannad .
-
+env:
+  - TARGET=test
+  - TARGET=self
 script:
-  - docker run clannad make test
-  - docker run clannad make self
-allow_failures:
-  - docker run clannad make self
+  - "docker run clannad make $TARGET"
+matrix:
+  allow_failures:
+    - env: TARGET=self
