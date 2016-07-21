@@ -223,7 +223,6 @@ void
 dump_ast(Node *ast)
 {
   dump_node(0, ast);
-  exit(1);
 }
 
 void

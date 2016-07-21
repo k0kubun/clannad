@@ -111,7 +111,10 @@ main(int argc, char **argv)
     return 1;
   }
 
-  if (opts.dump_ast) dump_ast(ast);
+  if (opts.dump_ast) {
+    dump_ast(ast);
+    return 1;
+  }
   analyze(ast);
 
   LLVMModuleRef mod = compile(ast);
