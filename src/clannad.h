@@ -181,6 +181,7 @@ LLVMModuleRef compile(Node *ast);
 void dump_ast(Node *ast);
 char* kind_label(enum NodeKind kind);
 void dump_macros();
+void dump_typedefs();
 
 // dict.c
 Dict* create_dict();
@@ -210,6 +211,7 @@ void optimize(LLVMModuleRef mod);
 Node* create_node(Node *temp);
 int parse_file(Node **astptr, char *filename);
 bool has_typedef(char *name);
+Dict* init_typedefs();
 
 // preprocessor.y
 int pp_parse_exp(Node **astptr, char *exp);

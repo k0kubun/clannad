@@ -895,7 +895,7 @@ builtin_va_list_type()
   return create_node(&(Node){ NODE_TYPE, .flags = TYPE_STRUCT, .fields = vector_push(create_vector(), field_node) });
 }
 
-void
+Dict*
 init_typedefs()
 {
   if (!typedefs) {
@@ -903,6 +903,7 @@ init_typedefs()
 
     dict_set(typedefs, "__builtin_va_list", builtin_va_list_type());
   }
+  return typedefs;
 }
 
 void

@@ -239,3 +239,15 @@ dump_macros()
     }
   }
 }
+
+void
+dump_typedefs()
+{
+  Dict *defs = init_typedefs();
+  for (int i = 0; i < defs->entries->length; i++) {
+    DictEntry *entry = vector_get(defs->entries, i);
+    printf("'%s':\n", entry->key);
+    Node *type = entry->data;
+    dump_ast(type);
+  }
+}
